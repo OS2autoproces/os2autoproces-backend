@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dk.digitalidentity.ap.dao.model.Process;
+import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.ProcessService;
+import dk.digitalidentity.ap.service.UserService;
 
 @RestController
 @CrossOrigin(exposedHeaders = "x-csrf-token")
@@ -26,6 +29,9 @@ public class CloneAPI {
 
 	@Autowired
 	private ProcessService processService;
+	
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/{processId}/copy")
 	public ResponseEntity<?> getClone(@PathVariable("processId") long processId, HttpServletRequest request) {
@@ -65,7 +71,6 @@ public class CloneAPI {
 		clone.setLevelOfRoutineWorkReduction(process.getLevelOfRoutineWorkReduction());
 		clone.setLevelOfStructuredInformation(process.getLevelOfStructuredInformation());
 		clone.setLevelOfUniformity(process.getLevelOfUniformity());
-		clone.setLocalId(process.getLocalId());
 		clone.setLongDescription(process.getLongDescription());
 		clone.setOrganizationalImplementationNotes(process.getOrganizationalImplementationNotes());
 		clone.setPhase(process.getPhase());
@@ -75,6 +80,9 @@ public class CloneAPI {
 		clone.setShortDescription(process.getShortDescription());
 		clone.setSolutionRequests(process.getSolutionRequests());
 		clone.setStatus(process.getStatus());
+		clone.setSepMep(process.isSepMep());
+		clone.setRunPeriod(process.getRunPeriod());
+		clone.setCodeRepositoryUrl(process.getCodeRepositoryUrl());
 		clone.setTargetsCitizens(process.isTargetsCitizens());
 		clone.setTargetsCompanies(process.isTargetsCompanies());
 		clone.setTechnicalImplementationNotes(process.getTechnicalImplementationNotes());
@@ -100,11 +108,14 @@ public class CloneAPI {
 			}
 		}
 		
+		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
+		User user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
+		
 		// values that are not copied
 		clone.setVisibility(Visibility.PERSONAL);
-		clone.setOwner(SecurityUtil.getUser());
-		clone.setReporter(SecurityUtil.getUser());
-		clone.setContact(SecurityUtil.getUser());
+		clone.setOwner(user);
+		clone.setReporter(user);
+		clone.setContact(user);
 		clone.setCvr(SecurityUtil.getCvr());
 		clone.setLinks(new ArrayList<>());
 		clone.setItSystems(new ArrayList<>());

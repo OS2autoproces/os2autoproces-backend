@@ -173,10 +173,6 @@ public class ProcessValidator implements Validator {
 					case OPERATION:
 						// no extra required fields in this phase
 					case IMPLEMENTATION:
-						if (process.getVendor() == null || process.getVendor().length() == 0) {
-							errors.rejectValue("vendor", "validation.process.vendor.notnull");
-						}
-						
 						if (process.getTechnologies() == null) {
 							errors.rejectValue("technologies", "validation.process.technologies.notnull");
 						}
@@ -198,45 +194,7 @@ public class ProcessValidator implements Validator {
 					case DEVELOPMENT:
 						// no extra validation here
 					case SPECIFICATION:
-						if (process.getProcessChallenges() == null || process.getProcessChallenges().length() == 0) {
-							errors.rejectValue("processChallenges", "validation.process.processChallenges.notnull");
-						}
-
-						if (process.getEvaluatedLevelOfRoi() == null || process.getEvaluatedLevelOfRoi().equals(Level.NOT_SET)) {
-							errors.rejectValue("evaluatedLevelOfRoi", "validation.process.evaluatedLevelOfRoi.notnull");
-						}
-						
-						if (process.getLevelOfChange() == null || process.getLevelOfChange().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfChange", "validation.process.levelOfChange.notnull");
-						}
-						
-						if (process.getLevelOfDigitalInformation() == null || process.getLevelOfDigitalInformation().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfDigitalInformation", "validation.process.levelOfDigitalInformation.notnull");
-						}
-						
-						if (process.getLevelOfProfessionalAssessment() == null || process.getLevelOfProfessionalAssessment().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfProfessionalAssessment", "validation.process.levelOfProfessionalAssessment.notnull");
-						}
-						
-						if (process.getLevelOfQuality() == null || process.getLevelOfQuality().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfQuality", "validation.process.levelOfQuality.notnull");
-						}
-						
-						if (process.getLevelOfRoutineWorkReduction() == null || process.getLevelOfRoutineWorkReduction().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfRoutineWorkReduction", "validation.process.levelOfRoutineWorkReduction.notnull");
-						}
-						
-						if (process.getLevelOfSpeed() == null || process.getLevelOfSpeed().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfSpeed", "validation.process.levelOfSpeed.notnull");
-						}
-						
-						if (process.getLevelOfStructuredInformation() == null || process.getLevelOfStructuredInformation().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfStructuredInformation", "validation.process.levelOfStructuredInformation.notnull");
-						}
-						
-						if (process.getLevelOfUniformity() == null || process.getLevelOfUniformity().equals(Level.NOT_SET)) {
-							errors.rejectValue("levelOfUniformity", "validation.process.levelOfUniformity.notnull");
-						}
+						// no extra validation here
 					case PREANALYSIS:
 						// no extra required fields in this phase
 					case IDEA:

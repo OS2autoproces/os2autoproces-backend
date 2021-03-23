@@ -1,5 +1,6 @@
 package dk.digitalidentity.ap.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,8 @@ import dk.digitalidentity.ap.dao.model.QComment;
 public interface CommentDao extends JpaRepository<Comment, Long>, QueryDslPredicateExecutor<Comment>, QuerydslBinderCustomizer<QComment> {
 
 	List<Comment> getByProcess(Process process);
+	
+	List<Comment> getByCreatedBetween(Date start, Date end);
 	
 	@Override
 	default void customize(QuerydslBindings bindings, QComment comment) {

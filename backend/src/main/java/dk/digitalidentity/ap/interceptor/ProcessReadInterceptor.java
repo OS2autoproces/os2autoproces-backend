@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.dao.model.Process;
+import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.security.SecurityUtil;
 
 @Aspect
@@ -46,6 +47,20 @@ public class ProcessReadInterceptor {
 		else if (target instanceof PageImpl<?>) {
 			Page<Object> page = (Page<Object>) target;
 			List<Object> targetList = page.getContent();
+
+			if (!targetList.isEmpty()) {
+				// Get first element of list to determine type
+				if (targetList.get(0) instanceof Process) {
+					List<Process> processes = targetList.stream().map(o -> (Process) o).collect(Collectors.toList());
+
+					for (Process process : processes) {
+						filter(process);
+					}
+				}
+			}
+		}
+		else if (target instanceof List) {
+			List<Object> targetList = (List<Object>) target;
 
 			if (!targetList.isEmpty()) {
 				// Get first element of list to determine type
@@ -91,8 +106,8 @@ public class ProcessReadInterceptor {
 			}
 		}
 
-		// no more filtering on same cvr access
-		if (process.getCvr().equals(SecurityUtil.getCvr())) {
+		// no more filtering on same cvr access (or global parent processes)
+		if (process.getCvr().equals(SecurityUtil.getCvr()) || process.getType().equals(ProcessType.GLOBAL_PARENT)) {
 			return;
 		}
 		

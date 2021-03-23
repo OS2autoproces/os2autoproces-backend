@@ -19,9 +19,11 @@ import dk.digitalidentity.ap.dao.model.Bookmark;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.projection.ProcessGridProjection;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.BookmarkService;
 import dk.digitalidentity.ap.service.ProcessService;
+import dk.digitalidentity.ap.service.UserService;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -37,16 +39,19 @@ public class BookmarkApi {
 	private ProcessService processService;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private ProjectionFactory factory;
 
 	@GetMapping
 	public ResponseEntity<?> getBookmarks() {
-		User user = SecurityUtil.getUser();
-		if (user == null) {
+		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
+		if (authenticatedUser == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no user in organisation matching logged in user: " + SecurityUtil.getUserId());
 		}
 		
-		List<Bookmark> bookmarks = bookmarkService.getByUser(user);
+		List<Bookmark> bookmarks = bookmarkService.getByUser(authenticatedUser.getId());
 		List<Process> processes = bookmarks.stream().map(b -> b.getProcess()).collect(Collectors.toList());
 
 		// filter only those user can read
@@ -65,8 +70,8 @@ public class BookmarkApi {
 			return ResponseEntity.notFound().build();
 		}
 		
-		User user = SecurityUtil.getUser();
-		if (user == null) {
+		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
+		if (authenticatedUser == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no user in organisation matching logged in user: " + SecurityUtil.getUserId());
 		}
 
@@ -75,11 +80,13 @@ public class BookmarkApi {
 			return ResponseEntity.notFound().build();
 		}
 
-		Bookmark bookmark = bookmarkService.getByUserAndProcess(user, process);
+		Bookmark bookmark = bookmarkService.getByUserAndProcess(authenticatedUser.getId(), process);
 		if (bookmark != null) {
 			return ResponseEntity.ok("");
 		}
 
+		User user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
+		
 		Bookmark newBookmark = new Bookmark();
 		newBookmark.setProcess(process);
 		newBookmark.setUser(user);
@@ -95,12 +102,12 @@ public class BookmarkApi {
 			return ResponseEntity.notFound().build();
 		}
 
-		User user = SecurityUtil.getUser();
+		AuthenticatedUser user = SecurityUtil.getUser();
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no user in organisation matching logged in user: " + SecurityUtil.getUserId());
 		}
 
-		Bookmark bookmark = bookmarkService.getByUserAndProcess(user, process);
+		Bookmark bookmark = bookmarkService.getByUserAndProcess(user.getId(), process);
 		if (bookmark == null) {
 			return ResponseEntity.ok("");
 		}

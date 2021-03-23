@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import dk.digitalidentity.ap.dao.model.Notification;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.User;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.NotificationService;
 import dk.digitalidentity.ap.service.ProcessService;
+import dk.digitalidentity.ap.service.UserService;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -29,6 +31,9 @@ public class NotificationApi {
 
 	@Autowired
 	private ProcessService processService;
+	
+	@Autowired
+	private UserService userService;
 
 	@PutMapping("/{processId}")
 	public ResponseEntity<?> addNotification(@PathVariable("processId") long processId) {
@@ -37,8 +42,8 @@ public class NotificationApi {
 			return ResponseEntity.notFound().build();
 		}
 		
-		User user = SecurityUtil.getUser();
-		if (user == null) {
+		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
+		if (authenticatedUser == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no user in organisation matching logged in user: " + SecurityUtil.getUserId());
 		}
 
@@ -47,10 +52,12 @@ public class NotificationApi {
 			return ResponseEntity.notFound().build();
 		}
 
-		Notification notification = notiticationService.getByUserAndProcess(user, process);
+		Notification notification = notiticationService.getByUserAndProcess(authenticatedUser.getId(), process);
 		if (notification != null) {
 			return ResponseEntity.ok("");
 		}
+
+		User user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
 
 		Notification newNotification = new Notification();
 		newNotification.setProcess(process);
@@ -67,12 +74,12 @@ public class NotificationApi {
 			return ResponseEntity.notFound().build();
 		}
 
-		User user = SecurityUtil.getUser();
+		AuthenticatedUser user = SecurityUtil.getUser();
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no user in organisation matching logged in user: " + SecurityUtil.getUserId());
 		}
 
-		Notification notification = notiticationService.getByUserAndProcess(user, process);
+		Notification notification = notiticationService.getByUserAndProcess(user.getId(), process);
 		if (notification == null) {
 			return ResponseEntity.ok("");
 		}

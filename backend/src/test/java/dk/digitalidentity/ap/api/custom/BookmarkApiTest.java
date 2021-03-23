@@ -63,7 +63,7 @@ public class BookmarkApiTest extends ApiTestHelper {
 		this.mockMvc.perform(put("/api/bookmarks/{id}", id2))
 					.andExpect(status().is(200));
 
-		List<Bookmark> bookmarks = bookmarkService.getByUser(user);
+		List<Bookmark> bookmarks = bookmarkService.getByUser(user.getId());
 		Assert.assertTrue(bookmarks.size() == 2);
 		
 		int matches = 0;
@@ -81,7 +81,7 @@ public class BookmarkApiTest extends ApiTestHelper {
 			.andExpect(status().is(200))
 			.andReturn();
 
-		bookmarks = bookmarkService.getByUser(user);
+		bookmarks = bookmarkService.getByUser(user.getId());
 		Assert.assertTrue(bookmarks.size() == 1);
 		Assert.assertTrue(bookmarks.get(0).getProcess().getId() == Long.parseLong(id2));
 	}

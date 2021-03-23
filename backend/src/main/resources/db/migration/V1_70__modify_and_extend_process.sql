@@ -1,0 +1,10 @@
+ALTER TABLE process MODIFY long_description TEXT;
+ALTER TABLE process MODIFY time_spend_comment TEXT;
+ALTER TABLE process ADD COLUMN code_repository_url VARCHAR(300);
+ALTER TABLE process ADD COLUMN run_period VARCHAR(64) NOT NULL DEFAULT 'ONDEMAND';
+ALTER TABLE process ADD COLUMN sep_mep BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE process_aud ADD COLUMN code_repository_url VARCHAR(300);
+ALTER TABLE process_aud ADD COLUMN run_period VARCHAR(64);
+ALTER TABLE process_aud ADD COLUMN sep_mep BOOLEAN NULL;
+ALTER TABLE process_aud MODIFY long_description TEXT;
+ALTER TABLE process_aud MODIFY time_spend_comment TEXT;

@@ -40,11 +40,11 @@
 			<div class="card">
 				<div class="card-body">
 					<strong>Query for OrgUnits that matches a given name (case-insensitive infix search - supply at least 3 characters)</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/orgUnits?name=&lt;name&gt;&amp;cvr=&lt;cvr&gt;
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/orgUnits?name=&lt;name&gt;&amp;cvr=&lt;cvr&gt;
 (returns a list of orgUnits that has the supplied name-parameter anywhere in their name, owned by the supplied CVR number)</pre>
 
 					<strong>Read a single OrgUnit</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/orgUnits/&lt;id&gt;
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/orgUnits/&lt;id&gt;
 (returns the data on the orgUnit that matches the supplied id)</pre>
 				</div>
 			</div>
@@ -96,11 +96,11 @@
   },
   "_links" : {
     "self" : {
-      "href" : "https://dev.os2autoproces.eu/api/orgUnits{?page,size,sort}",
+      "href" : "https://www.os2autoproces.eu/api/orgUnits{?page,size,sort}",
       "templated" : true
     },
     "profile" : {
-      "href" : "https://dev.os2autoproces.eu/api/profile/orgUnits"
+      "href" : "https://www.os2autoproces.eu/api/profile/orgUnits"
     }
   },
   "page" : {

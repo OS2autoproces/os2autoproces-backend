@@ -1,6 +1,6 @@
 package dk.digitalidentity.ap.stub;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import dk.digitalidentity.ap.service.MailSenderService;
 public class StubbedMailSender implements MailSenderService {
 
 	@Override
-	public void sendMessage(String from, List<String> to, String subject, String body) throws Exception {
+	public void sendMessage(String from, Collection<String> to, String subject, String body) throws Exception {
 		; // do nothing
 	}
 }

@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dk.digitalidentity.ap.api.model.SystemUserDTO;
+import dk.digitalidentity.ap.dao.model.IdentityProvider;
 import dk.digitalidentity.ap.dao.model.Municipality;
-import dk.digitalidentity.ap.dao.model.User;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
+import dk.digitalidentity.ap.service.IdentityProviderService;
 import dk.digitalidentity.ap.service.MunicipalityService;
 
 @RestController
@@ -24,12 +26,15 @@ public class PublicApi {
 	
 	@Autowired
 	private MunicipalityService municipalityService;
+	
+	@Autowired
+	private IdentityProviderService identityProviderService;
 
 	@GetMapping("/whoami")
 	public ResponseEntity<SystemUserDTO> whoami() {
 		SystemUserDTO result = new SystemUserDTO();
 
-		User user = SecurityUtil.getUser();
+		AuthenticatedUser user = SecurityUtil.getUser();
 		if (user != null) {
 			result.setUuid(user.getUuid());
 			result.setEmail(user.getEmail());
@@ -48,7 +53,12 @@ public class PublicApi {
 	public ResponseEntity<List<Municipality>> getMunicipalities() {
 		return new ResponseEntity<>(municipalityService.findAll(), HttpStatus.OK);
 	}
-	
+
+	@GetMapping("/identityproviders")
+	public ResponseEntity<List<IdentityProvider>> getIdentityProviders() {
+		return new ResponseEntity<>(identityProviderService.getAll(), HttpStatus.OK);
+	}
+
 	@GetMapping("/municipalities/{cvr}")
 	public ResponseEntity<?> getMunicipality(@PathVariable("cvr") String cvr) {
 		Municipality municipality = municipalityService.getByCvr(cvr);

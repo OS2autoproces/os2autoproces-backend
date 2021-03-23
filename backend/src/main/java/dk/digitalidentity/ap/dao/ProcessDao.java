@@ -14,8 +14,11 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.querydsl.core.BooleanBuilder;
+
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.QProcess;
+import dk.digitalidentity.ap.dao.model.enums.Domain;
 
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface ProcessDao extends JpaRepository<Process, Long>, QueryDslPredicateExecutor<Process>, QuerydslBinderCustomizer<QProcess> {
@@ -23,6 +26,9 @@ public interface ProcessDao extends JpaRepository<Process, Long>, QueryDslPredic
 	@RestResource(exported = false)
 	List<Process> findByLastChangedBetween(Date begin, Date end);
 
+	@RestResource(exported = false)
+	List<Process> findByForm(String code);
+	
 	@RestResource(exported = false)
 	@Query(value = "SELECT * FROM process" +
 	               "  WHERE phase = 'OPERATION'" +
@@ -53,6 +59,21 @@ public interface ProcessDao extends JpaRepository<Process, Long>, QueryDslPredic
 			Iterator<? extends Date> it = value.iterator();
 
 			return path.after(it.next());
+		});
+		
+		bindings.bind(root.domains).all((path, value) -> {
+		    BooleanBuilder builder = new BooleanBuilder();
+
+			Iterator<? extends List<Domain>> iterator = value.iterator();
+			while (iterator.hasNext()) {
+				List<Domain> domains = iterator.next();
+
+				for (Domain domain : domains) {
+					builder.or(path.contains(domain));
+				}
+			}
+
+			return builder;
 		});
 	}
 }

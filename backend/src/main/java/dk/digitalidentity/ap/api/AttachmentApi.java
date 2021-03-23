@@ -48,7 +48,7 @@ public class AttachmentApi {
 			return ResponseEntity.notFound().build();
 		}
 		
-		List<Attachment> attachments = attachmentDao.getByProcess(process);
+		List<Attachment> attachments = attachmentDao.findByProcess(process);
 
 		// filter out non-public attachments on cross-municipality lookup
 		if (!process.getCvr().equals(SecurityUtil.getCvr()) && attachments != null && attachments.size() > 0) {

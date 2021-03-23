@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.springframework.data.domain.AuditorAware;
 
-import dk.digitalidentity.ap.dao.model.User;
-
 public class CommentUsernameGenerator implements AuditorAware<String> {
 	private static Map<String, String> municipalityNames;
 		
@@ -15,7 +13,7 @@ public class CommentUsernameGenerator implements AuditorAware<String> {
 		String name = null;
 		String municipalityName = null;
 		
-		User user = SecurityUtil.getUser();
+		AuthenticatedUser user = SecurityUtil.getUser();
 		if (user != null) {
 			name = user.getName();
 

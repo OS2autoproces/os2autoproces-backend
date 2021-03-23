@@ -1,5 +1,6 @@
 package dk.digitalidentity.ap.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,9 @@ public class CommentService {
 
 	public List<Comment> getByProcess(Process process) {
 		return commentDao.getByProcess(process);
+	}
+	
+	public List<Comment> getByCreatedBetween(Date start, Date end) {
+		return commentDao.getByCreatedBetween(start, end);
 	}
 }

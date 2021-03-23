@@ -1,5 +1,6 @@
 package dk.digitalidentity.ap.dao.model.projection;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ public interface ProcessGridProjection {
 	String getShortDescription();
 	int getRating();
 	Phase getPhase();
+	Date getLastChanged();
 	ProcessType getType();
 	Status getStatus();
 	List<Domain> getDomains();
@@ -29,7 +31,8 @@ public interface ProcessGridProjection {
 	String getLegalClause();
 	String getMunicipalityName();
 	Visibility getVisibility();
-	
+	long getChildrenCount();
+
 	default boolean isHasBookmarked() {
 		BookmarkDao bookmarkDao = ApplicationContextProvider.getApplicationContext().getBean("bookmarkDao", BookmarkDao.class);
 		if (bookmarkDao == null) {
@@ -39,6 +42,6 @@ public interface ProcessGridProjection {
 			return false;
 		}
 
-		return (bookmarkDao.getByUserAndProcessId(SecurityUtil.getUser(), this.getId()) != null);
+		return (bookmarkDao.getByUserIdAndProcessId(SecurityUtil.getUser().getId(), this.getId()) != null);
 	}
 }

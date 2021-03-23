@@ -58,19 +58,19 @@ public class NotificationApiTest extends ApiTestHelper {
 		
 		Process process = processDao.findOne(Long.parseLong(id));
 
-		Notification notification = notificationDao.getByUserAndProcess(user, process);
+		Notification notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
 		Assert.assertNull(notification);
 
 		this.mockMvc.perform(put("/api/notifications/{id}", id))
 					.andExpect(status().is(200));
 
-		notification = notificationDao.getByUserAndProcess(user, process);
+		notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
 		Assert.assertNotNull(notification);
 
 		this.mockMvc.perform(delete("/api/notifications/{id}", id))
 					.andExpect(status().is(200));
 
-		notification = notificationDao.getByUserAndProcess(user, process);
+		notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
 		Assert.assertNull(notification);
 	}
 }

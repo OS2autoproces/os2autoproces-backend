@@ -1,7 +1,10 @@
 package dk.digitalidentity.ap.task;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +13,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import dk.digitalidentity.ap.dao.model.Comment;
 import dk.digitalidentity.ap.dao.model.Notification;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.State;
+import dk.digitalidentity.ap.dao.model.enums.Phase;
+import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.service.CommentService;
 import dk.digitalidentity.ap.service.MailSenderService;
 import dk.digitalidentity.ap.service.NotificationService;
 import dk.digitalidentity.ap.service.ProcessModificationsService;
@@ -33,6 +40,9 @@ public class NotificationTask {
 	@Value("${email.sender:}")
 	private String senderEmailAddress;
 
+	@Value("${email.enabled:false}")
+	private boolean emailActive;
+	
 	@Autowired
 	private MailSenderService mailSenderService;
 
@@ -46,12 +56,15 @@ public class NotificationTask {
 	private ProcessService processService;
 	
 	@Autowired
+	private CommentService commentService;
+	
+	@Autowired
 	private ProcessModificationsService processModificationsService;
 
 	// send notifications once every 10 minutes
 	@Scheduled(fixedRate = 10 * 60 * 1000)
 	public void sendNotifications() {
-		if (!runScheduled) {
+		if (!runScheduled || !emailActive) {
 			return;
 		}
 		
@@ -62,7 +75,6 @@ public class NotificationTask {
 			lastRunTimestamp = new Date(Long.parseLong(state.getValue()));
 		}
 
-		// TODO: we can optimize this by just getting the ID fields
 		List<Process> modifiedProcesses = processService.findByLastChangedBetween(lastRunTimestamp, currentTimestamp);
 		
 		if (modifiedProcesses != null && modifiedProcesses.size() > 0) {
@@ -73,7 +85,25 @@ public class NotificationTask {
 				if (history == null || !history.hasChanges()) {
 					continue;
 				}
-				
+
+				// if the process phase is changed to operation, but visibility is not public, send notification to owner
+				if (process.getPhase().equals(Phase.OPERATION) &&
+				   !history.getLatest().getPhase().equals(history.getPrev().getPhase()) &&
+				   !process.getVisibility().equals(Visibility.PUBLIC)) {
+					
+					if (process.getOwner() != null && process.getOwner().getEmail() != null) {
+						String subject = "";
+						String message = "";
+
+						try {
+							mailSenderService.sendMessage(senderEmailAddress, Collections.singletonList(process.getOwner().getEmail()), subject, message);
+						}
+						catch (Exception ex) {
+							log.error("Failed to send phase-change notification for process: " + process.getId(), ex);
+						}
+					}
+				}
+
 				try {
 					List<Notification> notifications = notificationService.getByProcess(process);
 					
@@ -88,6 +118,35 @@ public class NotificationTask {
 				}
 			}
 		}
+		
+		// let's see if there are any new comments
+		List<Comment> comments = commentService.getByCreatedBetween(lastRunTimestamp, currentTimestamp);
+		for (Comment comment : comments) {
+			try {
+				List<Notification> notifications = notificationService.getByProcess(comment.getProcess());
+				
+				if (notifications != null && notifications.size() > 0) {
+					
+					// all subscribers
+					Set<String> emails = notifications.stream().filter(n -> n.getUser().getEmail() != null).map(n -> n.getUser().getEmail()).collect(Collectors.toSet());
+					
+					// all associated users
+					emails.addAll(comment.getProcess().getUsers().stream().filter(u -> u.getEmail() != null).map(u -> u.getEmail()).collect(Collectors.toSet()));
+
+					// always contact person
+					String contactPerson = (comment.getProcess().getContact() != null) ? comment.getProcess().getContact().getEmail() : null;
+					if (contactPerson != null) {
+						emails.add(contactPerson);
+					}
+
+					sendNotification(comment, emails);
+				}
+			}
+			catch (Exception ex) {
+				log.error("Failed to send notifications for comment: " + comment.getId(), ex);
+			}
+
+		}
 
 		if (state == null) {
 			state = new State();
@@ -98,6 +157,23 @@ public class NotificationTask {
 		stateService.save(state);
 	}
 	
+	private void sendNotification(Comment comment, Collection<String> emails) {
+		String subject = "OS2autoproces (" + comment.getProcess().getId() + "): " + comment.getProcess().getTitle();
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("Processen med ID " + comment.getProcess().getId() + " er blevet opdateret med en kommentar:<br/><br/>");
+
+		builder.append("<b>" + comment.getName() + "</b></br>");
+		builder.append(comment.getMessage());
+
+		try {
+			mailSenderService.sendMessage(senderEmailAddress, emails, subject, builder.toString());
+		}
+		catch (Exception ex) {
+			log.warn("Error occured while trying to send email. ", ex);
+		}
+	}
+
 	private void sendNotification(ProcessHistoryPair history, List<String> emails) {
 		String subject = "OS2autoproces (" + history.getId() + "): " + history.getLatest().getTitle();
 

@@ -50,11 +50,19 @@ public class LegalClauseTask {
 
 				List<String> emails = Collections.singletonList(process.getOwner().getEmail());
 
-				String subject = "OS2autoproces paragraf-opfølgning (" + process.getId() + "): " + process.getTitle();
+				String subject = "Validering af proces med ID [" + process.getId() + "] i OS2autoproces";
 				
 				StringBuilder builder = new StringBuilder();
-				builder.append("Processen med ID " + process.getId() + " er opmærket med lovparagraf '" + process.getLegalClause() + "', der sidst er blevet valideret " + ((process.getLegalClauseLastVerified() != null) ? format.format(process.getLegalClauseLastVerified()) : "(aldrid)") + "<br/><br/>");
-				builder.append("Undersøg venligst om processen stadig overholder den nævnte lovparagraf, og opdater processen i OS2autoproces med den nye valideringsdato.");
+				
+				String link = "https://www.os2autoproces.eu/details/" + process.getId();
+				
+				builder.append("Det er nu tid til at validere processen [" + process.getTitle() + "] med ID [" + process.getId() + "] der er indberettet i OS2autoproces i forhold til lovgivningen.<br/><br/>");
+				builder.append("Processen er opmærket med lovparagraf [" + process.getLegalClause() + "] og er sidst blevet valideret [" + ((process.getLegalClauseLastVerified() != null) ? format.format(process.getLegalClauseLastVerified()) : "aldrig") + "].<br/><br/>");
+				builder.append("Undersøg venligst om processen stadig overholder den nævnte lovparagraf og opdater feltet “Sidst kontrolleret i forhold til §” under fanen Drift med den nye valideringsdato.<br/><br/>");
+
+				builder.append("Find processen her: <a href=\"" + link + "\">[link]</a> eller søg på processen ID direkte i OS2autoproces.<br/><br/>");
+				
+				builder.append("Ved spørgsmål kontakt din kontaktperson for OS2autoproces.");
 
 				sendNotification(subject, builder.toString(), emails);
 			}

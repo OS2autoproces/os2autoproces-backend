@@ -11,9 +11,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "rev")
+@EqualsAndHashCode(exclude = { "rev", "revtype" })
 public class ProcessHistory {
 	private long rev;
+	private long revtype;
 	
 	private String title;
 	private String shortDescription;
@@ -36,9 +37,19 @@ public class ProcessHistory {
 	
 	public ProcessHistory(ResultSet rs) throws SQLException {
 		rev = rs.getLong("rev");
+		revtype = rs.getLong("revtype");
 		klId = rs.getString("kl_id");
-		phase = Phase.valueOf(rs.getString("phase"));
-		status = Status.valueOf(rs.getString("status"));
+		
+		String phaseStr = rs.getString("phase");
+		if (phaseStr != null) {
+			phase = Phase.valueOf(phaseStr);
+		}
+		
+		String statusStr = rs.getString("status");
+		if (statusStr != null) {
+			status = Status.valueOf(statusStr);
+		}
+		
 		statusText = rs.getString("status_text");
 		legalClause = rs.getString("legal_clause");
 		kle = rs.getString("kle");

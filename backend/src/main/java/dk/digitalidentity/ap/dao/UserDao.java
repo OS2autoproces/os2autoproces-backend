@@ -43,6 +43,9 @@ public interface UserDao extends JpaRepository<User, Long>, QueryDslPredicateExe
 	User getByUuidAndCvrAndActiveTrue(String uuid, String cvr);
 	
 	@RestResource(exported = false)
+	List<User> getByUuidAndCvr(String uuid, String cvr);
+	
+	@RestResource(exported = false)
 	List<User> getByCvr(String cvr);
 
 	@Override

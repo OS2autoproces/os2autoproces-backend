@@ -1,6 +1,7 @@
 package dk.digitalidentity.ap.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,7 +34,7 @@ public class AmazonSESService implements MailSenderService {
 	private String smtpHost;
 
 	@Override
-	public void sendMessage(String from, List<String> emails, String subject, String body) throws Exception {
+	public void sendMessage(String from, Collection<String> emails, String subject, String body) throws Exception {
 		if (!isConfigured()) {
 			log.warn("AmazonSESService is not configured with a username/password - not sending emails!");
 			return;

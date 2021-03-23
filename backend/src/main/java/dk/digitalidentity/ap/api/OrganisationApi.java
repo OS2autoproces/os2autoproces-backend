@@ -1,7 +1,5 @@
 package dk.digitalidentity.ap.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +13,12 @@ import dk.digitalidentity.ap.api.model.OrganisationDTO;
 import dk.digitalidentity.ap.api.model.OrganisationImportResponse;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.OrganisationService;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @RestController
 @RequestMapping("/xapi")
 public class OrganisationApi {
-	private static final Logger log = LoggerFactory.getLogger(OrganisationApi.class);
 
 	@Autowired
 	private OrganisationService organisationImporter;

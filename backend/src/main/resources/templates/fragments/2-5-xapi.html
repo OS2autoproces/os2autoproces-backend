@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-2-4" th:fragment="header">2.5 XAPI Security</h3>
+	
+	<div th:fragment="content">
+		<p>
+			The frontend accesses the APIs using the logged-in users session, and the user logs in using
+			a SAML login flow. Using the same approach to create an actual system-integration against the
+			APIs is possible, but somewhat cumbersome. But there is an easier way.
+		</p>
+		
+		<h4>Getting access to the APIs without being logged in</h4>
+		<p>
+			There is an API endpoint exposed here /xapi/auth, can can be used to exchange an API Key
+			for a user-session, which grants access to the API's, just as if a super-user had logged into
+			OS2autoproces.
+		</p>
+		
+		<p>
+			To call this endpoint, the following is needed			
+		</p>
+		
+		<ul>
+			<li>A REST client (any framework or tool that can call REST endpoints and supports cookies will work)</li>
+			<li>An API Key (contact Digital Identity for an Api Key)</li>
+		</ul>
+
+		<p>Exchanging the API Key can be done by performing a HTTP POST operation against the /xapi/auth endpoint,
+			in combination with a HTTP Header called ApiKey, containing the actual API Key</p>
+		
+		<pre>
+			POST https://www.os2autoproces.eu/xapi/auth
+			ApiKey: xxxxxxxx
+		</pre>
+		
+		<p>
+			If the REST endpoint returns HTTP 200, and a Set-Cookie header, the operation is succesful. The value
+			of the Set-Cookie is the session-cookie that must be used on all calls to the rest of the API.
+		</p>
+	</div>
+</body>
+</html>

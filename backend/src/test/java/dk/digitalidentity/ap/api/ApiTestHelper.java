@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.digitalidentity.ap.dao.model.User;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.UserService;
 import dk.digitalidentity.saml.model.TokenUser;
@@ -72,7 +73,7 @@ public abstract class ApiTestHelper {
 		}
 
 		TokenUser token = TokenUser.builder().authorities(authorities).cvr(cvr).username("dummy").attributes(new HashMap<>()).build();
-		token.getAttributes().put("user", user);
+		token.getAttributes().put("user", new AuthenticatedUser(user));
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("dummy", null, authorities);
 		auth.setDetails(token);
 

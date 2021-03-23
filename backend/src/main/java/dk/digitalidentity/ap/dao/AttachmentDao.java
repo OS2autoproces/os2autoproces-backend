@@ -15,7 +15,8 @@ import dk.digitalidentity.ap.dao.model.QAttachment;
 @RepositoryRestResource(exported = false)
 public interface AttachmentDao extends JpaRepository<Attachment, Long>, QueryDslPredicateExecutor<Attachment>, QuerydslBinderCustomizer<QAttachment> {
 
-	List<Attachment> getByProcess(Process process);
+	List<Attachment> findAll();
+	List<Attachment> findByProcess(Process process);
 	Attachment getById(long attachmentId);
 
 	@Override

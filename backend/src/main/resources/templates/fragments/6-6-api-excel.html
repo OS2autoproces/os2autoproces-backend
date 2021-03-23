@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-6-6" th:fragment="header">6.6 Excel API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Custom Secure API</td>
+						<td>Stable</td>
+						<td>This API is intended for download excel files containing the searched for processes.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Below are listed the operations available on this API. Note there is only one method, and it takes as arguments the exact same
+			as the Process API when searching for processes. The intended use is for the frontend to download an EXCEL file with the processes
+			that a previous search supplied
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Download excel file</strong>
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/excel</pre>
+				</div>
+			</div>
+		</p>
+	</div>
+</body>
+</html>

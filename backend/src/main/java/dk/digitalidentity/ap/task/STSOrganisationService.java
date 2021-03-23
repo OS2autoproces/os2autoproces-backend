@@ -39,7 +39,7 @@ public class STSOrganisationService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public synchronized void loadOrganisation(String cvr) throws Exception {
-		log.info("Attemping to fetch organisation data from STS Organisation for CVR " + cvr);
+		log.info("Attempting to fetch organisation data from STS Organisation for CVR " + cvr);
 		
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("cvr", cvr);
@@ -55,11 +55,11 @@ public class STSOrganisationService {
 		String key = keyResponse.getBody();
 		
 		ResponseEntity<STSHierarchyWrapper> response = null;
-		for (int i = 0; i < 12; i++) {
-			Thread.sleep(5 * 60 * 1000); // sleep 5 minutes before attempting to read again
+		for (int i = 0; i < 15; i++) { // 45 minutes total
+			Thread.sleep(2 * 75 * 1000); // sleep 2,5 minutes before attempting to read again
 
 			response = restTemplate.getForEntity(stsOrgSyncUrl + "/" + key, STSHierarchyWrapper.class);
-			
+
 			if (response.getStatusCodeValue() != 404) {
 				break;
 			}

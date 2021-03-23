@@ -54,41 +54,41 @@
 		<ul>
 			<li><strong>bookmarkUsers</strong>. Adding a bookmarkUsers.id=xxx or bookmarkUsers.uuid=xxx as a search parameter will
 			ensure that only processes that have been bookmarked by that user is returned. Example:
-			https://dev.os2autoproces.eu/api/processes?bookmarkUsers.id=1</li>
+			https://www.os2autoproces.eu/api/processes?bookmarkUsers.id=1</li>
 			<li><strong>freetext</strong>. Adding a freetext=xxx as a search parameter, will perform a search for
 			processes that has xxx as an infix of a series of textfields within the process
-			datamodel (not implemented yet). Example: https://dev.os2autoproces.eu/api/processes?freetext=Hello</li>
+			datamodel (not implemented yet). Example: https://www.os2autoproces.eu/api/processes?freetext=Hello</li>
 		</ul>
 		
 		<p>
 			<div class="card">
 				<div class="card-body">
 					<strong>Fetch a list of processes</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/processes
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/processes
 (returns a list of processes, example given in the subchapter below)</pre>
 
 					<strong>Fetch a single process</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/processes/&lt;id&gt;
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/processes/&lt;id&gt;
 (returns a single process with the given id)</pre>
 
 					<strong>Create a new process</strong>
-					<pre class="card-text">POST https://dev.os2autoproces.eu/api/processes
+					<pre class="card-text">POST https://www.os2autoproces.eu/api/processes
 (body should contain the process to be created)</pre>
 
 					<strong>Copy an existing process</strong>
-					<pre class="card-text">POST https://dev.os2autoproces.eu/api/processes/&lt;id&gt;/copy
+					<pre class="card-text">POST https://www.os2autoproces.eu/api/processes/&lt;id&gt;/copy
 (returns a copy of the process with the given id - the copy has a new id)</pre>
 
 					<strong>Overwrite an existing process</strong>
-					<pre class="card-text">PUT https://dev.os2autoproces.eu/api/processes/&lt;id&gt;
+					<pre class="card-text">PUT https://www.os2autoproces.eu/api/processes/&lt;id&gt;
 (body should contain the process to be updated)</pre>
 
 					<strong>Update individual fields on existing process</strong>
-					<pre class="card-text">PATCH https://dev.os2autoproces.eu/api/processes/&lt;id&gt;
+					<pre class="card-text">PATCH https://www.os2autoproces.eu/api/processes/&lt;id&gt;
 (body should contain the fields the be updated, and their new values (partial process JSON object))</pre>
 
 					<strong>Update individual fields on existing process</strong>
-					<pre class="card-text">PATCH https://dev.os2autoproces.eu/api/processes/&lt;id&gt;
+					<pre class="card-text">PATCH https://www.os2autoproces.eu/api/processes/&lt;id&gt;
 (body should contain the fields the be updated, and their new values (partial process JSON object))</pre>
 				</div>
 			</div>
@@ -106,7 +106,6 @@
 				<div class="card-body">
 					<pre class="card-text">{
   "id" : 501,
-  "localId" : "ID70",
   "klId" : null,
   "esdhReference" : null,
   "phase" : "OPERATION",
@@ -168,38 +167,38 @@
   "searchWords" : "",
   "_links" : {
     "self" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501"
+      "href" : "https://www.os2autoproces.eu/api/processes/501"
     },
     "process" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501{?projection}",
+      "href" : "https://www.os2autoproces.eu/api/processes/501{?projection}",
       "templated" : true
     },
     "orgUnits" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/orgUnits"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/orgUnits"
     },
     "reporter" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/reporter"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/reporter"
     },
     "users" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/users"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/users"
     },
     "technologies" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/technologies"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/technologies"
     },
     "owner" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/owner"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/owner"
     },
     "children" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/children"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/children"
     },
     "parents" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/parents"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/parents"
     },
     "itSystems" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/itSystems"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/itSystems"
     },
     "contact" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/contact"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/contact"
     }
   }
 }</pre>
@@ -224,12 +223,6 @@
 						<td>integer</td>
 						<td>no</td>
 						<td>The unique id of the process</td>
-					</tr>
-					<tr>
-						<td>localId</td>
-						<td>string (64 char)</td>
-						<td>yes</td>
-						<td>An optional local id used by the municipality</td>
 					</tr>
 					<tr>
 						<td>klId</td>
@@ -259,11 +252,11 @@
 						<td>status</td>
 						<td>Enum</td>
 						<td>no</td>
-						<td>One of the following: REJECTED, FAILED, PENDING, INPROGRESS</td>
+						<td>One of the following: REJECTED, FAILED, PENDING, INPROGRESS, NOT_RATED</td>
 					</tr>
 					<tr>
 						<td>statusText</td>
-						<td>string (1200 char)</td>
+						<td>string (10.000 char)</td>
 						<td>yes</td>
 						<td>Optional text coupled with status</td>
 					</tr>
@@ -299,13 +292,13 @@
 					</tr>
 					<tr>
 						<td>longDescription</td>
-						<td>String (1200 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Long description</td>
 					</tr>
 					<tr>
 						<td>itSystemsDescription</td>
-						<td>String (1200 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>A description of the it-systems used in the process</td>
 					</tr>
@@ -383,19 +376,19 @@
 					</tr>
 					<tr>
 						<td>internalNotes</td>
-						<td>String (2400 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Note that field is null unless the user has write access to this process</td>
 					</tr>
 					<tr>
 						<td>processChallenges</td>
-						<td>String (1200 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Freetext field for describing challenges in this process</td>
 					</tr>
 					<tr>
 						<td>solutionRequests</td>
-						<td>String (2400 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Freetext field for describing solution requests for this process</td>
 					</tr>
@@ -431,7 +424,7 @@
 					</tr>
 					<tr>
 						<td>timeSpendComment</td>
-						<td>String (300 char)</td>
+						<td>String (10.000 char)</td>
 						<td>no</td>
 						<td>Required field, contains comments to the time-spend sections</td>
 					</tr>
@@ -503,13 +496,13 @@
 					</tr>
 					<tr>
 						<td>technicalImplementationNotes</td>
-						<td>String (3000 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Freetext field</td>
 					</tr>
 					<tr>
 						<td>organizationalImplementationNotes</td>
-						<td>String (3000 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Freetext field</td>
 					</tr>
@@ -521,7 +514,7 @@
 					</tr>
 					<tr>
 						<td>ratingComment</td>
-						<td>String (1200 char)</td>
+						<td>String (10.000 char)</td>
 						<td>yes</td>
 						<td>Freetext field</td>
 					</tr>
@@ -530,6 +523,24 @@
 						<td>String (1000 char)</td>
 						<td>yes</td>
 						<td>Optional list of search words (use SearchWord API to get good values to add to this list)</td>
+					</tr>
+					<tr>
+						<td>codeRepositoryUrl</td>
+						<td>String (300 char)</td>
+						<td>yes</td>
+						<td>Optional http link to a code repository</td>
+					</tr>
+					<tr>
+						<td>runPeriod</td>
+						<td>enum</td>
+						<td>no</td>
+						<td>Legal values: ONDEMAND, ONCE, DAILY, WEEKLY, MONTHLY, QUATERLY, YEARLY</td>
+					</tr>
+					<tr>
+						<td>sepMep</td>
+						<td>Boolean</td>
+						<td>no</td>
+						<td>set to true if this is a SEP or MEP process</td>
 					</tr>
 				</tbody>
 			</table>
@@ -612,7 +623,8 @@
 			<ul>
 				<li><strong>grid</strong>. This projection returns a small subset of the fields in the datamodel,
 				making it a good choice for listing process information in the UI. The fields returned are
-				(id, title, shortDescription, rating, phase, status, domain, kle, legalClause, municipalityName, visibility).
+				(id, title, shortDescription, lastChanged, rating, phase, status, domain, kle, legalClause, municipalityName, visibility),
+				as well as an extra computed field called childrenCount, containing the amount of children the process has.
 				The list can be modified if needed, contact Brian in that case. Note the grid projection is a good projection
 				to use when listing processes (calls to the API with more than one result).</li>
 
@@ -632,10 +644,10 @@
 			<div class="card">
 				<div class="card-body">
 					<strong>Do a grid-projected search</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/processes?projection=grid</pre>
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/processes?projection=grid</pre>
 
 					<strong>Do an extended-projected read of a single process</strong>
-					<pre class="card-text">GET https://dev.os2autoproces.eu/api/processes/&lt;id&gt;?projection=extended</pre>
+					<pre class="card-text">GET https://www.os2autoproces.eu/api/processes/&lt;id&gt;?projection=extended</pre>
 				</div>
 			</div>
 		</p>
@@ -659,38 +671,38 @@
   "shortDescription" : "Lorem ipsum dolor sit amet,",
   "_links" : {
     "self" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1"
+      "href" : "https://www.os2autoproces.eu/api/processes/1"
     },
     "process" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1{?projection}",
+      "href" : "https://www.os2autoproces.eu/api/processes/1{?projection}",
       "templated" : true
     },
     "orgUnits" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/orgUnits"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/orgUnits"
     },
     "reporter" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/reporter"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/reporter"
     },
     "users" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/users"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/users"
     },
     "technologies" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/technologies"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/technologies"
     },
     "owner" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/owner"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/owner"
     },
     "children" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/children"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/children"
     },
     "parents" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/parents"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/parents"
     },
     "itSystems" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/itSystems"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/itSystems"
     },
     "contact" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/1/contact"
+      "href" : "https://www.os2autoproces.eu/api/processes/1/contact"
     }
   }
 }</pre>
@@ -749,7 +761,6 @@
   "levelOfRoutineWorkReduction" : "LOW",
   "levelOfStructuredInformation" : "VERY_LOW",
   "levelOfUniformity" : "LOW",
-  "localId" : "ID70",
   "organizationalImplementationNotes" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor",
   "phase" : "OPERATION",
   "processChallenges" : "Lorem ipsum",
@@ -811,38 +822,38 @@
   },
   "_links" : {
     "self" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501"
+      "href" : "https://www.os2autoproces.eu/api/processes/501"
     },
     "process" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501{?projection}",
+      "href" : "https://www.os2autoproces.eu/api/processes/501{?projection}",
       "templated" : true
     },
     "orgUnits" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/orgUnits"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/orgUnits"
     },
     "reporter" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/reporter"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/reporter"
     },
     "users" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/users"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/users"
     },
     "technologies" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/technologies"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/technologies"
     },
     "owner" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/owner"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/owner"
     },
     "children" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/children"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/children"
     },
     "parents" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/parents"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/parents"
     },
     "itSystems" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/itSystems"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/itSystems"
     },
     "contact" : {
-      "href" : "https://dev.os2autoproces.eu/api/processes/501/contact"
+      "href" : "https://www.os2autoproces.eu/api/processes/501/contact"
     }
   }
 }</pre>

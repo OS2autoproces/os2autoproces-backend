@@ -45,8 +45,10 @@ import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.Level;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
+import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
 import dk.digitalidentity.ap.dao.model.enums.Status;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.saml.model.TokenUser;
 import lombok.Getter;
@@ -61,7 +63,6 @@ public class BootstrapApi {
 	private ArrayList<String> surnames;
 	private Random random = new Random();
 	private LoremIpsum lorem = new LoremIpsum();
-	private List<User> users = null;
 	private User user1 = null;
 
 	@Autowired
@@ -155,7 +156,7 @@ public class BootstrapApi {
 			user = new User();
 			user.setActive(true);
 			user.setCvr(municipality1);
-			user.setEmail("itminds1@digital-identity.dk");
+//			user.setEmail("itminds1@digital-identity.dk");
 			user.setName("IT Minds 1");
 			user.setUuid("097ff0a8-d853-4bfe-90e0-22ca3287dc24");
 			userDao.save(user);
@@ -163,7 +164,7 @@ public class BootstrapApi {
 			user = new User();
 			user.setActive(true);
 			user.setCvr(municipality1);
-			user.setEmail("itminds2@digital-identity.dk");
+//			user.setEmail("itminds2@digital-identity.dk");
 			user.setName("IT Minds 2");
 			user.setUuid("982c0709-8e13-4e04-86a2-25b84ca69538");
 			userDao.save(user);
@@ -171,7 +172,7 @@ public class BootstrapApi {
 			user = new User();
 			user.setActive(true);
 			user.setCvr(municipality1);
-			user.setEmail("itminds3@digital-identity.dk");
+//			user.setEmail("itminds3@digital-identity.dk");
 			user.setName("IT Minds 3");
 			user.setUuid("1848a9f9-6403-4b78-88fa-12352d7b31a6");
 			userDao.save(user);
@@ -196,7 +197,7 @@ public class BootstrapApi {
 	private void generateProcesses(String municipality, Technology technology, long processCount) {
 		for (int i = 0; i < processCount; i++) {
 			fakeLogin(municipality, getRandomUserFromDB(municipality));
-			
+
 			Process p = new Process();
 			p.setPhase(Phase.values()[random.nextInt(Phase.values().length)]);
 			p.setStatus(Status.values()[random.nextInt(Status.values().length)]);
@@ -234,9 +235,6 @@ public class BootstrapApi {
 			}
 
 			if (random.nextInt(3) == 2) {
-				p.setLocalId("ID" + random.nextInt(100));
-			}
-			if (random.nextInt(3) == 2) {
 				p.setKlId("ID" + random.nextInt(100));
 			}
 			if (random.nextInt(3) == 2) {
@@ -247,11 +245,11 @@ public class BootstrapApi {
 				p.setDecommissioned(new Date());
 			}
 
+			p.setRunPeriod(RunPeriod.ONDEMAND);
 			p.setVendor("Some Vendor");
 			p.setEsdhReference("81928467");
 			p.setTimeSpendComment("Some Comment");
 
-			p.setLocalId("ID" + random.nextInt(100));
 			p.setTimeSpendComputedTotal(random.nextInt(3));
 			p.setTimeSpendEmployeesDoingProcess(random.nextInt(3));
 			p.setTimeSpendOccurancesPerEmployee(random.nextInt(3));
@@ -299,10 +297,7 @@ public class BootstrapApi {
 	}
 
 	private User getRandomUserFromDB(String municipality) {
-		if (users == null) {
-			users = userDao.findAll();
-		}
-
+		List<User> users = userDao.findAll();
 		List<User> localUsers = users.stream().filter(u -> u.getCvr().equals(municipality)).collect(Collectors.toList());
 
 		return localUsers.get(random.nextInt(localUsers.size()));
@@ -326,7 +321,9 @@ public class BootstrapApi {
 			user.setActive(true);
 			user.setCvr(municipality);
 			NameAndEmail randomNameAndEmail = getRandomNameAndEmail();
-			user.setEmail(randomNameAndEmail.getEmail());
+
+			// we do not want emails in the test-environment
+			//			user.setEmail(randomNameAndEmail.getEmail());
 			user.setName(randomNameAndEmail.getName());
 			user.setUuid(UUID.randomUUID().toString());
 			user.setPositions(new ArrayList<>());
@@ -377,7 +374,7 @@ public class BootstrapApi {
 		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
 
 		TokenUser token = TokenUser.builder().authorities(authorities).cvr(cvr).username("dummy").attributes(new HashMap<>()).build();
-		token.getAttributes().put("user", user);
+		token.getAttributes().put("user", new AuthenticatedUser(user));
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("dummy", null, authorities);
 		auth.setDetails(token);
 

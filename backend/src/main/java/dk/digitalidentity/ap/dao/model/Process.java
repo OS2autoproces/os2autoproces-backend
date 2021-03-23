@@ -41,6 +41,7 @@ import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.Level;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
 import dk.digitalidentity.ap.dao.model.enums.ProcessType;
+import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
 import dk.digitalidentity.ap.dao.model.enums.Status;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import lombok.Getter;
@@ -59,10 +60,6 @@ public class Process {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column
 	private Long id;
-
-	@Column
-	@Size(max = 64)
-	private String localId;
 
 	@Column
 	@Size(max = 64)
@@ -87,7 +84,7 @@ public class Process {
 	private ProcessType type;
 
 	@Column
-	@Size(max = 1200)
+	@Size(max = 10000)
 	private String statusText;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -211,7 +208,7 @@ public class Process {
 
 	@Column
 	@NotNull
-	@Size(max = 50)
+	@Size(max = 65)
 	private String title;
 
 	@Column
@@ -220,19 +217,19 @@ public class Process {
 	private String shortDescription;
 
 	@Column
-	@Size(max = 1200)
+	@Size(max = 10000)
 	private String longDescription;
 
 	@Column
-	@Size(max = 2400)
+	@Size(max = 10000)
 	private String internalNotes;
 
 	@Column
-	@Size(max = 1200)
+	@Size(max = 10000)
 	private String processChallenges;
 
 	@Column
-	@Size(max = 2400)
+	@Size(max = 10000)
 	private String solutionRequests;
 
 	@Column
@@ -243,7 +240,7 @@ public class Process {
 	@Column
 	@NotNull
 	@Min(value = 0)
-	private int timeSpendPerOccurance;
+	private double timeSpendPerOccurance;
 
 	@Column
 	@NotNull
@@ -262,7 +259,7 @@ public class Process {
 	private int timeSpendComputedTotal;
 	
 	@Column
-	@Size(max = 300)
+	@Size(max = 10000)
 	private String timeSpendComment;
 
 	@Column
@@ -310,26 +307,41 @@ public class Process {
 	private Level evaluatedLevelOfRoi;
 
 	@Column
-	@Size(max = 3000)
+	@Size(max = 10000)
 	private String technicalImplementationNotes;
 
 	@Column
-	@Size(max = 3000)
+	@Size(max = 10000)
 	private String organizationalImplementationNotes;
 
 	@Column
 	@NotNull
 	@Min(value = 0)
-	@Max(value = 3) // TODO: is max 3?
+	@Max(value = 3)
 	private int rating;
 
 	@Column
-	@Size(max = 1200)
+	@Size(max = 10000)
 	private String ratingComment;
 
 	@Column
 	@Size(max = 1000)
 	private String searchWords;
+	
+	@Column
+	@Size(max = 300)
+	private String codeRepositoryUrl;
+	
+	@Column
+	@Enumerated(EnumType.STRING)
+	private RunPeriod runPeriod;
+	
+	@Column
+	@NotNull
+	private boolean sepMep;
+	
+	@Column
+	private long childrenCount;
 
 	// this one exists solely because we need to use it for searching purposes ;)
 	@JsonIgnore

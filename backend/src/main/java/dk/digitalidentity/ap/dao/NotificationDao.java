@@ -11,13 +11,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import dk.digitalidentity.ap.dao.model.Notification;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.QNotification;
-import dk.digitalidentity.ap.dao.model.User;
 
 @RepositoryRestResource(exported = false)
 public interface NotificationDao extends JpaRepository<Notification, Long>, QueryDslPredicateExecutor<Notification>, QuerydslBinderCustomizer<QNotification> {
 
-	Notification getByUserAndProcess(User user, Process process);
-	Notification getByUserAndProcessId(User user, Long processId);
+	Notification getByUserIdAndProcess(long userId, Process process);
+	Notification getByUserIdAndProcessId(long userId, Long processId);
 	List<Notification> getByProcess(Process process);
 
 	@Override

@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import dk.digitalidentity.ap.dao.model.Form;
 import dk.digitalidentity.ap.service.FormService;
 import dk.digitalidentity.ap.service.KleToFormService;
+import dk.digitalidentity.ap.service.ProcessService;
+import dk.formonline.formoperationer.FinanslovIndgangType;
 import dk.formonline.formoperationer.FormHierarkiHentOutputType;
 import dk.formonline.formoperationer.HovedOmraadeType;
 import dk.formonline.formoperationer.OpgaveOmraadeType;
@@ -42,6 +44,9 @@ public class FormTask {
 	
 	@Autowired
 	private KleToFormService kleToFormService;
+	
+	@Autowired
+	private ProcessService processService;
 
 	@Async
 	public void init() {
@@ -60,19 +65,13 @@ public class FormTask {
 
 		log.info("Running Scheduled Task: " + this.getClass().getName());
 
-		List<Form> updatedFormList = null;
-		try {
-			
-			updatedFormList = getUpdatedFormList();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		List<Form> updatedFormList = getUpdatedFormList();
 		List<Form> formList = formService.findAll();
+		List<Form> formsWithLegalClauseChanges = new ArrayList<>();
 
 		for (Form updatedForm : updatedFormList) {
 			boolean found = false;
-			boolean nameChange = false;
+			boolean change = false;
 
 			for (Iterator<Form> iterator = formList.iterator(); iterator.hasNext();) {
 				Form form = iterator.next();
@@ -81,7 +80,12 @@ public class FormTask {
 					found = true;
 
 					if (!form.getDescription().equals(updatedForm.getDescription())) {
-						nameChange = true;
+						change = true;
+					}
+					
+					if (!form.getLegalClause().equals(updatedForm.getLegalClause())) {
+						change = true;
+						formsWithLegalClauseChanges.add(form);
 					}
 
 					iterator.remove();
@@ -89,9 +93,10 @@ public class FormTask {
 				}
 			}
 
-			if (found && nameChange) {
+			if (found && change) {
 				Form form = formService.getByCode(updatedForm.getCode());
 				form.setDescription(updatedForm.getDescription());
+				form.setLegalClause(updatedForm.getLegalClause());
 
 				formService.save(form);
 			}
@@ -100,13 +105,19 @@ public class FormTask {
 			}
 		}
 		
+		if (formsWithLegalClauseChanges.size() > 0) {
+			log.info("Found " + formsWithLegalClauseChanges.size() + " FORM records with changes to legal clauses");
+
+			processService.updateLegalClauses(formsWithLegalClauseChanges);
+		}
+		
 		kleToFormService.setFormLoaded();
 	}
 
 	public List<Form> getUpdatedFormList() {
 		List<Form> updatedFormList = new ArrayList<Form>();
 
-		HttpEntity<FormHierarkiHentOutputType> responseMainEntity = restTemplate.getForEntity("http://www.form-online.dk:8080/FORM-REST/resources/", FormHierarkiHentOutputType.class);
+		HttpEntity<FormHierarkiHentOutputType> responseMainEntity = restTemplate.getForEntity("http://api.form-online.dk/resources/", FormHierarkiHentOutputType.class);
 
 		FormHierarkiHentOutputType formHierarchyOutput = responseMainEntity.getBody();
 		
@@ -122,14 +133,16 @@ public class FormTask {
 			String desc = serviceOmraade.getNavnTekst();
 			form.setDescription(desc.substring(0, Math.min(desc.length(), 255)));
 			form.setCode(serviceOmraade.getServiceOmraadeNummerIdentifikator());
-			
+			form.setLegalClause("");
 			updatedFormList.add(form);
-
+			
 			for (HovedOmraadeType hovedOmraadeType : serviceOmraade.getHovedOmraade()) {
 				Form form2 = new Form();
 				String desc2 = hovedOmraadeType.getNavnTekst();
 				form2.setDescription(desc2.substring(0, Math.min(desc2.length(), 255)));
 				form2.setCode(hovedOmraadeType.getHovedOmraadeNummerIdentifikator());
+				
+				buildLegalClause(form2, hovedOmraadeType.getFinanslovIndgang());
 				
 				updatedFormList.add(form2);
 				
@@ -139,6 +152,8 @@ public class FormTask {
 					form3.setDescription(desc3.substring(0, Math.min(desc3.length(), 255)));
 					form3.setCode(opgaveOmraadeType.getOpgaveOmraadeNummerIdentifikator());					
 					updatedFormList.add(form3);
+
+					buildLegalClause(form3, opgaveOmraadeType.getFinanslovIndgang());
 					
 					for (OpgaveType opgaveType : opgaveOmraadeType.getOpgave()) {
 						Form form4 = new Form();
@@ -146,6 +161,8 @@ public class FormTask {
 						form4.setDescription(desc4.substring(0, Math.min(desc4.length(), 255)));
 						form4.setCode(opgaveType.getOpgaveNummerIdentifikator());
 						
+						buildLegalClause(form4, opgaveType.getFinanslovIndgang());
+
 						updatedFormList.add(form4);
 					}
 				}
@@ -156,5 +173,24 @@ public class FormTask {
 		log.info("Done processing forms");
 
 		return updatedFormList;
+	}
+	
+	private void buildLegalClause(Form form, List<FinanslovIndgangType> finansLovIndgangTypes) {
+		StringBuilder builder = new StringBuilder();
+		for (FinanslovIndgangType finansLovIndgangType : finansLovIndgangTypes) {
+			String legalClause = finansLovIndgangType.getFinanslovParagrafTekst() + " (" + finansLovIndgangType.getFinanslovReference() + ")";
+			
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(legalClause);
+		}
+
+		String legalClause = builder.toString();
+		if (legalClause.length() > 3000) {
+			legalClause = legalClause.substring(0, 3000);
+		}
+
+		form.setLegalClause(legalClause);
 	}
 }

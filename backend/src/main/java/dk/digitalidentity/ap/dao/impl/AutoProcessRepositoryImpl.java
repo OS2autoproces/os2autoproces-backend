@@ -36,6 +36,7 @@ import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Operation;
+import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.PathImpl;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.PredicateOperation;
@@ -48,6 +49,7 @@ import dk.digitalidentity.ap.dao.model.QUser;
 import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import lombok.extern.log4j.Log4j;
 
@@ -225,6 +227,27 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 
 		return super.findAll(predicate, pageable);
 	}
+	
+	@Override
+	public List<T> findAll(Predicate predicate) {
+		if (entityInformation.getJavaType().equals(Process.class)) {
+			Predicate where = getPredicate(predicate);
+
+			return super.findAll(where);
+		}
+		else if (entityInformation.getJavaType().equals(User.class)) {
+			Predicate where = getSameCvrPredicateForUser(predicate);
+
+			return super.findAll(where);
+		}
+		else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
+			Predicate where = getSameCvrPredicateForOrgUnit(predicate);
+
+			return super.findAll(where);
+		}
+
+		return super.findAll(predicate);
+	}
 
 	private Predicate getSameCvrPredicateForUser(Predicate predicate) {
 		// Spring Security ensures that a user is logged in, and a CVR number is
@@ -258,14 +281,18 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 
 	private Predicate getPredicate(Predicate predicate) {
 		QProcess process = QProcess.process;
-		User user = SecurityUtil.getUser();
+		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
 
 		predicate = handleFreeTextSearch(predicate);
 		
 		// processes of type 'GLOBAL_PARENT' automatically becomes visible to all users
 		Predicate global = process.type.eq(ProcessType.GLOBAL_PARENT);
 
-		if (SecurityUtil.getRoles().contains(SecurityUtil.ROLE_SUPERUSER)) {
+		if (SecurityUtil.getRoles().contains(SecurityUtil.ROLE_SYSTEM)) {
+			// System user always gets exactly what it asks for, no restrictions
+			return predicate;
+		}
+		else if (SecurityUtil.getRoles().contains(SecurityUtil.ROLE_SUPERUSER)) {
 			Predicate pub = process.visibility.eq(Visibility.PUBLIC);
 			Predicate cvr = process.cvr.eq(SecurityUtil.getCvr());
 			Predicate superUser = ExpressionUtils.anyOf(global, pub, cvr);
@@ -275,12 +302,12 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 		else if (SecurityUtil.getRoles().contains(SecurityUtil.ROLE_LOCAL_SUPERUSER)) {
 			Predicate pub = process.visibility.eq(Visibility.PUBLIC);
 			Predicate cvrAndMunicipality = ExpressionUtils.allOf(process.cvr.eq(SecurityUtil.getCvr()), process.visibility.eq(Visibility.MUNICIPALITY));
-			Predicate reporter = process.reporter.eq(user);
-			Predicate assignedTo = process.users.contains(user);
+			Predicate reporter = process.reporter.id.eq(authenticatedUser.getId());
+			Predicate assignedTo = process.users.any().id.eq(authenticatedUser.getId());
 
 			Set<Predicate> predicates = new HashSet<>();
-			for (OrgUnit position : user.getPositions()) {
-				predicates.add(process.reporter.positions.any().eq(position));
+			for (String positionOrgUnitUuid : authenticatedUser.getPositionOrgUnitUuids()) {
+				predicates.add(process.reporter.positions.any().uuid.eq(positionOrgUnitUuid));
 			}
 
 			Predicate localSuperUser = ExpressionUtils.anyOf(global, ExpressionUtils.anyOf(predicates), pub, cvrAndMunicipality, reporter, assignedTo);
@@ -290,8 +317,8 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 		else {
 			Predicate pub = process.visibility.eq(Visibility.PUBLIC);
 			Predicate cvrAndMunicipality = ExpressionUtils.allOf(process.cvr.eq(SecurityUtil.getCvr()), process.visibility.eq(Visibility.MUNICIPALITY));
-			Predicate reporter = process.reporter.eq(user);
-			Predicate assignedTo = process.users.contains(user);
+			Predicate reporter = process.reporter.id.eq(authenticatedUser.getId());
+			Predicate assignedTo = process.users.any().id.eq(authenticatedUser.getId());
 			Predicate normalUser = ExpressionUtils.anyOf(global, pub, cvrAndMunicipality, reporter, assignedTo);
 			
 			return ExpressionUtils.allOf(predicate, normalUser);
@@ -303,8 +330,8 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 			return null;
 		}
 
-		List<Predicate> newPredicates = new ArrayList<>();
-		String freeTextSearch = analyzePredicate(predicate, newPredicates);
+		List<Predicate> modifiedPredicateHolder = new ArrayList<>();
+		String freeTextSearch = analyzePredicateV2(predicate, predicate, modifiedPredicateHolder);
 
 		if (freeTextSearch != null) {
 			QProcess process = QProcess.process;
@@ -313,37 +340,55 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 			Predicate longDescription = process.longDescription.contains(freeTextSearch);
 			Predicate title = process.title.contains(freeTextSearch);
 			Predicate searchWords = process.searchWords.contains(freeTextSearch);
-			Predicate legalClause = process.legalClause.contains(freeTextSearch);
-
-			newPredicates.add(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, legalClause));
+			Predicate orgUnitNames = process.orgUnits.any().name.contains(freeTextSearch);
+			Predicate reporterName = process.reporter.name.contains(freeTextSearch);
+			Predicate contactName = process.contact.name.contains(freeTextSearch);
+			Predicate ownerName = process.owner.name.contains(freeTextSearch);
+			Predicate kleCode = process.kle.startsWith(freeTextSearch);
 			
-			return ExpressionUtils.allOf(newPredicates);
+			try {
+				// if the freeTextSearch is just a number, perform a search on the process ID and only
+				Long id = Long.parseLong(freeTextSearch);
+
+				return process.id.eq(id); 
+			}
+			catch (Exception ex) {
+				; // ignore;
+			}
+
+			if (modifiedPredicateHolder.size() > 0) {
+				Predicate p = modifiedPredicateHolder.get(0);
+				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, ownerName, kleCode), p);
+			}
+			else {
+				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, ownerName, kleCode);
+			}
 		}
 
 		// nothing found, just return original
 		return predicate;
 	}
 
-	private String analyzePredicate(Predicate predicate, List<Predicate> newPredicates) {
-		String result = null;
-		
-		if (predicate instanceof PredicateOperation) {
-			PredicateOperation predicateOperation = (PredicateOperation) predicate;
+	private String analyzePredicateV2(Predicate originalPredicate, Predicate predicateToAnalyze, List<Predicate> modifiedPredicateHolder) {
+		if (predicateToAnalyze instanceof PredicateOperation) {
+			PredicateOperation predicateOperation = (PredicateOperation) predicateToAnalyze;
 
 			for (Expression<?> expression : predicateOperation.getArgs()) {
 				if (expression instanceof Operation) {
-					String tmpResult = extractFreeText((Operation) expression);
-					if (tmpResult != null) {
-						result = tmpResult;
+					String result = extractFreeText((Operation) expression);
+					if (result != null) {
+						Predicate modifiedPredicate = buildPredicateWithoutExpression(originalPredicate, expression);
+						if (modifiedPredicate != null) {
+							modifiedPredicateHolder.add(modifiedPredicate);
+						}
+
+						return result;
 					}
 					else if (expression instanceof Predicate) {
 						// go recursive
-						tmpResult = analyzePredicate((Predicate) expression, newPredicates);
-						if (tmpResult != null) {
-							result = tmpResult;
-						}
-						else {
-							newPredicates.add((Predicate) expression);
+						result = analyzePredicateV2(originalPredicate, (Predicate) expression, modifiedPredicateHolder);
+						if (result != null) {
+							return result;
 						}
 					}
 					else {
@@ -355,17 +400,58 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 				}
 			}
 		}
-		else if (predicate instanceof Operation) {
-			String tmpResult = extractFreeText((Operation) predicate);
-			if (tmpResult != null) {
-				result = tmpResult;
+		else if (predicateToAnalyze instanceof Operation) {
+			String result = extractFreeText((Operation) predicateToAnalyze);
+			if (result != null) {
+				return result;
 			}
 		}
-		else {
-			log.warn("Predicate is not an operation '" + predicate.getClass() + "': " + predicate);
-		}
 
-		return result;
+		return null;
+	}
+	
+	private Predicate buildPredicateWithoutExpression(Predicate originalPredicate, Expression<?> expressionToRemove) {
+		List<Expression> result = new ArrayList<>();
+		Operator operator = null;
+
+		if (originalPredicate instanceof PredicateOperation) {
+			PredicateOperation predicateOperation = (PredicateOperation) originalPredicate;
+			operator = predicateOperation.getOperator();
+			
+			for (Expression<?> expression : predicateOperation.getArgs()) {
+				if (expression.equals(expressionToRemove)) {
+					continue;
+				}
+
+				if (expression instanceof PredicateOperation) {
+					Predicate predicate = buildPredicateWithoutExpression((PredicateOperation) expression, expressionToRemove);
+
+					if (predicate != null) {
+						result.add(predicate);
+					}
+				}
+				else {
+					result.add(expression);
+				}
+			}
+		}
+		else if (originalPredicate instanceof Operation) {
+			if (!originalPredicate.equals(expressionToRemove)) {
+				operator = ((Operation) originalPredicate).getOperator();
+				
+				result.add(originalPredicate);
+			}
+		}
+		
+		if (result.size() > 0) {
+			if (result.size() == 1 && result.get(0) instanceof Predicate) {
+				return (Predicate) result.get(0);
+			}
+
+			return ExpressionUtils.predicate(operator, result.toArray(new Expression[0]));
+		}
+		
+		return null;
 	}
 
 	private String extractFreeText(Operation operation) {

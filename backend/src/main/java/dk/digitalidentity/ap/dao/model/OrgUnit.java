@@ -26,7 +26,7 @@ public class OrgUnit {
 	private String uuid;
 
 	@Column
-	@Size(max = 64)
+	@Size(max = 128)
 	private String name;
 
 	@Column

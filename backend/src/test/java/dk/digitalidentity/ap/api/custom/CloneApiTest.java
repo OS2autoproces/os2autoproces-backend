@@ -80,6 +80,7 @@ public class CloneApiTest extends ApiTestHelper {
 				method.getName().equals("getId") ||
 				method.getName().equals("getChildren") ||
 				method.getName().equals("getItSystems") ||
+				method.getName().equals("getItSystemsDescription") ||
 				method.getName().equals("getDecommissioned") ||
 				method.getName().equals("getOrgUnits") ||
 				method.getName().equals("getParents") ||

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import dk.digitalidentity.ap.dao.NotificationDao;
 import dk.digitalidentity.ap.dao.model.Notification;
 import dk.digitalidentity.ap.dao.model.Process;
-import dk.digitalidentity.ap.dao.model.User;
 
 @Service
 public class NotificationService {
@@ -20,8 +19,8 @@ public class NotificationService {
 		notificationDao.delete(notification);
 	}
 
-	public Notification getByUserAndProcess(User user, Process process) {
-		return notificationDao.getByUserAndProcess(user, process);
+	public Notification getByUserAndProcess(long userId, Process process) {
+		return notificationDao.getByUserIdAndProcess(userId, process);
 	}
 
 	public Notification save(Notification notification) {

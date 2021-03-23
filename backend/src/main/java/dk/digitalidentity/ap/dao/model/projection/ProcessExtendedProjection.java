@@ -19,6 +19,7 @@ import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.Level;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
 import dk.digitalidentity.ap.dao.model.enums.ProcessType;
+import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
 import dk.digitalidentity.ap.dao.model.enums.Status;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.SecurityUtil;
@@ -26,7 +27,6 @@ import dk.digitalidentity.ap.security.SecurityUtil;
 @Projection(name = "extended", types = { Process.class })
 public interface ProcessExtendedProjection {
 	Long getId();
-	String getLocalId();
 	String getKlId();
 	String getEsdhReference();
 	Phase getPhase();
@@ -66,7 +66,7 @@ public interface ProcessExtendedProjection {
 	String getProcessChallenges();
 	String getSolutionRequests();
 	int getTimeSpendOccurancesPerEmployee();
-	int getTimeSpendPerOccurance();
+	double getTimeSpendPerOccurance();
 	int getTimeSpendEmployeesDoingProcess();
 	int getTimeSpendComputedTotal();
 	int getTimeSpendPercentageDigital();
@@ -86,6 +86,11 @@ public interface ProcessExtendedProjection {
 	String getOrganizationalImplementationNotes();
 	int getRating();
 	String getRatingComment();
+	String getCodeRepositoryUrl();
+	RunPeriod getRunPeriod();
+	boolean isSepMep();
+	long getChildrenCount();
+
 
 	default boolean isCanEdit() {
 		return SecurityUtil.canEdit(this);
@@ -100,7 +105,7 @@ public interface ProcessExtendedProjection {
 			return false;
 		}
 
-		return (bookmarkDao.getByUserAndProcessId(SecurityUtil.getUser(), this.getId()) != null);
+		return (bookmarkDao.getByUserIdAndProcessId(SecurityUtil.getUser().getId(), this.getId()) != null);
 	}
 	
 	default boolean isEmailNotification() {
@@ -112,6 +117,6 @@ public interface ProcessExtendedProjection {
 			return false;
 		}
 
-		return (notificationDao.getByUserAndProcessId(SecurityUtil.getUser(), this.getId()) != null);
+		return (notificationDao.getByUserIdAndProcessId(SecurityUtil.getUser().getId(), this.getId()) != null);
 	}
 }

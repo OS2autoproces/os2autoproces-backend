@@ -34,7 +34,7 @@ public class OrgUnitApiTest extends ApiTestHelper {
 	public void setUp() throws Exception {
 		super.before();
 	}
-		
+
 	// purpose of test
 	// ***************
 	// Verify that a user can only read OrgUnits from the same CVR

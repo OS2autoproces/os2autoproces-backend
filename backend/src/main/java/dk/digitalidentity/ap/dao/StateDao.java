@@ -15,7 +15,8 @@ import dk.digitalidentity.ap.dao.model.State;
 @RepositoryRestResource(exported = false)
 public interface StateDao extends JpaRepository<State, Long>, QueryDslPredicateExecutor<State>, QuerydslBinderCustomizer<QState> {
 
-	@Query(value = "SELECT CURRENT_TIMESTAMP", nativeQuery = true)
+	// TODO: come up with a better way to support hosting in Ireland
+	@Query(value = "SELECT CURRENT_TIMESTAMP + INTERVAL 1 HOUR", nativeQuery = true)
 	Date getCurrentTimestamp();
 
 	State getByKey(String key);

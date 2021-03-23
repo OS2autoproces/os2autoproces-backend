@@ -25,6 +25,10 @@ public class UserService {
 	public User getByUuidAndCvr(String uuid, String cvr) {
 		return userDao.getByUuidAndCvrAndActiveTrue(uuid, cvr);
 	}
+	
+	public List<User> getByUuidAndCvrIncludingInactive(String uuid, String cvr) {
+		return userDao.getByUuidAndCvr(uuid, cvr);
+	}
 
 	public List<User> getByCvrIncludingInactive(String cvr) {
 		return userDao.getByCvr(cvr);

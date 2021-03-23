@@ -3,9 +3,8 @@ package dk.digitalidentity.ap.service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-
-import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,32 +27,38 @@ public class OrganisationService {
 	@Autowired
 	private OrgUnitService orgUnitService;
 
-	@Autowired
-	private EntityManager entityManager;
-
 	public OrganisationImportResponse bigImport(OrganisationDTO organisation, String cvr) throws Exception {
+		log.info("Starting import for " + cvr);
+
 		OrganisationImportResponse response = new OrganisationImportResponse();
 
+		// process ous
+		
 		List<OrgUnit> ous = parseOrgUnits(organisation.getOrgUnits(), cvr);
-		List<User> users = parseUsers(organisation.getUsers(), ous, cvr);
 
 		String errorMsg = null;
-		if ((errorMsg = validateUsers(users)) != null) {
-			log.warn("Rejecting payload due to bad users: " + errorMsg);
-			throw new Exception(errorMsg);
-		}
-		else if ((errorMsg = validateOUs(ous)) != null) {
+		if ((errorMsg = validateOUs(ous)) != null) {
 			log.warn("Rejecting payload due to bad ous: " + errorMsg);
 			throw new Exception(errorMsg);
 		}
 
-		List<User> existingUsers = userService.getByCvrIncludingInactive(cvr);
 		List<OrgUnit> existingOUs = orgUnitService.getByCvrIncludingInactive(cvr);
 
 		processOrgUnits(cvr, ous, existingOUs, response);
 		softDeleteOUs(cvr, ous, existingOUs, response);
 
-		processUsers(cvr, users, existingUsers, existingOUs, response);
+		// process users
+
+		List<User> users = parseUsers(organisation.getUsers(), existingOUs, cvr);
+
+		if ((errorMsg = validateUsers(users)) != null) {
+			log.warn("Rejecting payload due to bad users: " + errorMsg);
+			throw new Exception(errorMsg);
+		}
+
+		List<User> existingUsers = userService.getByCvrIncludingInactive(cvr);
+
+		processUsers(cvr, users, existingUsers, response);
 		softDeleteUsers(cvr, users, existingUsers, response);
 
 		return response;
@@ -188,7 +193,10 @@ public class OrganisationService {
 			// if not found we're dealing with a totally new OU add it to database
 			if (!found) {
 				created++;
-				orgUnitService.save(ou);
+				ou = orgUnitService.save(ou);
+				
+				// make sure to add to list of existingOUs, as we need them when processing users
+				existingOUs.add(ou);
 			}
 		}
 
@@ -230,9 +238,8 @@ public class OrganisationService {
 		log.info("Deleted " + deleted + " ou(s) for " + cvr);
 	}
 
-	private void processUsers(String cvr, List<User> newUsers, List<User> existingUsers, List<OrgUnit> existingOrgUnits, OrganisationImportResponse response) {
-		List<User> tobeAdded = new ArrayList<>();
-		long updated = 0;
+	private void processUsers(String cvr, List<User> newUsers, List<User> existingUsers, OrganisationImportResponse response) {
+		long updated = 0, created = 0;
 		
 		for (User newUser : newUsers) {
 			boolean found = false;
@@ -255,10 +262,7 @@ public class OrganisationService {
 					}
 					
 					// email change
-					if ((existingUser.getEmail() == null && newUser.getEmail() != null) ||
-						(existingUser.getEmail() != null && newUser.getEmail() == null) ||
-						(existingUser.getEmail() != null && newUser.getEmail() != null) && !existingUser.getEmail().equals(newUser.getEmail())) {
-
+					if (!Objects.equals(existingUser.getEmail(), newUser.getEmail())) {
 						existingUser.setEmail(newUser.getEmail());
 						changes = true;
 					}
@@ -308,40 +312,19 @@ public class OrganisationService {
 			}
 
 			if (!found) {
-				tobeAdded.add(newUser);
+				created++;
+				userService.save(newUser);
 			}
 		}
 
-		log.info("Updated " + updated + " user(s) and created " + tobeAdded.size() + " user(s) for " + cvr);
+		log.info("Updated " + updated + " user(s) and created " + created + " user(s) for " + cvr);
 
 		if (response != null) {
-			response.setUsersCreated(tobeAdded.size());
+			response.setUsersCreated(created);
 			response.setUsersUpdated(updated);
 		}
-
-		bulkInsert(tobeAdded, (existingUsers.size() == 0));
 	}
 	
-	private void bulkInsert(List<User> list, boolean firstRun) {
-		if (firstRun) {
-			entityManager.flush();
-
-			for (int i = 0; i < list.size() ; ++i) {
-				entityManager.persist(list.get(i));
-				if (i % 20 == 0) {
-					entityManager.flush();
-					entityManager.clear();
-				}
-			}
-			
-			entityManager.flush();
-			entityManager.clear();
-		}
-		else {
-			userService.save(list);
-		}
-	}
-
 	private void softDeleteUsers(String cvr, List<User> newUsers, List<User> existingUsers, OrganisationImportResponse response) {
 		long deleted = 0;
 		
@@ -358,6 +341,11 @@ public class OrganisationService {
 				}
 			}
 
+			// system accounts should never be soft-deleted
+			if (existingUser.getUuid().startsWith("00000000-0000-4000-0000-0000")) {
+				found = true;
+			}
+			
 			if (!found) {
 				//soft delete
 				deleted++;
