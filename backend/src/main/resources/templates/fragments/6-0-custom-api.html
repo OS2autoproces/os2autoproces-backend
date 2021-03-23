@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h2 id="chapter-6-0" th:fragment="header">6 Custom APIs</h2>
+	
+	<div th:fragment="content">
+		<div th:replace="fragments/6-1-api-bookmark :: header" />
+		<div th:replace="fragments/6-1-api-bookmark :: content" />
+
+		<div th:replace="fragments/6-2-api-comment :: header" />
+		<div th:replace="fragments/6-2-api-comment :: content" />
+		
+		<div th:replace="fragments/6-3-api-attachment :: header" />
+		<div th:replace="fragments/6-3-api-attachment :: content" />
+		
+		<div th:replace="fragments/6-4-api-cms :: header" />
+		<div th:replace="fragments/6-4-api-cms :: content" />
+		
+		<div th:replace="fragments/6-5-api-notification :: header" />
+		<div th:replace="fragments/6-5-api-notification :: content" />
+	</div>
+</body>
+</html>

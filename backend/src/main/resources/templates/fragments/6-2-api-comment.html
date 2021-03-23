@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-6-2" th:fragment="header">6.2 Comment API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Custom Secure API</td>
+						<td>Stable</td>
+						<td>This API is intended for managing comments on a Process. The comments cannot be
+						managed directly on the Process object, as only users with write-access can edit
+						a Process, but anyone with read-access can add a comment.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Below are listed the operations available on this API.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Get all comments for a given process</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/technologies/&lt;id&gt;
+(returns an array of comments for the process with the given id - will return an empty array of the user does not have read-access)</pre>
+					
+					<strong>Add a comment to a given process</strong>
+					<pre class="card-text">PUT https://dev.os2autoproces.eu/api/technologies/&lt;id&gt;
+{
+  "message": "My take on this process is that there are too few comments!"
+}
+
+(will do nothing if attempted on processes that the user does not have read-access to)</pre>
+					
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output when reading all comments looks like this
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">[
+  {
+    "name": "Piotr Suski (psu@digital-identity.dk)",
+    "message": "hello 1",
+    "created": "2018-06-23 10:35"
+  },
+  {
+    "name": "Piotr Suski (psu@digital-identity.dk)",
+    "message": "hello 2",
+    "created": "2018-06-23 10:35"
+  },
+  {
+    "name": "Piotr Suski (psu@digital-identity.dk)",
+    "message": "hello 3",
+    "created": "2018-06-23 10:35"
+  }
+]</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>name</td>
+						<td>String</td>
+						<td>no</td>
+						<td>A constructed ID of the user, containing name and email address</td>
+					</tr>
+					<tr>
+						<td>message</td>
+						<td>String</td>
+						<td>no</td>
+						<td>The actual message entered by the user as a comment</td>
+					</tr>
+					<tr>
+						<td>created</td>
+						<td>Date</td>
+						<td>no</td>
+						<td>The timestamp for when the message was created</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-3-5" th:fragment="header">3.5 Advanced searching</h3>
+	
+	<div th:fragment="content">
+		<p>When performing searches on Processes, sometimes the fields that are part of the query is located
+		inside another object referenced by the Process. An example would be the need to search for all
+		Processes reported by a given User. The QueryDSL syntax allows for search-parameters that matches
+		referenced objects, as shown by the example below</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Find all processes reported by the user with the ID 7</strong>
+					<pre>GET https://dev.os2autoproces.eu/api/process?reporter.id=7</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			As with all query parameters, they can be combined, so searching for all processes
+			reported by a specific user, which has a specific status, and has been updated
+			after a specific time is also possible, simply by adding more search parameters
+		</p>
+	</div>
+</body>
+</html>
+

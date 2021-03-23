@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-5-3" th:fragment="header">5.3 FORM API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Generated Secure API</td>
+						<td>Stable</td>
+						<td>This API gives read-only access to the FORM classification</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Note that this is a generated API, so it supports all of the operations that
+			Spring Data REST allows (though updating operations are disabled).
+			This list is just the operations that are useful for the frontend.
+			Note that when fetching all FORM values, it might be useful
+			to set the size parameter to some very high number, to effectively disable pagination,
+			as the list will likely only have some 3100 values, and the data-size is very small.
+			Also the data practically never changes (roughly once every 3 months), so it makes
+			sense for the frontend to load all FORM values in the beginning, and then store
+			them locally in the DOM.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Fetch a list of FORM values</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/forms
+(returns a list of FORM values, example given in the subchapter below)</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output follows the standard structure for list-output on generated APIs, meaning that the
+			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
+			The result contains an array of (simple) FORM objects, which are described in the datamodel chapter below. 
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">{
+  "_embedded" : {
+    "forms" : [ {
+      "code" : "02",
+      "description" : "Internationale aftaler"
+    }, {
+      "code" : "02.05",
+      "description" : "Internationale aftaler"
+    }, {
+      "code" : "02.05.05",
+      "description" : "Aftaler vedrørende De Forenede Nationer (FN)"
+    }, {
+      "code" : "02.05.05.05",
+      "description" : "Danmarks aftaler vedrørende De Forenede Nationers (FN) styrende organer"
+    }, {
+      "code" : "02.05.05.10",
+      "description" : "Danmarks aftaler vedrørende De Forenede Nationers (FN) særorganisationer"
+    }, {
+      "code" : "02.05.05.15",
+      "description" : "Danmarks aftaler vedrørende De Forenede Nationers (FN) fonde og programmer med videre"
+    }, {
+      "code" : "02.05.05.20",
+      "description" : "Danmarks aftaler vedrørende De Forenede Nationers (FN) finansielle institutioner"
+    }, {
+      "code" : "02.05.10",
+      "description" : "Aftaler vedrørende Europarådet"
+    }, {
+      "code" : "02.05.10.05",
+      "description" : "Danmarks aftaler vedrørende Europarådet"
+    }, {
+      "code" : "02.05.15",
+      "description" : "Aftaler vedrørende Den Europæiske Union (EU)"
+    }, {
+      "code" : "02.05.15.05",
+      "description" : "Danmarks aftaler vedrørende Den Europæiske Union (EU)"
+    }, {
+      "code" : "02.05.20",
+      "description" : "Aftaler vedrørende nordisk samarbejde"
+    }, {
+      "code" : "02.05.20.05",
+      "description" : "Danmarks aftaler vedrørende nordisk samarbejde"
+    }, {
+      "code" : "02.05.25",
+      "description" : "Aftaler vedrørende internationale specialorganisationer"
+    }, {
+      "code" : "02.05.25.10",
+      "description" : "Danmarks aftaler vedrørende Den Nordatlantiske Traktats Organisation (NATO)"
+    }, {
+      "code" : "02.05.25.15",
+      "description" : "Danmarks aftaler vedrørende Organisationen for Sikkerhed og Samarbejde i Europa (OSCE)"
+    }, {
+      "code" : "02.05.25.20",
+      "description" : "Danmarks aftaler vedrørende Organisationen for Økonomisk Samarbejde og Udvikling (OECD)"
+    }, {
+      "code" : "02.05.25.25",
+      "description" : "Danmarks aftaler vedrørende Verdenshandelsorganisationen (WTO)"
+    }, {
+      "code" : "02.05.25.30",
+      "description" : "Danmarks aftaler vedrørende Den Internationale Kriminalpolitiorganisation (INTERPOL)"
+    }, {
+      "code" : "02.05.25.35",
+      "description" : "Danmarks aftaler vedrørende Østersørådet"
+    } ]
+  },
+  "_links" : {
+    "first" : {
+      "href" : "https://dev.os2autoproces.eu/api/forms?page=0&amp;size=20"
+    },
+    "self" : {
+      "href" : "https://dev.os2autoproces.eu/api/forms{?page,size,sort}",
+      "templated" : true
+    },
+    "next" : {
+      "href" : "https://dev.os2autoproces.eu/api/forms?page=1&amp;size=20"
+    },
+    "last" : {
+      "href" : "https://dev.os2autoproces.eu/api/forms?page=153&amp;size=20"
+    },
+    "profile" : {
+      "href" : "https://dev.os2autoproces.eu/api/profile/forms"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 3080,
+    "totalPages" : 154,
+    "number" : 0
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>code</td>
+						<td>string</td>
+						<td>no</td>
+						<td>This field contains a 2-8 digit number, formatted as a string where each 2 digits are separated by
+							a dot FORM is related to KLE, in the sense that each FORM element is related to a single KLE element,
+							though multiple FORM elements may be related to the same KLE element.
+						</td>
+					</tr>
+					<tr>
+						<td>description</td>
+						<td>string</td>
+						<td>no</td>
+						<td>This is the title/name of the FORM element, and should be displayed (along with the code)
+							in the UI.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

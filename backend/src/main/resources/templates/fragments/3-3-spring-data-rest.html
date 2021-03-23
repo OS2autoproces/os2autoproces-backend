@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-3-3" th:fragment="header">3.3 Working with relationships</h3>
+	
+	<div th:fragment="content">
+		<p>
+			Relationships are used solely on the Process, and when using the Process API, the output from
+			a GET on a given Process, will contain a series of links to other objects, examples being
+			the User that reported the Process, the OrgUnit(s) that are associated with the Process, etc.
+		</p>
+		
+		<p>
+			These relationships can be managed in much the same was as ordinary attributes, except only
+			PATCH operations can be used. Below are shown how to work with both
+			one-to-one relationships like the "owner" on a Process, and one-to-many relationships
+			like "orgUnits" on a Process.
+		</p>
+		
+		<h4>One-to-one relationships</h4>
+		<p>
+			A one-to-one relationships is managed simply by adding a field to the payload with the
+			name of the relationship, and then supplying a URI value that points to the target
+			of the relationship. Notice that the URI is the exact URL that the object can be
+			read through the corresponding API - that means that the URI has the domain-name of
+			the server as part of the URI-value, as shown below.
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Change the 'owner' relationship on a given process using PATCH</strong>
+					<pre>PATCH https://dev.os2autoproces.eu/api/process/501
+{
+  "owner" : "https://dev.os2autoproces.eu/api/users/1009"
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>One-to-many relationships</h4>
+		<p>One-to-many relationships are handled in the same way, but the references are to arrays of objects.</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Change the 'orgUnits' relationship on a given process using PATCH</strong>
+					<pre>PATCH https://dev.os2autoproces.eu/api/process/501
+{
+  "orgUnits" : [
+      "https://dev.os2autoproces.eu/api/orgUnits/11",
+      "https://dev.os2autoproces.eu/api/orgUnits/17",
+  ]
+}</pre>
+				</div>
+			</div>
+		</p>
+	</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-2-1" th:fragment="header">2.1 About CSRF and CORS</h3>
+	
+	<div th:fragment="content">
+		<p>
+			The backend exposes a series of API operations that gives access to sensitive information,
+			as well as allows updating and creating data. These operation are secured by ordinary access control
+			mechanisms, requiring SAML-based authentication of the end-user.
+		</p>
+		
+		<p>
+			These mechanisms only prevents unauthorized users from accessing the API, it does not protect
+			against malicious parties tricking the authorized users into performing API with "evil" payloads.
+		</p>
+		
+		<p>
+			CORS and CSRF protection are two elements that attempt to hinder these types of attacks, and
+			both are enabled on the backend.
+		</p>
+		
+		<h4>How does this affect the frontend?</h4>
+		<p>
+			The CORS configuration will inform the web-browser that it must not perform javascript-based
+			calls to the API, unless the call originates from HTML hosted on specific web-addresses.
+			The backend is configured with a list of legal web-addresses, and it will inform the end-users
+			browser about this, so the browser will block the call to the API.
+		</p>
+		
+		<p>
+			As long as the web-address that hosts the frontend, is known by the backend, CORS will not be
+			an issue with regards to calling the API. The frontend framework may have to be configured to
+			run in "CORS-mode", though this is framework specific.
+		</p>
+		
+		<p>
+			The CSRF protection on the backend requires a bit more work on the frontend. The backend will
+			send a couple of headers back containing CSRF information, that the frontend must supply on
+			all requests. The response headers are the following:
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body"><pre>X-CSRF-HEADER: X-CSRF-TOKEN
+X-CSRF-PARAM: _csrf
+X-CSRF-TOKEN: af45908f-a262-4e6e-ad43-85d272fb4cf7</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			The only value that is important to handle is the X-CSRF-TOKEN response header. It contains the
+			session specific CSRF token, that must be supplied as a request header in all non-GET calls to the API,
+			like this (note the headername is X-CSRF-TOKEN and the value is the one returned in the response header)
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre>X-CSRF-TOKEN: af45908f-a262-4e6e-ad43-85d272fb4cf7</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			The easiest way to get the X-CSRF-TOKEN value is probably to call the /pubic/whoami endpoint right
+			after a user has successfully logged in, as the response will contain the mentioned header.
+		</p>
+	</div>
+</body>
+</html>

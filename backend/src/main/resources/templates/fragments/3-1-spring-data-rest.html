@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-3-1" th:fragment="header">3.1 Reading objects</h3>
+	
+	<div th:fragment="content">
+		<h4>Basic queries</h4>
+		<p>
+			Data is read from the APIs using ordinary GET methods, either by accessing the root of the API,
+			or by accessing a specific object by its ID.
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Access root of KLE api</strong>
+					<pre>GET https://dev.os2autoproces.eu/api/kles</pre>
+					
+					<strong>Read specific KLE</strong>
+					<pre>GET https://dev.os2autoproces.eu/api/kles/27.24.27</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			The output from a basic query either returns a list of objects, or a single object, always
+			matching the datamodel for that specific object-type. When the output is a list of objects,
+			metadata about the result-set is also returned - how this is used is described in the following
+			chapters.
+		</p>
+		
+		<h4>Projections</h4>
+		<p>
+			Getting the objects "plain" datamodel might not always be the most useful output, and
+			the APIs support projections. A projection is a predefined mapping from the objects
+			normal datamodel, to something else. This project can be a small subsets of the fields
+			found in the full datamodel, but it can also be extra fields that are computed or pulled
+			in from other objects.
+		</p>
+		
+		<p>
+			A single projection can be applied to the output, and the allowed projections are documented
+			in the various API sections. A projection is applied by adding a 'projection' parameter to the
+			request as shown below.
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Read a specific process and project it to a different output</strong>
+					<pre>GET https://dev.os2autoproces.eu/api/processes/7?projection=extended</pre>
+				</div>
+			</div>
+		</p>
+	</div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-5-8" th:fragment="header">5.8 SearchWords API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Generated Secure API</td>
+						<td>Stable</td>
+						<td>This API gives read-only access to search words added to existing processes</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<p>
+			The SearchWords API grants read-only access to all existing SearchWords added to other Processes.
+			The intended use for this API is to support a type-ahead feature in the UI when adding SearcWords
+			to a Process.
+		</p>		
+		
+		<p>
+			Please note that a scheduled job runs through all processes at regular intervals to update
+			the set of searchWords, so new searchWords (entered into processes), are not immediately
+			available through this API.
+		</p>
+
+		<h4>Useful operations</h4>
+		<p>
+			Note that this is a generated API, so it supports all of the operations that
+			Spring Data REST allows (though updating operations are disabled).
+			This list is just the operations that are useful for the frontend. The last
+			one is the one intended for type-ahead use, as it filters the result set
+			according to the supplied argument
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Fetch all searchWords</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/searchWords
+(returns a list of registered searchWords, example given in the subchapter below)</pre>
+
+					<strong>Fetch all searchWords containing the string 'cat' (infix search)</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/searchWords?searchWord=cat
+(returns a list of registered searchWords, example given in the subchapter below)</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output follows the standard structure for list-output on generated APIs, meaning that the
+			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
+			The result contains an array of searchWords as described in the datamodel below. 
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">{
+  "_embedded" : {
+    "searchWords" : [ {
+      "searchWord" : "RPA 2.0"
+    }, {
+      "searchWord" : "UIPath"
+    }, {
+      "searchWord" : "BluePrism"
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://dev.os2autoproces.eu/api/searchWords{?page,size,sort}",
+      "templated" : true
+    },
+    "profile" : {
+      "href" : "https://dev.os2autoproces.eu/api/profile/searchWords"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 3,
+    "totalPages" : 1,
+    "number" : 0
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>searchWord</td>
+						<td>string</td>
+						<td>no</td>
+						<td>This is the actual stored searchWord</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

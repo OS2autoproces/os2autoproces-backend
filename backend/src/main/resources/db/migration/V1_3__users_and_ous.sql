@@ -1,0 +1,24 @@
+CREATE TABLE users (
+	id							BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	uuid							VARCHAR(36) NOT NULL,
+	name							VARCHAR(128) NOT NULL,
+	active							TINYINT(1) NOT NULL,
+	cvr							VARCHAR(8) NOT NULL,
+	email							VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE ous (
+	id							BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	uuid							VARCHAR(36) NOT NULL,
+	name							VARCHAR(64) NOT NULL,
+	active							TINYINT(1) NOT NULL,
+	cvr							VARCHAR(8) NOT NULL
+);
+
+CREATE TABLE users_ous (
+	user_id							BIGINT NOT NULL,
+	ou_id							BIGINT NOT NULL,
+
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	FOREIGN KEY (ou_id) REFERENCES ous(id) ON DELETE CASCADE
+);

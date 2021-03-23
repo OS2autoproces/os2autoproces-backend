@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-6-5" th:fragment="header">6.5 Notification API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Custom Secure API</td>
+						<td>Stable</td>
+						<td>This API is intended for managing the a users notification subscriptions, and is custom created, as
+						the notification subscriptions cannot be managed directly from the user object (the user object is an
+						externally managed object, and the User API is read-only).
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Below are listed the operations available on this API.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Start subscribing to notifications for a given process on the currently logged in user</strong>
+					<pre class="card-text">PUT https://dev.os2autoproces.eu/api/notifications/&lt;id&gt;
+(the supplied id should match a process - if the user has read-access to the process, a subscription is added to the user)</pre>
+					
+					<strong>Stop subscribing to notifications for a given process on the currently logged in user</strong>
+					<pre class="card-text">DELETE https://dev.os2autoproces.eu/api/notifications/&lt;id&gt;
+(the supplied id should match a process - if the user has a subscription for that process, it is removed)</pre>
+				</div>
+			</div>
+		</p>
+	</div>
+</body>
+</html>

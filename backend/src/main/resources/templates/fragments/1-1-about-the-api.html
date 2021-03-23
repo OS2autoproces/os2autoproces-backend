@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-1-1" th:fragment="header">1.1 General API notes</h3>
+	
+	<div th:fragment="content">
+		<p>
+			OS2autoproces exposes a series of APIs, and this documentation is intended for developers building a
+			frontend application on top of these APIs.
+		</p>
+		
+		<p>
+			Please note that all examples in this document points to <strong>dev.os2autoproces.eu</strong> - in production the
+			URL will be different, so make sure that the backend URL is configurable in the fronend application.
+		</p>
+		
+		<p>
+			As the APIs are being developed in parallel with the frontend, each API is clearly labeled with the
+			current state of the API. These states can be
+			<ul>
+				<li>
+					<strong>Final</strong>. The API is finished according to the current requirement specification.
+					Change requests from the customer may affect this API, but otherwise it can be assumed
+					to be as stable as is possible during a development project.
+				</li>
+				<li>
+					<strong>Stable</strong>. The API is working as intended, but there may still be a few changes to the fields
+					(a field may be added or a field removed, and a type on a field may change, or similar minor changes)
+				</li>
+				<li>
+					<strong>Experimental</strong>. The API is being actively developed, and behavior may change without notice.
+					It is possible to use the API, but it should only be done for experimental purposes.
+				</li>
+				<li>
+					<strong>Planned</strong>. The API is planned - documentation is probably non-existent besides the note
+					about the API being planned.
+				</li>
+			</ul>
+		</p>
+	</div>
+</body>
+</html>

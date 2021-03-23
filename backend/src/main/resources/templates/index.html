@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>API Documentation</title>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link th:href="@{doc/css/simple-sidebar.css}" rel="stylesheet" />
+</head>
+<body>
+    <div id="wrapper" class="toggled">
+        <div id="sidebar-wrapper" th:replace="fragments/navbar :: navbar" />
+
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+            	<h1>API Documentation</h1>
+
+            	<!-- API endpoints -->
+                <div th:replace="fragments/1-0-about-the-api :: header" />
+                <div th:replace="fragments/1-0-about-the-api :: content" />
+                
+                <!-- Introduction to security -->
+				<div th:replace="fragments/2-0-security :: header" />
+                <div th:replace="fragments/2-0-security :: content" />
+                
+                <!-- Introduction to spring data rest -->
+				<div th:replace="fragments/3-0-spring-data-rest :: header" />
+                <div th:replace="fragments/3-0-spring-data-rest :: content" />
+                
+                <!-- And now a section of each API -->
+				<div th:replace="fragments/4-0-public-api :: header" />
+                <div th:replace="fragments/4-0-public-api :: content" />
+                
+				<div th:replace="fragments/5-0-generated-api :: header" />
+                <div th:replace="fragments/5-0-generated-api :: content" />
+                
+				<div th:replace="fragments/6-0-custom-api :: header" />
+                <div th:replace="fragments/6-0-custom-api :: content" />
+            </div>
+        </div>
+    </div>
+
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

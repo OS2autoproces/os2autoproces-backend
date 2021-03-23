@@ -1,0 +1,1 @@
+ALTER TABLE municipalities ADD COLUMN sts_sync BOOLEAN NOT NULL DEFAULT 0;

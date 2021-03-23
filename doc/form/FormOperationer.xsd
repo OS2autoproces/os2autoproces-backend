@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        targetNamespace="urn:oio:form:1.0.0"
+        xmlns:oio="urn:oio:definitions:1.0.0"
+        xmlns:form="urn:oio:form:1.0.0"
+        oio:mapping="urn:oio:form:MPD:1.0.0">
+
+    <include schemaLocation="Form.xsd"/>
+    
+    <element name="FormHierarkiHentInput" type="form:FormHierarkiHentInputType" oio:definition="urn:oio:form:formhierarki:hent:input:ADD:1.0.0"/>
+    <complexType name="FormHierarkiHentInputType" oio:definition="urn:oio:form:formhierarki:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:FormIndgang" minOccurs="0" oio:content="indgang"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="FormHierarkiHentOutput" type="form:FormHierarkiHentOutputType" oio:definition="urn:oio:form:formhierarki:hent:output:ADD:1.0.0"/>
+    <complexType name="FormHierarkiHentOutputType" oio:definition="urn:oio:form:formhierarki:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:ServiceOmraadeIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="serviceomraadeindgange"/>
+            <element ref="form:ServiceOmraade" minOccurs="0" maxOccurs="unbounded" oio:content="serviceomraader"/>
+            <element ref="form:HovedOmraadeIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="hovedomraadeindgange"/>
+            <element ref="form:HovedOmraade" minOccurs="0" maxOccurs="unbounded" oio:content="hovedomraader"/>
+            <element ref="form:OpgaveOmraadeIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveomraadeindgange"/>
+            <element ref="form:OpgaveOmraade" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveomraader"/>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="OpgaverMyndighedHentInput" type="form:OpgaverMyndighedHentInputType" oio:definition="urn:oio:form:opgaver:myndighed:hent:input:ADD:1.0.0"/>
+    <complexType name="OpgaverMyndighedHentInputType" oio:definition="urn:oio:form:opgaver:myndighed:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:MyndighedNavn" oio:content="myndighedsnavn"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaverMyndighedHentOutput" type="form:OpgaverMyndighedHentOutputType" oio:definition="urn:oio:form:opgaver:myndighed:hent:output:ADD:1.0.0"/>
+    <complexType name="OpgaverMyndighedHentOutputType" oio:definition="urn:oio:form:opgaver:myndighed:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="OpgaverLovgivningHentInput" type="form:OpgaverLovgivningHentInputType" oio:definition="urn:oio:form:opgaver:lovgivning:hent:input:ADD:1.0.0"/>
+    <complexType name="OpgaverLovgivningHentInputType" oio:definition="urn:oio:form:opgaver:lovgivning:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:LovgivningTekst" oio:content="lovgivning"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaverLovgivningHentOutput" type="form:OpgaverLovgivningHentOutputType" oio:definition="urn:oio:form:opgaver:lovgivning:hent:output:ADD:1.0.0"/>
+    <complexType name="OpgaverLovgivningHentOutputType" oio:definition="urn:oio:form:opgaver:lovgivning:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="OpgaverFinanslovHentInput" type="form:OpgaverFinanslovHentInputType" oio:definition="urn:oio:form:opgaver:finanslov:hent:input:ADD:1.0.0"/>
+    <complexType name="OpgaverFinanslovHentInputType" oio:definition="urn:oio:form:opgaver:finanslov:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:FinanslovParagrafTekst" oio:content="finanslovparagraf"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaverFinanslovHentOutput" type="form:OpgaverFinanslovHentOutputType" oio:definition="urn:oio:form:opgaver:finanslov:hent:output:ADD:1.0.0"/>
+    <complexType name="OpgaverFinanslovHentOutputType" oio:definition="urn:oio:form:opgaver:finanslov:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="OpgaverDomaenebestyrelseHentInput" type="form:OpgaverDomaenebestyrelseHentInputType" oio:definition="urn:oio:form:opgaver:domaenebestyrelse:hent:input:ADD:1.0.0"/>
+    <complexType name="OpgaverDomaenebestyrelseHentInputType" oio:definition="urn:oio:form:opgaver:domaenebestyrelse:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:DomaenebestyrelseNavnKode" oio:content="navn"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaverDomaenebestyrelseHentOutput" type="form:OpgaverDomaenebestyrelseHentOutputType" oio:definition="urn:oio:form:opgaver:domaenebestyrelse:hent:output:ADD:1.0.0"/>
+    <complexType name="OpgaverDomaenebestyrelseHentOutputType" oio:definition="urn:oio:form:opgaver:domaenebestyrelse:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="OpgaverKLEHentInput" type="form:OpgaverKLEHentInputType" oio:definition="urn:oio:form:opgaver:kle:hent:input:ADD:1.0.0"/>
+    <complexType name="OpgaverKLEHentInputType" oio:definition="urn:oio:form:opgaver:kle:hent:input:ADD:1.0.0">
+        <sequence>
+            <element ref="form:EmneHandlingFacetTekst" oio:content="emnehandling"/>
+            <element ref="form:FormDybdeKvantitet" minOccurs="0" oio:content="dybde"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaverKLEHentOutput" type="form:OpgaverKLEHentOutputType" oio:definition="urn:oio:form:opgaver:kle:hent:output:ADD:1.0.0"/>
+    <complexType name="OpgaverKLEHentOutputType" oio:definition="urn:oio:form:opgaver:kle:hent:output:ADD:1.0.0">
+        <choice>
+            <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+            <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+        </choice>
+    </complexType>
+
+    <element name="FormDybdeKvantitet" type="integer" oio:definition="urn:oio:form:dybde:BDD:1.0.0"/>
+    
+    <element name="FormIndgang" type="form:FormIndgangType" oio:definition="urn:oio:form:indgang:ADD:1.0.0"/>
+    <complexType name="FormIndgangType" oio:definition="urn:oio:form:indgang:ADD:1.0.0">
+        <choice>
+            <element ref="form:NavnTekst" oio:content="navn"/>
+            <element ref="form:ServiceOmraadeNummerIdentifikator" oio:content="serviceomraadenummer"/>
+            <element ref="form:HovedOmraadeNummerIdentifikator" oio:content="hovedomraadenummer"/>
+            <element ref="form:OpgaveOmraadeNummerIdentifikator" oio:content="opgaveomraadenummer"/>
+            <element ref="form:OpgaveNummerIdentifikator" oio:content="opgavenummer"/>
+            <element ref="form:FormReference" oio:content="reference"/>
+        </choice>
+    </complexType>
+
+</schema>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-4-2" th:fragment="header">4.2 Who am I API</h3>
+	
+	<div th:fragment="content">
+		<p>
+		The purpose of this API is to expose information about the currently logged in user to the frontend,
+		as well as give the frontend an easy way to figure out if the user has a valid session.
+		</p>
+		
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Unsecured API</td>
+						<td>Stable</td>
+						<td>This API gives information about the currently logged in user</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Fetch information about the currently logged in user</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/public/whoami</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text"><strong>Output when user is logged in:</strong>
+{
+	"uuid": "3eb85486-361e-4aa6-b2bf-843c810bc95a",
+	"email": "psu@digital-identity.dk",
+	"name": "Piotr Suski",
+	"cvr": "36074051",
+	"roles": [ROLE_SUPERUSER,ROLE_FRONTPAGE_EDITOR]
+}
+
+<strong>Output when user is not logged in:</strong>
+{
+	uuid: null,
+	email: null,
+	name: null,
+	cvr: null,
+	roles: []
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>uuid</td>
+						<td>string</td>
+						<td>yes</td>
+						<td>Contains the users unique identifier (unique across all municipalities)</td>
+					</tr>
+					<tr>
+						<td>email</td>
+						<td>string</td>
+						<td>yes</td>
+						<td>Contains the users email address</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>yes</td>
+						<td>Contains the users name</td>
+					</tr>
+					<tr>
+						<td>cvr</td>
+						<td>string</td>
+						<td>yes</td>
+						<td>Contains the CVR number of the municipality that the user comes from</td>
+					</tr>
+					<tr>
+						<td>roles</td>
+						<td>array of strings</td>
+						<td>yes</td>
+						<td>Contains an array of roles that that the user has. The list of possible values are
+							<ul>
+								<li>ROLE_USER</li>
+								<li>ROLE_LOCAL_SUPERUSER</li>
+								<li>ROLE_SUPERUSER</li>
+								<li>ROLE_ADMINISTRATOR</li>
+								<li>ROLE_FRONTPAGE_EDITOR</li>
+							</ul>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

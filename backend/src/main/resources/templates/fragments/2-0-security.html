@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h2 id="chapter-2-0" th:fragment="header">2 Security</h2>
+	
+	<div th:fragment="content">
+		<ul>
+			<li><a href="#chapter-2-1">About CSRF and CORS</a></li>
+			<li><a href="#chapter-2-2">About SAML</a></li>
+			<li><a href="#chapter-2-3">Temporary Development Setup</a></li>
+			<li><a href="#chapter-2-4">Frontend Implementation</a></li>
+		</ul>
+
+		<div th:replace="fragments/2-1-csrf :: header" />
+		<div th:replace="fragments/2-1-csrf :: content" />
+
+		<div th:replace="fragments/2-2-saml :: header" />
+		<div th:replace="fragments/2-2-saml :: content" />
+		
+		<div th:replace="fragments/2-3-development :: header" />
+		<div th:replace="fragments/2-3-development :: content" />
+		
+		<div th:replace="fragments/2-4-frontend :: header" />
+		<div th:replace="fragments/2-4-frontend :: content" />
+	</div>
+</body>
+</html>

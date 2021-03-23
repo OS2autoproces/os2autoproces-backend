@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-6-3" th:fragment="header">6.3 Attachment API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Custom Secure API</td>
+						<td>Stable</td>
+						<td>This API is managing attachments, and Spring DATA Rest is not an obvious choice
+						for API's with a side-effect (uploading an attachment requires the attachment to
+						be stored outside the database), so a custom API has been written for dealing with
+						attachments.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Below are listed the operations available on this API.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Get a list of attachments for a given process</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/attachments/&lt;id&gt;</pre>
+
+					<strong>Upload one or more attachments (files) to a given process</strong>
+					<pre class="card-text">POST https://dev.os2autoproces.eu/api/attachments/&lt;id&gt;</pre>
+					
+					<strong>Upload one or more attachments (files) to a given process, making them visible to other municipalities</strong>
+					<pre class="card-text">POST https://dev.os2autoproces.eu/api/attachments/&lt;id&gt;/public</pre>
+
+					<strong>Delete a specific attachment from a given process</strong>
+					<pre class="card-text">DELETE https://dev.os2autoproces.eu/api/attachments/&lt;id&gt;/&lt;attachmentId&gt;</pre>
+				</div>
+			</div>
+		</p>
+
+		<h4>Notes about file-upload</h4>
+		<p>
+			The PUT operation accepts ordinary file-uploads, as performed by a web-browser that uploads user
+			selected files from the local file-system. It should be possible to use the standard browser-controls
+			to upload the files to a FORM element, and the PUT the FORM element against the API endpoint.
+		</p>
+
+		<h4>Example output</h4>
+		<p>
+			When retrieving attachments for a given process, the actual attachments are not returned, but
+			rather metadata about the attachment (filename and the URL where the file can be downloaded)
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">[
+  {
+    "id": 1,
+    "fileName": "myfile.png",
+    "url": "http://domain.com/myfile.png",
+    "visibleToOtherMunicipalities": true
+  },
+  {
+    "id": 2,
+    "fileName": "mydoc.docx",
+    "url": "http://domain.com/mydoc.docx",
+    "visibleToOtherMunicipalities": false
+  }
+]</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td>integer</td>
+						<td>no</td>
+						<td>Unique identifier for the attachment - can be used to delete the attachment later</td>
+					</tr>
+					<tr>
+						<td>fileName</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The name of the attachment</td>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The url where the attachment can be downloaded from</td>
+					</tr>
+					<tr>
+						<td>visibleToOtherMunicipalities</td>
+						<td>boolean</td>
+						<td>no</td>
+						<td>true if this attachment can be seen by other municipalities</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

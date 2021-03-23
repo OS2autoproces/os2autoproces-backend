@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        targetNamespace="urn:oio:form:1.0.0"
+        xmlns:oio="urn:oio:definitions:1.0.0"
+        xmlns:form="urn:oio:form:1.0.0"
+        oio:mapping="urn:oio:form:MPD:1.0.0">
+
+    <element name="MyndighedNavn" type="string" oio:definition="urn:oio:form:myndighedsnavn:BDD:1.0.0"/>
+    
+    <element name="LovgivningTekst" type="string" oio:definition="urn:oio:form:lovgivning:BDD:1.0.0"/>
+    
+    <element name="FinanslovParagrafTekst" type="string" oio:definition="urn:oio:form:finanslovparagraf:BDD:1.0.0"/>
+    
+    <element name="EmneHandlingFacetTekst" type="string" oio:definition="urn:oio:form:kle:emnehandling:BDD:1.0.0"/>
+    
+    <element name="ServiceOmraadeIndgang" type="form:ServiceOmraadeIndgangType" oio:definition="urn:oio:form:serviceomraadeindgang:ADD:1.0.0"/>
+    <complexType name="ServiceOmraadeIndgangType" oio:definition="urn:oio:form:serviceomraadeindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:NavnTekst" oio:content="navn"/>
+            <element ref="form:FormReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="ServiceOmraade" type="form:ServiceOmraadeType" oio:definition="urn:oio:form:serviceomraade:ADD:1.0.0"/>
+    <complexType name="ServiceOmraadeType" oio:definition="urn:oio:form:serviceomraade:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:ServiceOmraadeBaseType">
+                <choice>
+                    <element ref="form:HovedOmraade" minOccurs="0" maxOccurs="unbounded" oio:content="hovedomraader"/>
+                    <element ref="form:HovedOmraadeIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="hovedomraadeindgange"/>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="HovedOmraadeIndgang" type="form:HovedOmraadeIndgangType" oio:definition="urn:oio:form:hovedomraadeindgang:ADD:1.0.0"/>
+    <complexType name="HovedOmraadeIndgangType" oio:definition="urn:oio:form:hovedomraadeindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:NavnTekst" oio:content="navn"/>
+            <element ref="form:FormReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="HovedOmraade" type="form:HovedOmraadeType" oio:definition="urn:oio:form:hovedomraade:ADD:1.0.0"/>
+    <complexType name="HovedOmraadeType" oio:definition="urn:oio:form:hovedomraade:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:HovedOmraadeBaseType">
+                <choice>
+                    <element ref="form:OpgaveOmraade" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveomraader"/>
+                    <element ref="form:OpgaveOmraadeIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveomraadeindgange"/>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="OpgaveOmraadeIndgang" type="form:OpgaveOmraadeIndgangType" oio:definition="urn:oio:form:opgaveomraadeindgang:ADD:1.0.0"/>
+    <complexType name="OpgaveOmraadeIndgangType" oio:definition="urn:oio:form:opgaveomraadeindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:NavnTekst" oio:content="navn"/>
+            <element ref="form:FormReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="OpgaveOmraade" type="form:OpgaveOmraadeType" oio:definition="urn:oio:form:opgaveomraade:ADD:1.0.0"/>
+    <complexType name="OpgaveOmraadeType" oio:definition="urn:oio:form:opgaveomraade:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:OpgaveOmraadeBaseType">
+                <choice>
+                    <element ref="form:Opgave" minOccurs="0" maxOccurs="unbounded" oio:content="opgaver"/>
+                    <element ref="form:OpgaveIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="opgaveindgange"/>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="OpgaveIndgang" type="form:OpgaveIndgangType" oio:definition="urn:oio:form:opgaveindgang:ADD:1.0.0"/>
+    <complexType name="OpgaveIndgangType" oio:definition="urn:oio:form:opgaveindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:NavnTekst" oio:content="navn"/>
+            <element ref="form:FormReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="Opgave" type="form:OpgaveType" oio:definition="urn:oio:form:opgave:ADD:1.0.0"/>
+    <complexType name="OpgaveType" oio:definition="urn:oio:form:opgave:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:ObjektType">
+                <sequence>
+                    <element ref="form:OpgaveNummerIdentifikator" oio:content="opgavenummer"/>
+                    <element ref="form:FinanslovIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="finanslov"/>
+                    <element ref="form:LovgivningIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="lovgivning"/>
+                    <element ref="form:MyndighedIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="myndigheder"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="DomaenebestyrelseNavnKode" type="form:DomaenebestyrelseNavnKodeType" oio:definition="urn:oio:form:domaenebestyrelsenavn:DT:1.0.0"/>
+    <simpleType name="DomaenebestyrelseNavnKodeType" oio:definition="urn:oio:form:domaenebestyrelsenavn:DT:1.0.0">
+        <restriction base="string">
+            <enumeration value="Bygninger boliger og forsyning"/>
+            <enumeration value="Social og omsorg"/>
+            <enumeration value="Erhverv"/>
+            <enumeration value="Sundhed"/>
+        </restriction>
+    </simpleType>
+
+    <element name="NavnTekst" type="string" oio:definition="urn:oio:form:navn:BDD:1.0.0"/>
+    
+    <element name="FormReference" type="string" oio:definition="urn:oio:form:reference:BDD:1.0.0"/>
+    
+    <element name="ServiceOmraadeBase" type="form:ServiceOmraadeBaseType" oio:definition="urn:oio:form:serviceomraadebase:ADD:1.0.0"/>
+    <complexType name="ServiceOmraadeBaseType" oio:definition="urn:oio:form:serviceomraadebase:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:ObjektType">
+                <sequence>
+                    <element ref="form:ServiceOmraadeNummerIdentifikator" oio:content="serviceomraadenummer"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="HovedOmraadeBase" type="form:HovedOmraadeBaseType" oio:definition="urn:oio:form:hovedomraadebase:ADD:1.0.0"/>
+    <complexType name="HovedOmraadeBaseType" oio:definition="urn:oio:form:hovedomraadebase:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:ObjektType">
+                <sequence>
+                    <element ref="form:HovedOmraadeNummerIdentifikator" oio:content="hovedomraadenummer"/>
+                    <element ref="form:FinanslovIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="finanslov"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="OpgaveOmraadeBase" type="form:OpgaveOmraadeBaseType" oio:definition="urn:oio:form:opgaveomraadebase:ADD:1.0.0"/>
+    <complexType name="OpgaveOmraadeBaseType" oio:definition="urn:oio:form:opgaveomraadebase:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:ObjektType">
+                <sequence>
+                    <element ref="form:OpgaveOmraadeNummerIdentifikator" oio:content="opgaveomraadenummer"/>
+                    <element ref="form:DomaenebestyrelseIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="domaenebestyrelse"/>
+                    <element ref="form:FinanslovIndgang" minOccurs="0" maxOccurs="unbounded" oio:content="finanslov"/>
+                    <element ref="form:KLEindgang" minOccurs="0" maxOccurs="unbounded" oio:content="kle"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="Objekt" type="form:ObjektType" oio:definition="urn:oio:form:formobjekt:ADD:1.0.0"/>
+    <complexType name="ObjektType" oio:definition="urn:oio:form:formobjekt:ADD:1.0.0">
+        <complexContent>
+            <extension base="form:VersionType">
+                <sequence>
+                    <element ref="form:NavnTekst" oio:content="navn"/>
+                    <element ref="form:BeskrivelseTekst" oio:content="tekst"/>
+                    <element ref="form:Soegeord" minOccurs="0" maxOccurs="unbounded" oio:content="soegeord"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="ServiceOmraadeNummerIdentifikator" type="form:ServiceOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:serviceomraadenummer:DT:1.0.0"/>
+    <simpleType name="ServiceOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:serviceomraadenummer:DT:1.0.0">
+        <restriction base="string">
+            <pattern value="[0-9][0-9]"/>
+        </restriction>
+    </simpleType>
+
+    <element name="HovedOmraadeNummerIdentifikator" type="form:HovedOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:hovedomraadenummer:DT:1.0.0"/>
+    <simpleType name="HovedOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:hovedomraadenummer:DT:1.0.0">
+        <restriction base="string">
+            <pattern value="[0-9][0-9].[0-9][0-9]"/>
+        </restriction>
+    </simpleType>
+
+    <element name="OpgaveOmraadeNummerIdentifikator" type="form:OpgaveOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:opgaveomraadenummer:DT:1.0.0"/>
+    <simpleType name="OpgaveOmraadeNummerIdentifikatorType" oio:definition="urn:oio:form:opgaveomraadenummer:DT:1.0.0">
+        <restriction base="string">
+            <pattern value="[0-9][0-9].[0-9][0-9].[0-9][0-9]"/>
+        </restriction>
+    </simpleType>
+
+    <element name="OpgaveNummerIdentifikator" type="form:OpgaveNummerIdentifikatorType" oio:definition="urn:oio:form:opgavenummer:DT:1.0.0"/>
+    <simpleType name="OpgaveNummerIdentifikatorType" oio:definition="urn:oio:form:opgavenummer:DT:1.0.0">
+        <restriction base="string">
+            <pattern value="[0-9][0-9].[0-9][0-9].[0-9][0-9].[0-9][0-9]"/>
+        </restriction>
+    </simpleType>
+
+    <element name="DomaenebestyrelseIndgang" type="form:DomaenebestyrelseIndgangType" oio:definition="urn:oio:form:domaenebestyrelseindgang:ADD:1.0.0"/>
+    <complexType name="DomaenebestyrelseIndgangType" oio:definition="urn:oio:form:domaenebestyrelseindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:DomaenebestyrelseNavnKode" oio:content="navn"/>
+            <element ref="form:DomaenebestyrelseReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="KLEindgang" type="form:KLEindgangType" oio:definition="urn:oio:form:kleindgang:ADD:1.0.0"/>
+    <complexType name="KLEindgangType" oio:definition="urn:oio:form:kleindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:EmneHandlingFacetTekst" oio:content="navn"/>
+            <element ref="form:KLEReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="Version" type="form:VersionType" oio:definition="urn:oio:form:formversion:ADD:1.0.0"/>
+    <complexType name="VersionType" oio:definition="urn:oio:form:formversion:ADD:1.0.0">
+        <sequence>
+            <element ref="form:VersionIdentifikator" oio:content="versionnummer"/>
+            <element ref="form:OprettetDato" oio:content="oprettetdato"/>
+            <element ref="form:RettetDato" minOccurs="0" oio:content="rettetdato"/>
+            <element ref="form:UdgaaetDato" minOccurs="0" oio:content="udgaaetdato"/>
+            <element ref="form:UuidIdentifikator" oio:content="uuid"/>
+        </sequence>
+    </complexType>
+
+    <element name="VersionIdentifikator" type="string" oio:definition="urn:oio:form:formversion:ADD:1.0.0#versionnummer"/>
+    
+    <element name="OprettetDato" type="date" oio:definition="urn:oio:form:formversion:ADD:1.0.0#oprettetdato"/>
+    
+    <element name="RettetDato" type="date" oio:definition="urn:oio:form:formversion:ADD:1.0.0#rettetdato"/>
+    
+    <element name="UdgaaetDato" type="date" oio:definition="urn:oio:form:formversion:ADD:1.0.0#udgaaetdato"/>
+    
+    <element name="UuidIdentifikator" type="string" oio:definition="urn:oio:form:formversion:ADD:1.0.0#uuid"/>
+    
+    <element name="BeskrivelseTekst" type="string" oio:definition="urn:oio:form:tekst:BDD:1.0.0"/>
+    
+    <element name="MyndighedIndgang" type="form:MyndighedIndgangType" oio:definition="urn:oio:form:myndighedindgang:ADD:1.0.0"/>
+    <complexType name="MyndighedIndgangType" oio:definition="urn:oio:form:myndighedindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:MyndighedNavn" oio:content="navn"/>
+            <element ref="form:MyndighedReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="LovgivningIndgang" type="form:LovgivningIndgangType" oio:definition="urn:oio:form:lovgivningindgang:ADD:1.0.0"/>
+    <complexType name="LovgivningIndgangType" oio:definition="urn:oio:form:lovgivningindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:LovgivningTekst" oio:content="navn"/>
+            <element ref="form:LovgivningReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="FinanslovIndgang" type="form:FinanslovIndgangType" oio:definition="urn:oio:form:finanslovindgang:ADD:1.0.0"/>
+    <complexType name="FinanslovIndgangType" oio:definition="urn:oio:form:finanslovindgang:ADD:1.0.0">
+        <sequence>
+            <element ref="form:FinanslovParagrafTekst" oio:content="navn"/>
+            <element ref="form:FinanslovReference" oio:content="reference"/>
+        </sequence>
+    </complexType>
+
+    <element name="DomaenebestyrelseReference" type="string" oio:definition="urn:oio:form:domaenebestyrelsereference:ADD:1.0.0"/>
+    
+    <element name="KLEReference" type="string" oio:definition="urn:oio:form:kle:reference:BDD:1.0.0"/>
+    
+    <element name="Soegeord" type="form:SoegeordType" oio:definition="urn:oio:form:soegeord:ADD:1.0.0"/>
+    <complexType name="SoegeordType" oio:definition="urn:oio:form:soegeord:ADD:1.0.0">
+        <sequence>
+            <element ref="form:OrdenMaal" oio:content="orden"/>
+            <element ref="form:SoegeordTekst" oio:content="soegeord"/>
+        </sequence>
+    </complexType>
+
+    <element name="OrdenMaal" type="integer" oio:definition="urn:oio:form:soegeord:ADD:1.0.0#orden"/>
+    
+    <element name="SoegeordTekst" type="string" oio:definition="urn:oio:form:soegeord:ADD:1.0.0#soegeord"/>
+    
+    <element name="MyndighedReference" type="string" oio:definition="urn:oio:form:myndighedsreference:BDD:1.0.0"/>
+    
+    <element name="LovgivningReference" type="string" oio:definition="urn:oio:form:lovgivningsreference:BDD:1.0.0"/>
+    
+    <element name="FinanslovReference" type="string" oio:definition="urn:oio:form:finanslovsreference:BDD:1.0.0"/>
+    
+</schema>

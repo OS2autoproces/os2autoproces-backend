@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-4-1" th:fragment="header">4.1 Municipality API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Unsecured API</td>
+						<td>Stable</td>
+						<td>This API is used by the Discovery Page in the login flow, for finding the list of possible
+							municipalities that can login to the solution
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Operations</h4>
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Fetch a list of municipalities</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/public/municipalities</pre>
+					
+					<strong>Fetch a single municipality by its CVR number</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/public/municipalities/&lt;cvr&gt;</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">[
+	{
+		entityId: "http://adfs.digital-identity.dk/adfs/services/trust",
+		name: "Demo Kommune 1",
+		cvr: "36074051"
+	},
+	{
+		entityId: "http://adfs-prod.digital-identity.dk/adfs/services/trust",
+		name: "Demo Kommune 2",
+		cvr: "12345678"
+	}
+]</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>entityId</td>
+						<td>string</td>
+						<td>no</td>
+						<td>Business key for the identifier. This value should be used when calling the backend to indicate
+						    which Identity Provider the end-user picked.
+						</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>no</td>
+						<td>Friendly name that can be displayed in the UI - will contain the name of the municipality.
+						</td>
+					</tr>
+					<tr>
+						<td>cvr</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The CVR number of the municipality - is likely not needed in the UI, but is available just in case.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

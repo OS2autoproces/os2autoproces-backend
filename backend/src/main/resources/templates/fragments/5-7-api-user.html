@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-5-7" th:fragment="header">5.7 User API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Generated Secure API</td>
+						<td>Stable</td>
+						<td>This API gives read-only access to user data</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Note that this is a generated API, so it supports all of the operations that
+			Spring Data REST allows (though updating operations are disabled).
+			The set of data changes daily, and be rather large (anywhere between 5.000 and 10.000
+			entries per municipality), so it might be useful to use the backend for querying
+			data.
+		</p>
+
+		<p>
+			<strong>NOTICE</strong>. It is currently undecided if the backend will allow cross-municipality
+			lookup of user data.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Query for users that matches a given name (case-insensitive infix search - supply at least 3 characters)</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/users?name=&lt;name&gt;&amp;cvr=&lt;cvr&gt;
+(returns a list of users that has the supplied name-parameter anywhere in their name, coming from the supplied cvr number)</pre>
+
+					<strong>Read a single user</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/users/&lt;id&gt;
+(returns the data on the user that matches the supplied id)</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output follows the standard structure for list-output on generated APIs, meaning that the
+			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
+			The result contains an array of User objects, which are described in the datamodel chapter below. 
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">{
+  "_embedded" : {
+    "users" : [ {
+      "id": 1,
+      "uuid" : "5611fef7-1892-41f6-adf6-16bcd672487f",
+      "name" : "Brian Graversen",
+      "email" : "bsg@digital-identity.dk",
+      "active" : true,
+      "cvr" : "12345678"
+    }, {
+      "id" : 2,
+      "uuid" : "fbd9342f-802f-4125-8a25-d7552933e90b",
+      "name" : "Piotr Suski",
+      "email" : "psu@digital-identity.dk",
+      "active" : true,
+      "cvr" : "12345678"
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://dev.os2autoproces.eu/api/users{?page,size,sort}",
+      "templated" : true
+    },
+    "profile" : {
+      "href" : "https://dev.os2autoproces.eu/api/profile/users"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 2,
+    "totalPages" : 1,
+    "number" : 0
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td>integer</td>
+						<td>no</td>
+						<td>The unique id of the user, used for referencing the user</td>
+					</tr>
+					<tr>
+						<td>uuid</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The municipalities local id of the user</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The full name of the user</td>
+					</tr>
+					<tr>
+						<td>email</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The users email address</td>
+					</tr>
+					<tr>
+						<td>active</td>
+						<td>boolean</td>
+						<td>no</td>
+						<td>Indicates if the user is active (currently employeed), or inactive (no longer employeed at the municipality)</td>
+					</tr>
+					<tr>
+						<td>cvr</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The cvr number of the municipality from which the user comes</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

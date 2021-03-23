@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-3-4" th:fragment="header">3.4 Searching</h3>
+	
+	<div th:fragment="content">
+		<p>The generated APIs support a wide range of functionality for searching, sorting, paging and
+		other handy operations like that. This section outlines the basics of these.</p>
+		
+		<p><strong>Note</strong>. The various searching, sorting and paging operations can be combined,
+		as needed.</p>
+		
+		<h4>Searching using QueryDSL</h4>
+		<p>
+			The generated APIs all support <a href="http://www.querydsl.com/">QueryDSL</a> style search-parameters,
+			meaning that performing a GET operation on the root entity (e.g. /api/processes) can be combined
+			with search-parameters that matches fields in the datamodel. Some examples are shown below
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Find all processes with a specific KLE number</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?kle=27.00.00</pre>
+					
+					<strong>Find all processes with a specific KLE number and a high level of uniformity</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?kle=27.00.00&amp;levelOfUniformity=HIGH</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			By default, the parameters must be exact matches, but it is possible to setup rules on the backend,
+			that specifices how a match is computed (prefix, suffix, infix match, case insensitive/sensitive, greater than, less than, etc etc).
+			If it turns out that the frontend needs customization like this, please contact Brian to get it setup.
+		</p>
+		
+		<h4>Paging</h4>
+		<p>
+			By default paging is turned on for all the generated API's. This means that the output contains a paging
+			section, that looks like this
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre>{
+  "page" : {
+    "size" : 20,
+    "totalElements" : 207,
+    "totalPages" : 11,
+    "number" : 4
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			The page section of the output contains information about how many results are shown per page (size), how many elements
+			in total matches the search-criteria (totalElements), how mange pages that results in (totalPages), and what page
+			the output matches (number).
+		</p>
+		
+		<p>
+			It is possible to navigate the pages, as well as change the page-size, using the following arguments
+			<ul>
+				<li><strong>page</strong>. What page to retrieve</li>
+				<li><strong>size</strong>. How many elements to show per page</li>
+			</ul>
+			
+			Some examples are given below
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Navigate to page 7 on the list of processes</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?page=7</pre>
+					
+					<strong>Navigate to page 4 with a page size of 200</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?page=4&amp;size=200</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Sorting</h4>
+		<p>It is also possible to sort the output, either ascending or descending, according to a specific field
+		in the datamodel. Examples are given below</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Sort processes by rating, highest ratings first</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?sort=rating,desc</pre>
+					
+					<strong>Sort processes by domain, alphabetical sorting, A before B</strong>
+					<pre>
+GET https://dev.os2autoproces.eu/api/processes?sort=domain,asc</pre>
+				</div>
+			</div>
+		</p>
+	</div>
+</body>
+</html>
+

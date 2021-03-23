@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h2 id="chapter-4-0" th:fragment="header">4 Public APIs</h2>
+	
+	<div th:fragment="content">
+		<div th:replace="fragments/4-1-api-municipality :: header" />
+		<div th:replace="fragments/4-1-api-municipality :: content" />
+
+		<div th:replace="fragments/4-2-api-whoami :: header" />
+		<div th:replace="fragments/4-2-api-whoami :: content" />
+	</div>
+</body>
+</html>

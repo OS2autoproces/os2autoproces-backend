@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-2-2" th:fragment="header">2.2 About SAML</h3>
+	
+	<div th:fragment="content">
+		<p>
+			The end-users can only access the front-page of OS2autoproces without being signed
+			into the application. All actual functionality requires that the application knows
+			who the user is, and can tie that user to organizational data found in the application.
+		</p>
+		
+		<p>
+			OS2autoproces uses <a href="https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language">SAML</a>
+			as the authentication mechanism, as it is easy to implement, fully supported by all municipalities,
+			supports the concept of roles, and finally because it is a federation technology that allows
+			OS2autoproces to push the actual authentication process to the municipalities own internal
+			it-infrastructure, thus reducing development and operation costs for the solution.
+		</p>
+		
+		<p>
+			The SAML login flow happens roughly as outlined below
+
+			<ol>
+				<li>
+					The login process is triggered. This can happen either explicitly (the user actively tries to
+					login), or implicitly (the user tried to access a protected resource, and was rejected due to
+					an invalid/expired session). When this happens, the frontend will likely store (cookie, local storage
+					or some other mechanism) whatever resource that the user attempts to access, so the user can be
+					navigated back to that "page" after a successful login.
+				</li>
+				<li>
+					The users browser is redirected to the "discovery page" at the KOMBIT support system "Adgangsstyring for brugere".
+				</li>
+				<li>
+					The "discovery page" asks the user which municipality he or she is coming from (the discovery
+					page allows the end-user to store this choice in a cookie, and not ask the user on the next visit, but just skip
+					directly to the next step)
+				</li>
+				<li>
+					This step is out of scope of OS2autoproces - here the user performs the actual login in their
+					local it-infrastructure - if this succeeds, the user is redirected back to a login-handler
+					on the OS2autoproces backend, which establishes a session with the user, and issues a HTTP
+					cookie, which the user stores in his or her browser
+				</li>
+				<li>
+					The backend then redirects to the user to a pre-configured login-handler page on the frontend,
+					which will perform any post-login code (like calling /public/whoami - getting information about
+					the end-user, and retrieving a fresh CSRF token), and finally send the
+					user to the page the user originally intended to visit (looking up that information in a cookie,
+					localStorage or similar mechanism).
+				</li>
+			</ol>
+		</p>
+	</div>
+</body>
+</html>

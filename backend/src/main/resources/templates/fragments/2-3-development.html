@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-2-3" th:fragment="header">2.3 Temporary Development Setup</h3>
+	
+	<div th:fragment="content">
+		<p>
+			To support development, Syddjurs Municipality has allowed us to setup a SAML
+			Identity Provider in the KOMBIT infrastructure which uses their CVR number.
+			Below are the users that can login using this infrastructure
+		</p>
+		
+		<ul>
+			<li>itminds1@digitalidentity / Test1234 (has the role ROLE_SUPERUSER)</li>
+			<li>itminds2@digitalidentity / Test1234 (has the role ROLE_FRONTPAGE_EDITOR)</li>
+			<li>itminds3@digitalidentity / Test1234 (has the role ROLE_ADMINISTRATOR)</li>
+		</ul>
+
+		<p>
+			The login flow works as outlined below
+		</p>
+		
+		<ol>
+			<li>Access a protected resource on the backend (or navigate directly to https://dev.os2autoproces.eu/saml/login)</li>
+			<li>If a protected resource is requested, and no session exists, the backend will respond with HTTP 302, and a Location header containing the KOMBIT login page - if the /saml/login page is navigated to, the browser will automatically redirect to the KOMBIT login page</li>
+			<li>The browser is redirected to the KOMBIT discovery page - here pick "OS2autoproces (Syddjurs)"</li>
+			<li>The browser is now redirected to an AD FS login page - login using the supplied username/password</li>
+			<li>The browser is then returned to the OS2autoproces backend, which will redirect the browser back to the frontend (preconfigured login page)</li>
+		</ol>
+		
+		<p>
+			To trigger a logout, simply navigate the browser to this URL - upon succesful logout, the user is returned to the frontend
+			on a preconfigured URL.
+		</p>
+		
+		<pre>https://dev.os2autoproces.eu/saml/logout</pre>
+	</div>
+</body>
+</html>

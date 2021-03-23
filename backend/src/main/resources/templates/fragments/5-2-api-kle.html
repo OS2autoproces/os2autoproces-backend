@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-5-2" th:fragment="header">5.2 KLE API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Generated Secure API</td>
+						<td>Stable</td>
+						<td>This API gives read-only access to the KLE classification</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Note that this is a generated API, so it supports all of the operations that
+			Spring Data REST allows (though updating operations are disabled).
+			This list is just the operations that are useful for the frontend.
+			Note that when fetching all KLE values, it might be useful
+			to set the size parameter to some very high number, to effectively disable pagination,
+			as the list will likely only have some 2800 values, and the data-size is very small.
+			Also the data practically never changes (roughly once every 3 months), so it makes
+			sense for the frontend to load all KLE values in the beginning, and then store
+			them locally in the DOM.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Fetch a list of KLE values</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/kles
+(returns a list of KLE values, example given in the subchapter below)</pre>
+
+					<strong>Fetch all FORM values that belong to the KLE identified by the given ID</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/kles/&lt;id&gt;/forms
+(returns a list of FORM values, see the FORM API for the datamodel for FORM)</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output follows the standard structure for list-output on generated APIs, meaning that the
+			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
+			The result contains an array of (simple) KLE objects, which are described in the datamodel chapter below. 
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">{
+  "_embedded" : {
+    "kles" : [ {
+      "code" : "00",
+      "name" : "Kommunens styrelse"
+    }, {
+      "code" : "00.01",
+      "name" : "Kommunens styrelse"
+    }, {
+      "code" : "00.01.00",
+      "name" : "Kommunens styrelse i almindelighed"
+    }, {
+      "code" : "00.01.10",
+      "name" : "Opgaver der dækker flere hovedgrupper"
+    }, {
+      "code" : "00.03",
+      "name" : "International virksomhed og EU"
+    }, {
+      "code" : "00.03.00",
+      "name" : "International virksomhed og EU i almindelighed"
+    }, {
+      "code" : "00.03.02",
+      "name" : "Internationale organisationers virksomhed"
+    }, {
+      "code" : "00.03.04",
+      "name" : "Regionaludvikling EU"
+    }, {
+      "code" : "00.03.08",
+      "name" : "EU-interessevaretagelse"
+    }, {
+      "code" : "00.03.10",
+      "name" : "Internationalt samarbejde"
+    }, {
+      "code" : "00.05",
+      "name" : "Besøg, repræsentation mv."
+    }, {
+      "code" : "00.05.00",
+      "name" : "Besøg, repræsentation mv. i almindelighed"
+    }, {
+      "code" : "00.05.01",
+      "name" : "Venskabsbysamarbejde"
+    }, {
+      "code" : "00.05.02",
+      "name" : "Kommunale skibsadoptioner"
+    }, {
+      "code" : "00.05.03",
+      "name" : "Festdage, mærkedage og jubilæer"
+    }, {
+      "code" : "00.05.06",
+      "name" : "Receptioner"
+    }, {
+      "code" : "00.05.07",
+      "name" : "Hædersbevisninger, priser og prisuddelinger"
+    }, {
+      "code" : "00.05.09",
+      "name" : "Indsamlinger"
+    }, {
+      "code" : "00.05.10",
+      "name" : "Gaver til og fra kommunen/institutionen"
+    }, {
+      "code" : "00.05.11",
+      "name" : "Besøg til og fra kommunen/modtagelse af gæster"
+    } ]
+  },
+  "_links" : {
+    "first" : {
+      "href" : "https://dev.os2autoproces.eu/api/kles?page=0&amp;size=20"
+    },
+    "self" : {
+      "href" : "https://dev.os2autoproces.eu/api/kles{?page,size,sort}",
+      "templated" : true
+    },
+    "next" : {
+      "href" : "https://dev.os2autoproces.eu/api/kles?page=1&amp;size=20"
+    },
+    "last" : {
+      "href" : "https://dev.os2autoproces.eu/api/kles?page=138&amp;size=20"
+    },
+    "profile" : {
+      "href" : "https://dev.os2autoproces.eu/api/profile/kles"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 2767,
+    "totalPages" : 139,
+    "number" : 0
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>code</td>
+						<td>string</td>
+						<td>no</td>
+						<td>This field contains a 2-6 digit number, formatted as a string where each 2 digits are separated by
+							a dot. The code is known as the KLE group, subgroup or subject (depending on the amount of digits),
+							and is a code that can be attached to any work performed by a municipality.
+						</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>no</td>
+						<td>This is the title/name of the KLE group, subgroup or subject, and should be displayed (along with the code)
+							in the UI, and both the name and code should be searchable in the UI when selecting a KLE value, as
+							some workers use the codes and others tend to search by the name instead.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

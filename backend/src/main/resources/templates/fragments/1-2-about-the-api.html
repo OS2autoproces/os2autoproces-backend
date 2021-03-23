@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-1-2" th:fragment="header">1.2 Unsecured endpoints</h3>
+	
+	<div th:fragment="content">
+		<p>
+			OS2autoproces exposes a set of APIs that are unsecured, meaning they can be called without being
+			logged into the application. All unsecured APIs are exposed at the following base-address
+			(each actual API has an endpoint located below this base-address).
+		</p>
+		
+		<pre>https://dev.os2autoproces.eu/public</pre>
+		
+		<p>
+			All Unsecured endpoints are read-only, and are used for retrieving information useful
+			for displaying in the UI, or dealing with the login process or similar flows that
+			happens before the user is logged in.
+		</p>
+	</div>
+</body>
+</html>

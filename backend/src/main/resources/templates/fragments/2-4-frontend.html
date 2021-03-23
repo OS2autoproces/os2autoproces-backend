@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-2-4" th:fragment="header">2.4 Frontend Implementation</h3>
+	
+	<div th:fragment="content">
+		<p>
+			The SAML flow is handled by the backend, but the frontend needs to be aware of
+			the interactions that can trigger the flow, as the frontend plays a part in
+			this flow. This chapter outlines the flow that the frontend must implement.
+		</p>
+		
+		<h4>Deal with redirects from the backend</h4>
+		<p>
+			When the frontend performs calls to the backend APIs using javascript, the backend
+			will prevent access to the secured APIs if the user is not currently logged in (the users
+			browser does not supply a valid session cookie - either because it does not have any,
+			or because the session has expired).
+		</p>
+		
+		<p>
+			When this happens, the backend will return a HTTP 302 (redirect), with a Location header
+			set to the discovery page, expecting the browser to perform an actual navigation to
+			the discovery page, so the user can perform a login.
+		</p>
+		
+		<p>
+			The frontend must deal with these 302 responses correctly, and instead of redirecting
+			the javascript query to the new location, perform a browser navigation to the discovery
+			page... as the discovery page is a well-known resource, the javascript code could look
+			for this specific endpoint, and perform the browser navigation in that specific scenario,
+			and default to doing javascript query-redirect in all other cases.
+		</p>
+		
+		<h4>Implementing a discovery page</h4>
+		<p>
+			<strong>NOTICE</strong>. The discovery flow will likely be removed, so wait with this section.
+		</p>
+		
+		<p>
+			The temporary discovery page on the backend must be replaced by a (much) prettier discovery
+			page on the frontend, and the backend must know the location of this page, so it can return
+			the correct URL in the redirect mentioned above.
+		</p>
+		
+		<p>
+			The backend exposes a simple API for retrieving a list of municipalities that can login to
+			the solution, which can be used to retrieve a list choices for the end-user. This API should
+			be used to populate the discovery page with choices.
+		</p>
+		
+		<p>
+			Once the user has chosen which municipality he or she comes from, the discovery page should
+			perform a navigation to the following URL on the backend
+		</p>
+
+		<pre>https://dev.os2autoproces.eu/saml/login?idp=&lt;identifier&gt;</pre>
+				
+		<p>
+			Note that the &lt;identifier&gt; value in the URL should be replaced with the identifier of the
+			municipality that the user chooses. An example is shown below
+		</p>
+		
+		<pre>https://dev.os2autoproces.eu/saml/login?idp=http://adfs.digital-identity.dk/adfs/services/trust</pre>
+		
+		<p>
+			Upon successful login, the user is redirected back to some configured endpoint on the frontend application. 
+		</p>
+	</div>
+</body>
+</html>

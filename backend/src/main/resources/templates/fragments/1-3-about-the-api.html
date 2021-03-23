@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-1-3" th:fragment="header">1.3 Generated secured endpoints</h3>
+	
+	<div th:fragment="content">
+		<p>
+			OS2autoproces makes use of the
+			<a href="https://docs.spring.io/spring-data/rest/docs/2.6.12.RELEASE/reference/html/">Spring Data REST framework</a>
+			to generate CRUD-like APIs for many of the entities being handled by the backend.
+			These APIs can be configured to some extend, but there are limitations to what can be be customized,
+			and as such, these APIs all follow the same usage-pattern.
+		</p>
+
+		<p>
+			The generated APIs are secured by a SAML-based login mechanism, which means that before calling any
+			of these APIs, a login-flow must have been completed successfully, which results in a cookie being
+			issued by the backend, which the client/browser must supply on all calls to these APIs.
+		</p>
+		
+		<p>
+			Where relevant, the users identity is always derived from the session, and is never supplied by the
+			frontend when calling the API. In the same way, data is automatically filtered on the way out, so
+			if/when a user performs a search/read operation on data, where the user only has access to some of
+			this data, the rest is filtered away - the frontend does not need to perform any data-filtering or
+			security checks with regards to access to data (but should do security checks for functionality, so
+			actions are not exposed to the user, which the user cannot perform anyway)
+		</p>
+	</div>
+</body>
+</html>

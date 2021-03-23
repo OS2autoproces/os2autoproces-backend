@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h3 id="chapter-5-6" th:fragment="header">5.6 OrgUnit API</h3>
+	
+	<div th:fragment="content">
+		<h4>Description</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Generated Secure API</td>
+						<td>Stable</td>
+						<td>This API gives read-only access to the OrgUnits from the currently logged in users municipality</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<h4>Useful operations</h4>
+		<p>
+			Note that this is a generated API, so it supports all of the operations that
+			Spring Data REST allows (though updating operations are disabled).
+			The set of data changes daily, and is between 500 and 1000 entries per municipality.
+		</p>
+
+		<p>
+			<strong>NOTICE</strong>. It is currently undecided if the backend will allow cross-municipality
+			lookup of organizational data.
+		</p>
+
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<strong>Query for OrgUnits that matches a given name (case-insensitive infix search - supply at least 3 characters)</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/orgUnits?name=&lt;name&gt;&amp;cvr=&lt;cvr&gt;
+(returns a list of orgUnits that has the supplied name-parameter anywhere in their name, owned by the supplied CVR number)</pre>
+
+					<strong>Read a single OrgUnit</strong>
+					<pre class="card-text">GET https://dev.os2autoproces.eu/api/orgUnits/&lt;id&gt;
+(returns the data on the orgUnit that matches the supplied id)</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Example output</h4>
+		<p>
+			The output follows the standard structure for list-output on generated APIs, meaning that the
+			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
+			The result contains an array of User objects, which are described in the datamodel chapter below. 
+		</p>
+		
+		<p>
+			<div class="card">
+				<div class="card-body">
+					<pre class="card-text">{
+  "_embedded" : {
+    "orgUnits" : [ {
+      "id" : 1,
+      "uuid" : "7913234e-e253-4309-905e-84a3cf433e89",
+      "name" : "My Orgunit 01",
+      "active" : true,
+      "cvr" : "87654321"
+    }, {
+      "id" : 2,
+      "uuid" : "87f27b27-753e-4168-ba61-5ea7bf1efa98",
+      "name" : "My Orgunit 11",
+      "active" : true,
+      "cvr" : "87654321"
+    }, {
+      "id" : 3,
+      "uuid" : "2ef27647-8e88-4334-90da-6f3dd748511d",
+      "name" : "My Orgunit 21",
+      "active" : true,
+      "cvr" : "87654321"
+    }, {
+      "id" : 4,
+      "uuid" : "30a09715-f72a-4275-a21a-561d6c5d814d",
+      "name" : "My Orgunit 31",
+      "active" : true,
+      "cvr" : "87654321"
+    }, {
+      "id" : 5,
+      "uuid" : "fd1c8180-2205-472a-81b0-a2def1454d27",
+      "name" : "My Orgunit 41",
+      "active" : true,
+      "cvr" : "87654321"
+    }]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://dev.os2autoproces.eu/api/orgUnits{?page,size,sort}",
+      "templated" : true
+    },
+    "profile" : {
+      "href" : "https://dev.os2autoproces.eu/api/profile/orgUnits"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 5,
+    "totalPages" : 1,
+    "number" : 0
+  }
+}</pre>
+				</div>
+			</div>
+		</p>
+		
+		<h4>Datamodel</h4>
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Nullable</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td>integer</td>
+						<td>no</td>
+						<td>The unique id of the orgUnit, used for referencing the orgUnit</td>
+					</tr>
+					<tr>
+						<td>uuid</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The municipalities local id of the orgUnit</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The full name of the orgUnit</td>
+					</tr>
+					<tr>
+						<td>active</td>
+						<td>boolean</td>
+						<td>no</td>
+						<td>Indicates if the orgUnit is active (a part of the current organisation), or inactive (closed orgUnit)</td>
+					</tr>
+					<tr>
+						<td>cvr</td>
+						<td>string</td>
+						<td>no</td>
+						<td>The cvr number of the municipality to which the orgUnit belongs</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>
