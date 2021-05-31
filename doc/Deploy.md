@@ -23,6 +23,48 @@ på den maskine hvor man bygger EXE installeren.
 
 <h2>OS2autoproces Backend</h2>
 <p>
+OS2autoproces er en Java applikation, der er afhænging af konfigurationsfiler samt certifikat/keystore filer i forbindelse med deployment.
+Byggeprocessen for OS2autoproces sikrer at applikationen og dens framework afhængigheder pakkteres i en fed JAR fil, så til deployment
+har man alene brug for
+<ul>
+  <li>Den fede JAR file</li>
+  <li>En konfigurationsfil</li>
+  <li>En keystore fil</li>
+</ul>
+</p>
 
+<p>
+Man kan udelade konfigurationsfilen hvis man blot tilføjer alle konfigurationsparametre som miljøvariable i et Docker deployment. Dette
+kan gøres som beskrevet nedenfor
+</p>
+
+<h3>Docker</h3>
+Man kan bygge og pakktere OS2autoproces i en Docker container på følgende måde
+
+<ol>
+  <li>Kompiler OS2autoproces til en fed JAR fil</li>
+  <li>Kopier den fede JAR fil ind i en folder ved navn "deploy"</li>
+  <li>Lav en tekst fil ved navn "run.sh" og kopier den ind i "deploy" folderen</li>
+  <li>Byg en Docker container med indholdet af "deploy" folderen</li>
+  <li>Start Docker containeren vha Docker Compose, Kubernetes eller andet Docker deployment værktøj</li>
+<ol>
+
+<h4>1 - Kompiler OS2autoproces</h4>
+<p>
 </p>
   
+<h4>2 - Kompiler OS2autoproces</h4>
+<p>
+</p>
+  
+<h4>3 - Kompiler OS2autoproces</h4>
+<p>
+</p>
+  
+<h4>4 - Kompiler OS2autoproces</h4>
+<p>
+</p>
+  
+<h4>5 - Kompiler OS2autoproces</h4>
+<p>
+</p>
