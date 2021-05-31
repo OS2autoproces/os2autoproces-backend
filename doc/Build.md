@@ -69,9 +69,9 @@ Herudover findes en ekstern konfiguration i "config" folderen, som det er releva
 </p>
 
 <ul>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
+  <li><b>datasource.xxx</b>. Disse 3 indstillinger indeholder hhv url, brugernavn og kodeord til MySQL databasen</li>
+  <li><b>scheduled.enabled</b>. I test/udvikling sættes denne blot til "true". I produktion skal der kun være én server der har værdien sat til "true", alle andre skal have den sat til "false". Hvis den er sat til "true" kører skedulerede jobs i applikationen. Det er uhensigtsmæssigt at batch/skedulerede jobs kører parallelt på flere servere.</li>
+  <li><b>kitos.xxx</b>. xx</li>
   <li><b>xx</b>. xx</li>
   <li><b>xx</b>. xx</li>
   <li><b>xx</b>. xx</li>
