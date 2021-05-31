@@ -39,6 +39,7 @@ kan gøres som beskrevet nedenfor
 </p>
 
 <h3>Docker</h3>
+<p>
 Man kan bygge og pakktere OS2autoproces i en Docker container på følgende måde
 
 <ol>
@@ -47,24 +48,88 @@ Man kan bygge og pakktere OS2autoproces i en Docker container på følgende måd
   <li>Lav en tekst fil ved navn "run.sh" og kopier den ind i "deploy" folderen</li>
   <li>Byg en Docker container med indholdet af "deploy" folderen</li>
   <li>Start Docker containeren vha Docker Compose, Kubernetes eller andet Docker deployment værktøj</li>
-<ol>
+</ol>
+</p>
 
 <h4>1 - Kompiler OS2autoproces</h4>
 <p>
+JAR filen kan kompileres vha Maven og en terminal vindue som vist nedenfor
+<pre>
+$ mvn clean install
+</pre>
 </p>
   
-<h4>2 - Kompiler OS2autoproces</h4>
+<h4>2 - Kopier fed JAR til "deploy"</h4>
 <p>
+Start med at lave en deploy folder, og kopier så JAR filen derind som vist nedenfor
+<pre>
+$ mkdir Deploy
+$ cp target/os2autoproces-backend-1.0.0.jar deploy/
+</pre>
 </p>
   
-<h4>3 - Kompiler OS2autoproces</h4>
+<h4>3 - Lav run.sh script fil</h4>
 <p>
+Vi har brug for et shell script der kan starte OS2autoproces. Lav en tekst-fil ved navn run.sh og kopier den ind i "deploy" folderen. Filen skal have følgende indhold
+
+<pre>
+#!/bin/bash
+
+java -Dloader.path=config/* -jar os2autoproces-backend-1.0.0.jar
+</pre>
 </p>
   
-<h4>4 - Kompiler OS2autoproces</h4>
+<h4>4 - Byg Docker container</h4>
 <p>
+Når både JAR og run.sh fil ligger i "deploy" folderen, kan man bygge en container vha en Dockerfile. Lav en fil ved navn Dockerfile, og giv den følgende indhold
+<pre>
+FROM openjdk:8-jre
+
+WORKDIR /home
+COPY /deploy /home
+RUN chmod +x /home/run.sh
+EXPOSE 9090
+
+ENTRYPOINT ["/bin/bash", "run.sh"]
+</pre>
+</p>
+
+<p>
+Man bygger efterfølgende containeren via følgende kommandolinje. Dette forudsætter at man har Docker installeret.
+  
+<pre>
+docker build -t os2autoproces:latest .
+</pre>
 </p>
   
-<h4>5 - Kompiler OS2autoproces</h4>
+<h4>5 - Start Docker container</h4>
 <p>
+Docker containeren kan nu startes i produktionsmiljøet (hvordan man får containeren til produktionsmiljøet er udenfor scope af denne vejledning, men Dockerhub kunne være en mekanisme til dette). Til dette formål kan man bruge forskellige Docker værktøjer. Et sådan værktøj er Docker Compose, og der er nedenfor vist en simpel docker-compose.yml fil, som indeholder de fornødne opsætninger til at starte containeren. Bemærk at "environment" sektionen indeholder alt konfigurationen, og at der mountes en "config" folder, som skal indeholder certifikatet der refereres til i SAML opsætningen.
+  
+<pre>
+version: "2.4"
+services:
+  backend:
+    image: os2autoproces:latest
+    ports:
+      - 9090:9090
+    environment:
+      dataSource.url: "jdbc:mysql://localhost:3306/ap?useSSL=false"
+      dataSource.username: "root"
+      dataSource.password: "Test1234"
+
+      scheduled.enabled: "true"
+
+      ... osv ...
+    volumes:
+      - ./config:/home/config
+</pre>
+</p>
+
+<p>
+Der bør laves en "config" folder, hvor man kan kopiere keystore filen ind, så den kan læses af Docker containeren. Man kan også vælge at have hele environment sektionen i en application.propeties fil, som så placeres i "config" folderen.
+</p>
+
+<p>
+Man kan evt starte med en kopi af indholdet af application.properties filen fra kodebasen, og så tilpasse efter behov.
 </p>
