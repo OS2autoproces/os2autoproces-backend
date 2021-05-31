@@ -71,10 +71,10 @@ Herudover findes en ekstern konfiguration i "config" folderen, som det er releva
 <ul>
   <li><b>datasource.xxx</b>. Disse 3 indstillinger indeholder hhv url, brugernavn og kodeord til MySQL databasen</li>
   <li><b>scheduled.enabled</b>. I test/udvikling sættes denne blot til "true". I produktion skal der kun være én server der har værdien sat til "true", alle andre skal have den sat til "false". Hvis den er sat til "true" kører skedulerede jobs i applikationen. Det er uhensigtsmæssigt at batch/skedulerede jobs kører parallelt på flere servere.</li>
-  <li><b>kitos.xxx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
+  <li><b>kitos.xxx</b>. Disse 5 indstillinger peget på KITOS, og anvendes til udlæsning af it-system stamdata. Det er ikke en forudsætning til udvikling, og kan udelades udenfor produktionsmiljøet. I produktion skal man have en konkret konto i KITOS til udlæsning af data.</li>
+  <li><b>cloud.aws.xxx</b>. Disse 5 indstillinger anvendes til integration til AWS miljøet, der brugers til at gemme bilag samt sende emails. Kan udelades under udvikling, så længe man ikke uploader bilag.</li>
+  <li><b>s3.*</b>. Disse indstillinger udpeger den S3 bucket i AWS som bruges af ovenstående.</li>
+  <li><b>saml.*</b>. Disse indstillinger konfigurerer SAML opsætningen (se detaljer <a href="https://bitbucket.org/digitalidentity_dk/saml-module/">her</a>)</li>
   <li><b>xx</b>. xx</li>
   <li><b>xx</b>. xx</li>
   <li><b>xx</b>. xx</li>
