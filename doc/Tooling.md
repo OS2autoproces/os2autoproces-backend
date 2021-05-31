@@ -34,18 +34,28 @@ Backenden er skrevet i Java, specifikt Java 8.
 <h3>Værktøjer</h3>
 Det anbefales at man bruger et IDE som IntelliJ, Eclipse eller tilsvarende for at arbejde med kildekoden. Der medfølgender Maven pom.xml filer til at bygge projektet, og man kan anvende disse til at loade projektet ind i sit IDE.
 
-Ud over Java 8, et IDE og Maven 3, er der ikke andre forudsætninger for at kunne arbejde med kildekoden.
+Projektet forudsætter at man har en MySQL database kørende, da data lagres i en MySQL database (eller MySQL kompatibel databasen, fx MariaDB).
+
+Ud over MySQL, Java 8, et IDE og Maven 3, er der ikke andre forudsætninger for at kunne arbejde med kildekoden.
 
 <h3>Frameworks</h3>
 Backenden baserer sig primært på Spring frameworket. Specifikt anvendes følgende Spring moduler fra Spring Frameworket
 
 <ul>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
+  <li><b>Actuator</b>. Anvendes primært til at understøtte fejlsøgning og overvågning i driftsmiljøet.</li>
+  <li><b>Data REST</b>. Anvendes til at udstille et auto-genereret REST API baseret på datamodellen i Backenden.</li>
+  <li><b>Data JPA</b>. Anvendes som abstraktionslag mellem databasen og Backenden.</li>
+  <li><b>JDBC Sessions</b>. Anvendes som persistenslag til sessionsdata, for at understøtte et HA/Redundant driftsmiljø</li>
+  <li><b>Retry</b>. Anvendes til at simplificere retry logikken i kald til eksterne services</li>
+  <li><b>Envers</b>. Anvendes til at opbygge historik på database entiteter (processerne)</li>
+  <li><b>Cloud AWS</b>. Anvendes til at simplificere integrationen til AWS driftsmiljøet</li>
+</ul>
+
+Endvidere anvendes følgende 3.parts frameworks
+
+<ul>
+  <li><b>Thymeleaf</b>. Anvendes som templating engine - bruges til den indlejrede API dokumentation</li>
+  <li><b>Lombok</b>. Anvendes til at undgå at skulle skrive en masse boilerplate kode</li>
+  <li><b>Apache POI</b>. Anvendes til at danne EXCEL filer, som Frontenden kan udstille til download</li>
+  <li><b>QueryDSL</b>. Anvendes til at give rigere muligheder til opslag i databasen via Spring Data JPA</li>
 </ul>
