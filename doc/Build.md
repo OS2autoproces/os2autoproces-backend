@@ -38,7 +38,7 @@ skal tilpasses inden man effektivt kan afvikle løsningen, og trække relevante 
 </ul>
 </p>
 
-<h2>OS2autoproces Backend<h2>
+<h2>OS2autoproces Backend</h2>
 <p>
 Den nemmeste måde at bygge og afvikle OS2autoproces Backenden er via kommandolinjen, hvor man kan anvende Maven til formålet. Bemærk at man skal anvende Java 8 til at kompilere og bygge projektet. Man kan ikke anvende nyere Java versioner som Java 11 eller lignende.
 </p>
@@ -50,3 +50,43 @@ $ mvn clean install
 # kør projektet
 $ mvn spring-boot:run
 </pre>
+
+<p>
+Når man kompilerer projektet, danner den en fed JAR fil, placeret i target folderen. Denne JAR fil indeholder det fulde projekt, inkl alle afhængigheder, hvilket gør deployment betydeligt nemmere.
+</p>
+
+<p>
+Til udviklingsformål er der tilføjet et Spring Maven Plugin til pom.xml filen, der gør det muligt at afvikle projektet via "mvn spring-boot:run". Plugin'et er konfiguret til at hive folderen "config" med ind på classpath, så certifikater, konfigurationsfiler m.m. kan vedligeholdes i denne folder på en nem måde, mens man sidder og udvikler.
+</p>
+
+<h3>Konfiguration</h3>
+<p>
+Projektet har en default konfiguration, som indeholder de indstillinger der formodentligt aldrig skal ændres. Disse befinder sig i "src/main/resources/default.properties", og er konfiguration af frameworks.
+</p>
+
+<p>
+Herudover findes en ekstern konfiguration i "config" folderen, som det er relevant at tilpasse mens man udvikler. Det er samme konfiguration man typisk vil opsætte og tilpasse i forbindelse med produktionsdeployments. Konfigurationsfilen hedder her "application.properties", og de relevante indstillinger er beskrevet nedenfor
+</p>
+
+<ul>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+  <li><b>xx</b>. xx</li>
+</ul>
