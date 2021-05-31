@@ -16,9 +16,9 @@ Til Backenden er der udarbejdet følgende dokumenter. Tilgå repositoriet for Fr
 
 <h2>Kode</h2>
 <ul>
-  <li><a href="https://www.os2autoproces.eu/doc">API Dokumentation</a></li>
-  <li><a href="doc/Stuff.md">Klik her</a></li>
-  <li><a href="doc/Stuff.md">Klik her</a></li>
+  <li><a href="doc/Tooling.md">Beskrivelse af værktøjer, sprog og frameworks anvendt af kodebasen</a></li>
+  <li><a href="doc/Build.md">Vejledning til at bygge og afvikle kodebasen</a></li>
+  <li><a href="doc/Deploy.md">Vejledning til at pakketere, distribuere og afviklere løsningen i et servermiljø</a></li>
 </ul>
   
 </p>
