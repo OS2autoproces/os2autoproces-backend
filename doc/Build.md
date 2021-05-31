@@ -75,18 +75,7 @@ Herudover findes en ekstern konfiguration i "config" folderen, som det er releva
   <li><b>cloud.aws.xxx</b>. Disse 5 indstillinger anvendes til integration til AWS miljøet, der brugers til at gemme bilag samt sende emails. Kan udelades under udvikling, så længe man ikke uploader bilag.</li>
   <li><b>s3.*</b>. Disse indstillinger udpeger den S3 bucket i AWS som bruges af ovenstående.</li>
   <li><b>saml.*</b>. Disse indstillinger konfigurerer SAML opsætningen (se detaljer <a href="https://bitbucket.org/digitalidentity_dk/saml-module/">her</a>)</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
-  <li><b>xx</b>. xx</li>
+  <li><b>stsorgsync.url</b>. Pegepind til en kørende instans af OS2sync. Anvendes til indlæsning af organisationsdata fra kommuner der anvender FK Organisatino som kilde til OS2autoproces. Er ikke nødvendig at udfylde under udvikling.</li>
+  <li><b>server.ssl.*</b>. Opsætning af SSL certifikat. Bør ikke anvendes i produktion, men kan anvendes under udvikling.</li>
+  <li><b>management.*</b>. Opsætning af brugernavn/kodeord til Actuator endpoints</li>
 </ul>
