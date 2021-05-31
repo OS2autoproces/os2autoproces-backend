@@ -39,3 +39,14 @@ skal tilpasses inden man effektivt kan afvikle løsningen, og trække relevante 
 </p>
 
 <h2>OS2autoproces Backend<h2>
+<p>
+Den nemmeste måde at bygge og afvikle OS2autoproces Backenden er via kommandolinjen, hvor man kan anvende Maven til formålet. Bemærk at man skal anvende Java 8 til at kompilere og bygge projektet. Man kan ikke anvende nyere Java versioner som Java 11 eller lignende.
+</p>
+  
+<pre>
+# kompiler projektet
+$ mvn clean install
+
+# kør projektet
+$ mvn spring-boot:run
+</pre>
