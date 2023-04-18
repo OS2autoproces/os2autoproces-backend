@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.security;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.AuditorAware;
 
@@ -9,7 +10,7 @@ public class CommentUsernameGenerator implements AuditorAware<String> {
 	private static Map<String, String> municipalityNames;
 		
 	@Override
-	public String getCurrentAuditor() {
+	public Optional<String> getCurrentAuditor() {
 		String name = null;
 		String municipalityName = null;
 		
@@ -25,7 +26,7 @@ public class CommentUsernameGenerator implements AuditorAware<String> {
 			}
 		}
 
-		return name + ", " + municipalityName;
+		return Optional.of(name + ", " + municipalityName);
 	}
 	
 	static {

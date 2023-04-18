@@ -2,7 +2,6 @@ package dk.digitalidentity.ap.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +13,6 @@ import dk.digitalidentity.ap.dao.model.CmsEntry;
 import dk.digitalidentity.ap.security.RequireFrontPageEditorRole;
 import dk.digitalidentity.ap.service.CmsService;
 
-@CrossOrigin(exposedHeaders = "x-csrf-token")
 @RestController
 public class CmsApi {
 	

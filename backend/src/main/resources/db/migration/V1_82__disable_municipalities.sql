@@ -1,0 +1,1 @@
+ALTER TABLE municipalities ADD COLUMN disabled BOOLEAN DEFAULT 0;

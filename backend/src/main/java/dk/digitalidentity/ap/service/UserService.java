@@ -15,7 +15,7 @@ public class UserService {
 	private UserDao userDao;
 
 	public List<User> save(List<User> list) {
-		return userDao.save(list);
+		return userDao.saveAll(list);
 	}
 	
 	public User save(User user) {

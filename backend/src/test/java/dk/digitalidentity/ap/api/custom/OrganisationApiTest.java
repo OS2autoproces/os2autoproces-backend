@@ -9,10 +9,10 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -20,7 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
 import dk.digitalidentity.ap.api.model.OrgUnitDTO;
@@ -34,7 +34,7 @@ import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.security.TokenClient;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -58,7 +58,7 @@ public class OrganisationApiTest extends ApiTestHelper {
 	@Autowired
 	private UserDao userDao;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}
@@ -78,10 +78,10 @@ public class OrganisationApiTest extends ApiTestHelper {
 				
 		// verify database is empty
 		List<User> users = userDao.getByCvr("11223344");
-		Assert.assertTrue(users.size() == 0);
+		Assertions.assertTrue(users.size() == 0);
 
 		List<OrgUnit> orgUnits = orgUnitDao.getByCvr("11223344");
-		Assert.assertTrue(orgUnits.size() == 0);
+		Assertions.assertTrue(orgUnits.size() == 0);
 		
 		fakeClientLogin(municipality);
 		String payload = getPayload(false);
@@ -93,15 +93,15 @@ public class OrganisationApiTest extends ApiTestHelper {
 
 		// verify content is created
 		users = userDao.getByCvr("11223344");
-		Assert.assertTrue(users.size() == 3);
+		Assertions.assertTrue(users.size() == 3);
 
 		orgUnits = orgUnitDao.getByCvr("11223344");
-		Assert.assertTrue(orgUnits.size() == 3);
+		Assertions.assertTrue(orgUnits.size() == 3);
 
 		// data check
 		User user2 = userDao.getByUuidAndCvrAndActiveTrue(user2Uuid, "11223344");
-		Assert.assertTrue(user2.getPositions().size() == 2);
-		Assert.assertTrue(user2.getName().equals("user 2"));
+		Assertions.assertTrue(user2.getPositions().size() == 2);
+		Assertions.assertTrue(user2.getName().equals("user 2"));
 
 		fakeClientLogin(municipality);
 		payload = getPayload(true);
@@ -113,21 +113,21 @@ public class OrganisationApiTest extends ApiTestHelper {
 		
 		// verify content is created
 		users = userDao.getByCvr("11223344");
-		Assert.assertTrue(users.size() == 4);
+		Assertions.assertTrue(users.size() == 4);
 
 		orgUnits = orgUnitDao.getByCvr("11223344");
-		Assert.assertTrue(orgUnits.size() == 4);
+		Assertions.assertTrue(orgUnits.size() == 4);
 
 		// data check
 		User user3 = userDao.getByUuidAndCvrAndActiveTrue(user3Uuid, "11223344");
-		Assert.assertNull(user3);
+		Assertions.assertNull(user3);
 
 		OrgUnit orgUnit3 = orgUnitDao.getByUuidAndCvrAndActiveTrue(orgUnit3Uuid, "11223344");
-		Assert.assertNull(orgUnit3);
+		Assertions.assertNull(orgUnit3);
 
 		User user4 = userDao.getByUuidAndCvrAndActiveTrue(user4Uuid, "11223344");
-		Assert.assertTrue(user4.isActive());
-		Assert.assertTrue(user4.getName().equals("user 4"));
+		Assertions.assertTrue(user4.isActive());
+		Assertions.assertTrue(user4.getName().equals("user 4"));
 	}
 	
 	private String getPayload(boolean withUpdates) throws Exception {

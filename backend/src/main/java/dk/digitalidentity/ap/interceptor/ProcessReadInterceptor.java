@@ -79,6 +79,10 @@ public class ProcessReadInterceptor {
 		if (process == null) {
 			return;
 		}
+
+		if (SecurityUtil.isLoggedInAsSystemAccount()) {
+			return;
+		}
 		
 		// when linking to foreign processes (owned by other municipalities),
 		// those processes are read, and then linked to - if we make modifications,

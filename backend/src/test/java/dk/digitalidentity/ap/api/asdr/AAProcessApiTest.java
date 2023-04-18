@@ -10,10 +10,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +32,7 @@ import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.SecurityUtil;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -47,12 +47,12 @@ public class AAProcessApiTest extends ApiTestHelper {
 	@Autowired
 	private ProcessDao processDao;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		// make sure we have a good solid bunch of processes to work with
 		super.before(2, 2, 100);
 	}
-	
+
 	// The API has been implemented by Spring Data REST, so all the ordinary operations
 	// are tested through the tests made by the vendor of the framework
 	//
@@ -91,7 +91,7 @@ public class AAProcessApiTest extends ApiTestHelper {
 		
 		List<Process> allReportedByUser = allProcesses.stream()
 				.filter(p -> p.getVisibility().equals(Visibility.PERSONAL))
-				.filter(p -> p.getReporter().getUuid().equals(user.getUuid()))
+				.filter(p -> p.getReporter() != null && p.getReporter().getUuid().equals(user.getUuid()))
 				.collect(Collectors.toList());
 		
 		List<Process> allAssociatedWithUser = allProcesses.stream()
@@ -174,12 +174,12 @@ public class AAProcessApiTest extends ApiTestHelper {
 		try {
 			// the content is required as reading other municipalities processes blanks out several fields which are required
 			this.mockMvc.perform(patch("/api/processes/{id}", allFromOtherCvr.get(0).getId())
-						.content("{\"title\":\"veryRandomString\",\"contact\": \"https://localhost:9090/api/users/1\",\"owner\": \"https://localhost:9090/api/users/1\", \"phase\": \"IDEA\"}")
+						.content("{\"title\":\"veryRandomString\",\"users\":[],\"contact\": \"https://localhost:9090/api/users/1\",\"owner\": \"https://localhost:9090/api/users/1\", \"phase\": \"IDEA\"}")
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 						.andExpect(status().is(403)); // we get an exception instead :(
 
-			Assert.assertFalse("Should never arrive here!", true);
+			Assertions.assertFalse(true, "Should never arrive here!");
 		}
 		catch (Exception ex) {
 			// because the tests runs in the same context as the backend being tested, the exception
@@ -191,7 +191,7 @@ public class AAProcessApiTest extends ApiTestHelper {
 				t = t.getCause();
 			}
 			
-			Assert.assertTrue(t instanceof AccessDeniedException);
+			Assertions.assertTrue(t instanceof AccessDeniedException);
 		}
 
 		// now try with a super user
@@ -217,7 +217,7 @@ public class AAProcessApiTest extends ApiTestHelper {
 
 		List<Process> allReportedByUser = allProcesses.stream()
 				.filter(p -> p.getVisibility().equals(Visibility.PERSONAL))
-				.filter(p -> p.getReporter().getUuid().equals(user.getUuid()))
+				.filter(p -> p.getReporter() != null && p.getReporter().getUuid().equals(user.getUuid()))
 				.collect(Collectors.toList());
 		
 		List<Process> allAssociatedWithUser = allProcesses.stream()
@@ -267,14 +267,15 @@ public class AAProcessApiTest extends ApiTestHelper {
 
         Process[] processes = mapper.readValue(res, Process[].class);
         
-		Assert.assertTrue(processes.length == 0);
+        Assertions.assertTrue(processes.length == 0);
 		
 		// update two processes to match
 		
 		List<Process> allProcesses = processDao.findAll();
+		
 		List<Process> allReportedByUser = allProcesses.stream()
 				.filter(p -> p.getVisibility().equals(Visibility.PERSONAL))
-				.filter(p -> p.getReporter().getUuid().equals(user.getUuid()))
+				.filter(p -> p.getReporter() != null && p.getReporter().getUuid().equals(user.getUuid()))
 				.collect(Collectors.toList());
 
 		this.mockMvc.perform(patch("/api/processes/{id}", allReportedByUser.get(0).getId())
@@ -303,6 +304,6 @@ public class AAProcessApiTest extends ApiTestHelper {
 		
 		processes = mapper.readValue(res, Process[].class);
 		
-		Assert.assertTrue(processes.length == 2);
+		Assertions.assertTrue(processes.length == 2);
 	}
 }

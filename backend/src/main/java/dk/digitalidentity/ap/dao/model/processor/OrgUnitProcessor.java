@@ -1,17 +1,18 @@
 package dk.digitalidentity.ap.dao.model.processor;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 
 @Component
-public class OrgUnitProcessor implements ResourceProcessor<Resource<OrgUnit>> {
+public class OrgUnitProcessor implements RepresentationModelProcessor<EntityModel<OrgUnit>> {
 
 	@Override
-	public Resource<OrgUnit> process(Resource<OrgUnit> resource) {
+	public EntityModel<OrgUnit> process(EntityModel<OrgUnit> model) {
+
 		// strip links
-		return new Resource<>(resource.getContent());
+		return EntityModel.of(model.getContent());
 	}
 }

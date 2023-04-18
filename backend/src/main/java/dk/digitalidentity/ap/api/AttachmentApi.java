@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +26,6 @@ import dk.digitalidentity.ap.service.S3Service;
 import lombok.extern.log4j.Log4j;
 
 @RestController
-@CrossOrigin(exposedHeaders = "x-csrf-token")
 @Log4j
 @RequestMapping("/api/attachments")
 public class AttachmentApi {
@@ -104,7 +102,7 @@ public class AttachmentApi {
 			}
 		}
 
-		attachmentDao.save(attachments);
+		attachmentDao.saveAll(attachments);
 
 		return ResponseEntity.ok(attachments);
 	}

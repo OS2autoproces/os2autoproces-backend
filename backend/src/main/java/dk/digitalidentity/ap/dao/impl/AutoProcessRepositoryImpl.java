@@ -1,35 +1,24 @@
 package dk.digitalidentity.ap.dao.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.DefaultRevisionEntity;
-import org.hibernate.envers.RevisionNumber;
-import org.hibernate.envers.RevisionTimestamp;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.envers.repository.support.DefaultRevisionMetadata;
-import org.springframework.data.envers.repository.support.EnversRevisionRepository;
-import org.springframework.data.history.AnnotationRevisionMetadata;
+import org.springframework.data.envers.repository.support.EnversRevisionRepositoryImpl;
 import org.springframework.data.history.Revision;
-import org.springframework.data.history.RevisionMetadata;
-import org.springframework.data.history.RevisionSort;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
-import org.springframework.data.querydsl.EntityPathResolver;
+import org.springframework.data.jpa.repository.support.QuerydslJpaPredicateExecutor;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.repository.core.EntityInformation;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.history.support.RevisionEntityInformation;
 
 import com.querydsl.core.types.ConstantImpl;
@@ -53,158 +42,96 @@ import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import lombok.extern.log4j.Log4j;
 
-@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 @Log4j
-public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Number & Comparable<N>> extends QueryDslJpaRepository<T, ID> implements EnversRevisionRepository<T, ID, N> {
+public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
+		extends QuerydslJpaPredicateExecutor<T>
+		implements RevisionRepository<T, ID, N> {
 	private final EntityInformation<T, ?> entityInformation;
-	private final RevisionEntityInformation revisionEntityInformation;
-	private final EntityManager entityManager;
+	
+	// hacks :)
+	private final EnversRevisionRepositoryImpl enversImpl;
+	private final SimpleJpaRepository<T, ID> jpaRepositoryImpl;
 
 	public AutoProcessRepositoryImpl(JpaEntityInformation<T, ID> entityInformation, RevisionEntityInformation revisionEntityInformation, EntityManager entityManager) {
-		super(entityInformation, entityManager);
-
-		this.revisionEntityInformation = revisionEntityInformation;
-		this.entityInformation = entityInformation;
-		this.entityManager = entityManager;
-	}
-
-	public AutoProcessRepositoryImpl(JpaEntityInformation<T, ID> entityInformation, EntityManager entityManager, RevisionEntityInformation revisionEntityInformation, EntityPathResolver resolver) {
-		super(entityInformation, entityManager, resolver);
+		super(entityInformation, entityManager, SimpleEntityPathResolver.INSTANCE, null);
 		
 		this.entityInformation = entityInformation;
-		this.revisionEntityInformation = revisionEntityInformation;
-		this.entityManager = entityManager;
-	}
-	
-	@Override
-	public Revision<N, T> findLastChangeRevision(ID id) {
-		Class<T> type = entityInformation.getJavaType();
-		AuditReader reader = AuditReaderFactory.get(entityManager);
-		List<Number> revisions = reader.getRevisions(type, id);
-
-		if (revisions.isEmpty()) {
-			return null;
-		}
-
-		N latestRevision = (N) revisions.get(revisions.size() - 1);
-
-		Class<?> revisionEntityClass = revisionEntityInformation.getRevisionEntityClass();
-
-		Object revisionEntity = reader.findRevision(revisionEntityClass, latestRevision);
-		RevisionMetadata<N> metadata = (RevisionMetadata<N>) getRevisionMetadata(revisionEntity);
 		
-		return new Revision<N, T>(metadata, reader.find(type, id, latestRevision));
+		enversImpl = new EnversRevisionRepositoryImpl<T, ID, N>(entityInformation, revisionEntityInformation, entityManager);
+		jpaRepositoryImpl = new SimpleJpaRepository<T, ID>(entityInformation, entityManager);
 	}
-	
+
+	// sucks, but we have to copy the code (raw, unmodified) from EnversRevisionRepositoryImpl for the next
+	// 4 methods, because we cannot extend 2 implementations. We are extending QuerydslJpaPredicateExecutor, and
+	// hence have to implement RevisionRepository - but copying four methods is okay, since we can just call
+	// our own local instance ;)
 	@Override
-	public Revision<N, T> findRevision(ID id, N revisionNumber) {
-		return getEntityForRevision(revisionNumber, id, AuditReaderFactory.get(entityManager));
+	public Optional<Revision<N, T>> findLastChangeRevision(ID id) {
+		return enversImpl.findLastChangeRevision(id);
 	}
-	
+
 	@Override
 	public Revisions<N, T> findRevisions(ID id) {
-		Class<T> type = entityInformation.getJavaType();
-		AuditReader reader = AuditReaderFactory.get(entityManager);
-		List<? extends Number> revisionNumbers = reader.getRevisions(type, id);
-
-		return revisionNumbers.isEmpty() ? new Revisions<N, T>(Collections.EMPTY_LIST) : getEntitiesForRevisions((List<N>) revisionNumbers, id, reader);
+		return enversImpl.findRevisions(id);
 	}
-	
+
 	@Override
 	public Page<Revision<N, T>> findRevisions(ID id, Pageable pageable) {
-		Class<T> type = entityInformation.getJavaType();
-		AuditReader reader = AuditReaderFactory.get(entityManager);
-		List<Number> revisionNumbers = reader.getRevisions(type, id);
-
-		boolean isDescending = RevisionSort.getRevisionDirection(pageable.getSort()).isDescending();
-
-		if (isDescending) {
-			Collections.reverse(revisionNumbers);
-		}
-
-		if (pageable.getOffset() > revisionNumbers.size()) {
-			return new PageImpl<Revision<N, T>>(Collections.<Revision<N, T>>emptyList(), pageable, 0);
-		}
-
-		int upperBound = pageable.getOffset() + pageable.getPageSize();
-		upperBound = upperBound > revisionNumbers.size() ? revisionNumbers.size() : upperBound;
-
-		List<? extends Number> subList = revisionNumbers.subList(pageable.getOffset(), upperBound);
-		Revisions<N, T> revisions = getEntitiesForRevisions((List<N>) subList, id, reader);
-
-		return new PageImpl<Revision<N, T>>(revisions.getContent(), pageable, revisionNumbers.size());
-	}
-	
-	private Revisions<N, T> getEntitiesForRevisions(List<N> revisionNumbers, ID id, AuditReader reader) {
-		Class<T> type = entityInformation.getJavaType();
-		Map<N, T> revisions = new HashMap<N, T>(revisionNumbers.size());
-
-		Class<?> revisionEntityClass = revisionEntityInformation.getRevisionEntityClass();
-		Map<Number, Object> revisionEntities = (Map<Number, Object>) reader.findRevisions(revisionEntityClass, new HashSet<Number>(revisionNumbers));
-
-		for (Number number : revisionNumbers) {
-			revisions.put((N) number, reader.find(type, id, number));
-		}
-
-		return new Revisions<N, T>(toRevisions(revisions, revisionEntities));
-	}
-
-	private Revision<N, T> getEntityForRevision(N revisionNumber, ID id, AuditReader reader) {
-		Class<?> type = revisionEntityInformation.getRevisionEntityClass();
-
-		T revision = (T) reader.findRevision(type, revisionNumber);
-		Object entity = reader.find(entityInformation.getJavaType(), id, revisionNumber);
-
-		return new Revision<N, T>((RevisionMetadata<N>) getRevisionMetadata(revision), (T) entity);
-	}
-
-	private List<Revision<N, T>> toRevisions(Map<N, T> source, Map<Number, Object> revisionEntities) {
-		List<Revision<N, T>> result = new ArrayList<Revision<N, T>>();
-
-		for (Map.Entry<N, T> revision : source.entrySet()) {
-			N revisionNumber = revision.getKey();
-			T entity = revision.getValue();
-			RevisionMetadata<N> metadata = (RevisionMetadata<N>) getRevisionMetadata(revisionEntities.get(revisionNumber));
-
-			result.add(new Revision<N, T>(metadata, entity));
-		}
-
-		Collections.sort(result);
-
-		return Collections.unmodifiableList(result);
-	}
-
-	private RevisionMetadata<?> getRevisionMetadata(Object object) {
-		if (object instanceof DefaultRevisionEntity) {
-			return new DefaultRevisionMetadata((DefaultRevisionEntity) object);
-		}
-		else {
-			return new AnnotationRevisionMetadata<N>(object, RevisionNumber.class, RevisionTimestamp.class);
-		}
+		return enversImpl.findRevisions(id, pageable);
 	}
 
 	@Override
-	public T findOne(ID id) {
+	public Optional<Revision<N, T>> findRevision(ID id, N revisionNumber) {
+		return enversImpl.findRevision(id, revisionNumber);
+	}
+
+	public Optional<T> findById(ID id) {
 		if (entityInformation.getJavaType().equals(Process.class)) {
 			Predicate predicate = QProcess.process.id.eq((Long) id);
+
 			Predicate where = getPredicate(predicate);
 
 			return super.findOne(where);
 		}
 		else if (entityInformation.getJavaType().equals(User.class)) {
 			Predicate predicate = QUser.user.id.eq((Long) id);
+
 			Predicate where = getSameCvrPredicateForUser(predicate);
 
 			return super.findOne(where);
 		}
 		else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
 			Predicate predicate = QOrgUnit.orgUnit.id.eq((Long) id);
+
 			Predicate where = getSameCvrPredicateForOrgUnit(predicate);
 
 			return super.findOne(where);
 		}
 
-		return super.findOne(id);
+		// fallback to ordinary JPA lookup ;)
+		return jpaRepositoryImpl.findById(id);
+	}
+	
+	@Override
+	public Optional<T> findOne(Predicate predicate) {
+		if (entityInformation.getJavaType().equals(Process.class)) {
+			Predicate where = getPredicate(predicate);
+
+			return super.findOne(where);
+		}
+		else if (entityInformation.getJavaType().equals(User.class)) {
+			Predicate where = getSameCvrPredicateForUser(predicate);
+
+			return super.findOne(where);
+		}
+		else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
+			Predicate where = getSameCvrPredicateForOrgUnit(predicate);
+
+			return super.findOne(where);
+		}
+		
+		return super.findOne(predicate);
 	}
 
 	@Override
@@ -249,6 +176,8 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 		return super.findAll(predicate);
 	}
 
+	// helper methods start here
+	
 	private Predicate getSameCvrPredicateForUser(Predicate predicate) {
 		// Spring Security ensures that a user is logged in, and a CVR number is
 		// available before getting here when called through the API, but when
@@ -343,6 +272,7 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 			Predicate orgUnitNames = process.orgUnits.any().name.contains(freeTextSearch);
 			Predicate reporterName = process.reporter.name.contains(freeTextSearch);
 			Predicate contactName = process.contact.name.contains(freeTextSearch);
+			Predicate otherContactEmail = process.otherContactEmail.contains(freeTextSearch);
 			Predicate ownerName = process.owner.name.contains(freeTextSearch);
 			Predicate kleCode = process.kle.startsWith(freeTextSearch);
 			
@@ -358,10 +288,10 @@ public class AutoProcessRepositoryImpl<T, ID extends Serializable, N extends Num
 
 			if (modifiedPredicateHolder.size() > 0) {
 				Predicate p = modifiedPredicateHolder.get(0);
-				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, ownerName, kleCode), p);
+				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode), p);
 			}
 			else {
-				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, ownerName, kleCode);
+				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode);
 			}
 		}
 

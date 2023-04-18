@@ -21,7 +21,7 @@ public class Municipality {
 	@Id
 	@Column
 	@JsonIgnore
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column
@@ -37,4 +37,12 @@ public class Municipality {
 	@JsonIgnore
 	@Column
 	private boolean stsSync;
+	
+	@JsonIgnore
+	@Column
+	private boolean disabled;
+	
+	@JsonIgnore
+	@Column
+	private boolean allowNameUpdate;
 }

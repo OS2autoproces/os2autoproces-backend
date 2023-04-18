@@ -1,5 +1,6 @@
 package dk.digitalidentity.ap.task;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ public class STSOrganisationTask {
 		parse(true);
 	}
 
-	// fetch data every night at 03:00
-	@Scheduled(cron = "0 0 3 * * *")
+	// fetch data every evening at 18:30
+	@Scheduled(cron = "0 30 18 * * *")
 	public void parse() {
 		parse(false);
 	}
@@ -61,15 +62,21 @@ public class STSOrganisationTask {
 			}
 			
 			Predicate predicate = QOrgUnit.orgUnit.cvr.eq(municipality.getCvr());
-			if (onlyNew && orgUnitDao.count(predicate) > 0) {
+			long ouCount = orgUnitDao.count(predicate);
+			if (onlyNew && ouCount > 0) {
 				continue;
 			}
-			
+
 			try {
-				service.loadOrganisation(municipality.getCvr());
+				// run on a 7 day schedule
+				long dayToRun = Long.parseLong(municipality.getCvr()) % 7 + 1;
+
+				if (ouCount == 0 || LocalDate.now().getDayOfWeek().getValue() == dayToRun) {
+					service.loadOrganisation(municipality.getCvr());
+				}
 			}
 			catch (Exception ex) {
-				log.error("Failed to load organisation for cvr: " + municipality.getCvr(), ex);
+				log.error("Failed to load organisation for : " + municipality.getName(), ex);
 			}
 		}
 	}

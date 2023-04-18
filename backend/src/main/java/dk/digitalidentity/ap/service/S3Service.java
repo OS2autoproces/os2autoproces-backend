@@ -72,7 +72,7 @@ public class S3Service {
 		String filenameWithoutExtension = getFilenameWithoutExtension(fileName);
 		String randomSuffix = Long.toString(System.currentTimeMillis());
 
-		if (StringUtils.isEmpty(fileExtension)) {
+		if (!StringUtils.hasLength(fileExtension)) {
 			return filenameWithoutExtension + "-" + randomSuffix;
 		}
 		else {

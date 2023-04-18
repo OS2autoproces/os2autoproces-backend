@@ -1,17 +1,19 @@
 package dk.digitalidentity.ap.dao.model.processor;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.dao.model.CmsEntry;
 
 @Component
-public class CmsEntityProcessor implements ResourceProcessor<Resource<CmsEntry>> {
+public class CmsEntityProcessor implements RepresentationModelProcessor<EntityModel<CmsEntry>> {
 
 	@Override
-	public Resource<CmsEntry> process(Resource<CmsEntry> resource) {
+	public EntityModel<CmsEntry> process(EntityModel<CmsEntry> model) {
+
 		// strip links
-		return new Resource<>(resource.getContent());
+		return EntityModel.of(model.getContent());
 	}
+
 }

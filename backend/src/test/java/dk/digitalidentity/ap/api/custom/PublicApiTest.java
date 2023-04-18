@@ -5,27 +5,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
 import dk.digitalidentity.ap.api.model.SystemUserDTO;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
 @Transactional
 public class PublicApiTest extends ApiTestHelper {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}
@@ -42,10 +42,10 @@ public class PublicApiTest extends ApiTestHelper {
 		String response = result.getResponse().getContentAsString();
 
 		SystemUserDTO who = mapper.readValue(response, SystemUserDTO.class);
-		Assert.assertTrue(who.getCvr().equals(user.getCvr()));
-		Assert.assertTrue(who.getName().equals(user.getName()));
-		Assert.assertTrue(who.getUuid().equals(user.getUuid()));
-		Assert.assertTrue(who.getRoles().size() == 3);
+		Assertions.assertTrue(who.getCvr().equals(user.getCvr()));
+		Assertions.assertTrue(who.getName().equals(user.getName()));
+		Assertions.assertTrue(who.getUuid().equals(user.getUuid()));
+		Assertions.assertTrue(who.getRoles().size() == 3);
 
 		// logout
 		fakeLogin(null, null);
@@ -57,7 +57,7 @@ public class PublicApiTest extends ApiTestHelper {
 		response = result.getResponse().getContentAsString();
 
 		who = mapper.readValue(response, SystemUserDTO.class);
-		Assert.assertTrue(who.getCvr() == null);
-		Assert.assertTrue(who.getName() == null);
+		Assertions.assertTrue(who.getCvr() == null);
+		Assertions.assertTrue(who.getName() == null);
 	}
 }

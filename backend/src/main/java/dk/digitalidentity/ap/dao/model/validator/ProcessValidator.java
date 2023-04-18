@@ -200,6 +200,8 @@ public class ProcessValidator implements Validator {
 					case IDEA:
 						// no extra required fields in this phase
 						break;
+					case DECOMMISSIONED:
+						break;
 				}
 			}
 		}

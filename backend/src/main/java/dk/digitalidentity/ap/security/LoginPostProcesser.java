@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import dk.digitalidentity.ap.dao.model.Administrator;
+import dk.digitalidentity.ap.dao.model.Municipality;
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.service.AdministratorService;
@@ -38,10 +40,16 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 	public void process(TokenUser tokenUser) {
 		String uuid = (String) tokenUser.getAttributes().get(TokenUser.ATTRIBUTE_UUID);
 		
-		if (municipalityService.getByCvr(tokenUser.getCvr()) == null) {
+		Municipality municipality = municipalityService.getByCvr(tokenUser.getCvr());
+		if (municipality == null) {
 			log.warn("User with uuid=" + uuid.toLowerCase() + ", belongs to unknown organisation with cvr=" + tokenUser.getCvr());
 
 			throw new UsernameNotFoundException("Ukendt CVR: " + tokenUser.getCvr());			
+		}
+		else if (municipality.isDisabled()) {
+			log.warn("User with uuid=" + uuid.toLowerCase() + ", belongs to a disabled organisation with cvr=" + tokenUser.getCvr());
+
+			throw new UsernameNotFoundException("Adgang spærret. CVR: " + tokenUser.getCvr());			
 		}
 		
 		User user = null;
@@ -96,6 +104,25 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 			user.setActive(true);
 			user.setPositions(new ArrayList<>());
 			userService.save(user);
+		}
+		else if (municipality.isAllowNameUpdate()) {
+			Object givenName = tokenUser.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname");
+			Object surName = tokenUser.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname");
+			String name = tokenUser.getUsername();
+			if (givenName != null && surName != null) {
+				name = (String) givenName + " " + (String) surName;
+			}
+			else {
+				String nameCandidate = getNameIdValue("CN", name);
+				if (nameCandidate.length() > 0) {
+					name = nameCandidate;
+				}				
+			}
+
+			if (!Objects.equals(user.getName(), name)) {
+				user.setName(name);
+				userService.save(user);
+			}
 		}
 		
 		// quick-fix for users that are actually inactive, but are logging in anyway (reactive account)

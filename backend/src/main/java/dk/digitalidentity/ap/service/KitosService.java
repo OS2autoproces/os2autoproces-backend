@@ -40,7 +40,7 @@ public class KitosService {
 	private String kitosPassword;
 
 	public boolean isConfigured() {
-		if (StringUtils.isEmpty(kitosUsername) || StringUtils.isEmpty(kitosPassword)) {
+		if (!StringUtils.hasLength(kitosUsername) || !StringUtils.hasLength(kitosPassword)) {
 			log.warn("No KITOS username/password configured!");
 			return false;
 		}

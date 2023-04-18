@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,6 @@ import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.xls.ProcessXlsView;
 
 @RestController
-@CrossOrigin(exposedHeaders = "x-csrf-token")
 @RequestMapping("/api/excel")
 public class ExcelApi {
 	

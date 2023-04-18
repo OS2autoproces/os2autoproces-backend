@@ -9,22 +9,22 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
 import dk.digitalidentity.ap.dao.model.Bookmark;
 import dk.digitalidentity.ap.service.BookmarkService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -34,7 +34,7 @@ public class BookmarkApiTest extends ApiTestHelper {
 	@Autowired
 	private BookmarkService bookmarkService;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}
@@ -64,7 +64,7 @@ public class BookmarkApiTest extends ApiTestHelper {
 					.andExpect(status().is(200));
 
 		List<Bookmark> bookmarks = bookmarkService.getByUser(user.getId());
-		Assert.assertTrue(bookmarks.size() == 2);
+		Assertions.assertTrue(bookmarks.size() == 2);
 		
 		int matches = 0;
 		for (Bookmark bookmark : bookmarks) {
@@ -75,14 +75,14 @@ public class BookmarkApiTest extends ApiTestHelper {
 				matches++;
 			}
 		}	
-		Assert.assertTrue(matches == 2);
+		Assertions.assertTrue(matches == 2);
 		
 		this.mockMvc.perform(delete("/api/bookmarks/{id}", id1))
 			.andExpect(status().is(200))
 			.andReturn();
 
 		bookmarks = bookmarkService.getByUser(user.getId());
-		Assert.assertTrue(bookmarks.size() == 1);
-		Assert.assertTrue(bookmarks.get(0).getProcess().getId() == Long.parseLong(id2));
+		Assertions.assertTrue(bookmarks.size() == 1);
+		Assertions.assertTrue(bookmarks.get(0).getProcess().getId() == Long.parseLong(id2));
 	}
 }

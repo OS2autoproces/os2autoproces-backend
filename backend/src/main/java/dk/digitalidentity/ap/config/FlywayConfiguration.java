@@ -12,9 +12,6 @@ import org.springframework.context.annotation.Profile;
 @Profile("!test")
 public class FlywayConfiguration {
 
-	@Value("${dataSource.driverClassName:com.mysql.jdbc.Driver}")
-	private String databaseType;
-
 	@Value("${flyway.clean:false}")
 	private boolean flywayClean;
 
@@ -22,6 +19,7 @@ public class FlywayConfiguration {
 	public Flyway flyway(DataSource dataSource) {
 		Flyway flyway = new Flyway();
 		flyway.setDataSource(dataSource);
+		flyway.migrate();
 
 		if (flywayClean) {
 			flyway.clean();

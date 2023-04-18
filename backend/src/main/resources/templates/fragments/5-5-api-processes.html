@@ -136,6 +136,14 @@
     "url" : "http://blah2.dk",
     "internal" : true
   } ],
+  "services": [
+    {
+      "name": "Service Number One"
+    },
+    {
+      "name": "Service #2"
+    }
+  ],
   "vendor" : null,
   "cvr" : "12345678",
   "municipalityName": "Syddjurs Kommune",
@@ -164,7 +172,12 @@
   "organizationalImplementationNotes" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor",
   "rating" : 0,
   "ratingComment" : null,
-  "searchWords" : "",
+  "expectedDevelopmentTime": "100.12",
+  "searchWords": "",
+  "codeRepositoryUrl": null,
+  "runPeriod": "ONDEMAND",
+  "sepMep": false,
+  "childrenCount": 0,
   "_links" : {
     "self" : {
       "href" : "https://www.os2autoproces.eu/api/processes/501"
@@ -240,7 +253,7 @@
 						<td>phase</td>
 						<td>enum</td>
 						<td>no</td>
-						<td>One of the following: IDEA, PREANALYSIS, SPECIFICATION, DEVELOPMENT, IMPLEMENTATION, OPERATION</td>
+						<td>One of the following: IDEA, PREANALYSIS, SPECIFICATION, DEVELOPMENT, IMPLEMENTATION, OPERATION, DECOMMISSIONED</td>
 					</tr>
 					<tr>
 						<td>type</td>
@@ -252,7 +265,7 @@
 						<td>status</td>
 						<td>Enum</td>
 						<td>no</td>
-						<td>One of the following: REJECTED, FAILED, PENDING, INPROGRESS, NOT_RATED</td>
+						<td>One of the following: REJECTED, FAILED, PENDING, INPROGRESS, NOT_RATED, NOT_RELEVANT</td>
 					</tr>
 					<tr>
 						<td>statusText</td>
@@ -306,7 +319,7 @@
 						<td>domain</td>
 						<td>Array of Enum</td>
 						<td>empty is allowed</td>
-						<td>Zero or more of the following: WORK, HEALTH, CHILDREN, ENVIRONMENT, DEMOCRACY, ADMINISTRATION</td>
+						<td>Zero or more of the following: HEALTH, ENVIRONMENT, DEMOCRACY, ADMINISTRATION, EMPLOYMENT, PROFESSION, FAMILY, EDUCATION, TECHNIQUE, SOCIAL, SUSTAINABILITY, HR, IT, CULTURE, ECONOMY</td>
 					</tr>
 					<tr>
 						<td>visibility</td>
@@ -353,8 +366,14 @@
 					<tr>
 						<td>links</td>
 						<td>Array</td>
-						<td>yes</td>
+						<td>empty array</td>
 						<td>List of links (contains a char(1024) url value and a boolean internal field)</td>
+					</tr>
+					<tr>
+						<td>services</td>
+						<td>Array</td>
+						<td>empty array</td>
+						<td>List of services (contains a 255 char name)</td>
 					</tr>
 					<tr>
 						<td>vendor</td>
@@ -541,6 +560,18 @@
 						<td>Boolean</td>
 						<td>no</td>
 						<td>set to true if this is a SEP or MEP process</td>
+					</tr>
+					<tr>
+						<td>expectedDevelopmentTime</td>
+						<td>Double</td>
+						<td>yes</td>
+						<td>Indicate the expected development time for that process. 10 digits max length including 2 max digits of precision f.x. 100.30</td>
+					</tr>
+					<tr>
+						<td>otherContactEmail</td>
+						<td>String (225 char)</td>
+						<td>yes</td>
+						<td>Other contact email is shown instead of contact if not null when process is shown to other municipalities. Defaults to null, can be changed by UI</td>
 					</tr>
 				</tbody>
 			</table>
@@ -804,6 +835,7 @@
     "active" : true,
     "cvr" : "12345678"
   },
+  "otherContactEmail" : null,
   "internalNotes" : null,
   "canEdit" : true,
   "domains" : [
@@ -811,6 +843,7 @@
     "WORK"
   ],
   "shortDescription" : "Lorem ipsum",
+  "expectedDevelopmentTime": "100.12",
   "id" : 501,
   "owner" : {
     "id" : 2,

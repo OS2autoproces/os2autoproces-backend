@@ -44,6 +44,7 @@ import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
 import dk.digitalidentity.ap.dao.model.enums.Status;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.dao.model.projection.ProcessExtendedProjection;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,8 +58,7 @@ public class Process {
 	// IDs
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column
@@ -156,7 +156,8 @@ public class Process {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reporter", nullable = false)
-	@ReadOnlyProperty
+	// by agreement with Sigrid - for Aalborg API usage
+	//	@ReadOnlyProperty
 	private User reporter;
 
 	@OneToOne(fetch = FetchType.LAZY)
@@ -167,7 +168,7 @@ public class Process {
 	@JoinColumn(name = "owner", nullable = false)
 	private User owner;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name = "process_links", joinColumns = @JoinColumn(name = "process_id"), inverseJoinColumns = @JoinColumn(name = "link_id"))
 	private List<Link> links;
 
@@ -190,6 +191,10 @@ public class Process {
 	@OneToMany
 	@JoinTable(name = "process_technologies", joinColumns = { @JoinColumn(name = "process_id") }, inverseJoinColumns = { @JoinColumn(name = "technology_id") })
 	private List<Technology> technologies;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JoinTable(name = "process_services", joinColumns = @JoinColumn(name = "process_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
+	private List<Service> services;
 
 	@ElementCollection(targetClass = Domain.class)
 	@Enumerated(EnumType.STRING)
@@ -343,6 +348,19 @@ public class Process {
 	@Column
 	private long childrenCount;
 
+	@Column(name = "expected_development_time")
+	private Double expectedDevelopmentTime;
+
+	// this is used for finding out if we should send a notification after one year without change or if we have already sent it
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column
+	private Date noChangesNotificationDate;
+
+	@Column
+	@Size(max = 255)
+	private String otherContactEmail;
+
 	// this one exists solely because we need to use it for searching purposes ;)
 	@JsonIgnore
 	@Column
@@ -370,5 +388,16 @@ public class Process {
 	@JsonIgnore
 	public String getIllegalAccessField() {
 		return "N/A";
+	}
+
+	// only to be used by SecurityUtil to make security decisions on the process
+	public static Process fromProjection(ProcessExtendedProjection projection) {
+		Process p = new Process();
+		p.setUsers(projection.getUsers());
+		p.setReporter(projection.getReporter());
+		p.setType(projection.getType());
+		p.setCvr(projection.getCvr());
+		
+		return p;
 	}
 }

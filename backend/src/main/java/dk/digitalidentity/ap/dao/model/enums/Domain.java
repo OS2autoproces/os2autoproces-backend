@@ -1,12 +1,21 @@
 package dk.digitalidentity.ap.dao.model.enums;
 
 public enum Domain {
-	ADMINISTRATION("Administration og organisation"),
-	WORK("Arbejdsmarked og erhverv"),
-	CHILDREN("Børn og læring"),
-	DEMOCRACY("Demokrati og involvering"),
-	ENVIRONMENT("Miljø, teknik og forsyning"),
-	HEALTH("Social og sundhed");
+	ADMINISTRATION("Administration"),
+	EMPLOYMENT("Beskæftigelse"),
+	PROFESSION("Erhverv"),
+	FAMILY("Familie"),
+	EDUCATION("Uddannelse"),
+	DEMOCRACY("Demokrati"),
+	ENVIRONMENT("Miljø"),
+	TECHNIQUE("Teknik"),
+	SOCIAL("Social"),
+	HEALTH("Sundhed"),
+	SUSTAINABILITY("Bæredygtighed"),
+	HR("HR"),
+	IT("IT"),
+	CULTURE("Kultur"),
+	ECONOMY("Økonomi");
 	
 	private String value;
 	

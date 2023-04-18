@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -101,11 +100,8 @@ public class SecurityUtil {
 		return false;
 	}
 
-	public static boolean canEdit(ProcessExtendedProjection process) {
-		ModelMapper mm = new ModelMapper();
-		Process mappedProcess = mm.map(process, Process.class);
-
-		return canEdit(mappedProcess);
+	public static boolean canEdit(ProcessExtendedProjection process) {		
+		return canEdit(Process.fromProjection(process));
 	}
 	
 	public static void logoutSystem() {
@@ -128,6 +124,10 @@ public class SecurityUtil {
 		auth.setDetails(token);
 
 		SecurityContextHolder.getContext().setAuthentication(auth);
+	}
+
+	public static boolean isLoggedInAsSystemAccount() {
+		return "00000000".equals(getCvr());
 	}
 
 	public static User loginMunicipality(Municipality municipality) {
@@ -186,7 +186,7 @@ public class SecurityUtil {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 

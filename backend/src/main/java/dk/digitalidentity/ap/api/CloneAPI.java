@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ import dk.digitalidentity.ap.service.ProcessService;
 import dk.digitalidentity.ap.service.UserService;
 
 @RestController
-@CrossOrigin(exposedHeaders = "x-csrf-token")
 @RequestMapping("/api/processes")
 public class CloneAPI {
 
@@ -83,12 +81,17 @@ public class CloneAPI {
 		clone.setSepMep(process.isSepMep());
 		clone.setRunPeriod(process.getRunPeriod());
 		clone.setCodeRepositoryUrl(process.getCodeRepositoryUrl());
+		clone.setExpectedDevelopmentTime(process.getExpectedDevelopmentTime());
 		clone.setTargetsCitizens(process.isTargetsCitizens());
 		clone.setTargetsCompanies(process.isTargetsCompanies());
 		clone.setTechnicalImplementationNotes(process.getTechnicalImplementationNotes());
 		clone.setTechnologies(new ArrayList<>());
 		if (process.getTechnologies() != null && process.getTechnologies().size() > 0) {
 			clone.getTechnologies().addAll(process.getTechnologies());
+		}
+		clone.setServices(new ArrayList<>());
+		if (process.getServices() != null && process.getServices().size() > 0) {
+			clone.getServices().addAll(process.getServices());
 		}
 		clone.setTimeSpendComment(process.getTimeSpendComment());
 		clone.setTimeSpendComputedTotal(process.getTimeSpendComputedTotal());
@@ -120,6 +123,7 @@ public class CloneAPI {
 		clone.setLinks(new ArrayList<>());
 		clone.setItSystems(new ArrayList<>());
 		clone.setStatusText(null);
+		clone.setOtherContactEmail(null);
 
 		clone = processService.save(clone);
 

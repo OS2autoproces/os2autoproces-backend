@@ -1,0 +1,1 @@
+ALTER TABLE it_systems ADD COLUMN from_kitos TINYINT(1) NOT NULL DEFAULT 1;

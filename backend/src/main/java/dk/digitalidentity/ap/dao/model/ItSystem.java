@@ -22,7 +22,7 @@ public class ItSystem {
 
 	@Id
 	@Column
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column
@@ -38,4 +38,7 @@ public class ItSystem {
 	@Column
 	@Size(max = 128)
 	private String vendor;
+
+	@Column
+	private boolean fromKitos;
 }

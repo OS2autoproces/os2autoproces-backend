@@ -7,20 +7,20 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
 import dk.digitalidentity.ap.dao.UserDao;
 import dk.digitalidentity.ap.dao.model.User;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -30,7 +30,7 @@ public class UserApiTest extends ApiTestHelper {
 	@Autowired
 	private UserDao userDao;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}

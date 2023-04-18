@@ -5,17 +5,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
@@ -24,7 +26,7 @@ import dk.digitalidentity.ap.dao.ProcessDao;
 import dk.digitalidentity.ap.dao.model.Notification;
 import dk.digitalidentity.ap.dao.model.Process;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -37,7 +39,7 @@ public class NotificationApiTest extends ApiTestHelper {
 	@Autowired
 	private ProcessDao processDao;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}
@@ -56,21 +58,21 @@ public class NotificationApiTest extends ApiTestHelper {
 		int stopIdx = response.indexOf(",", startIdx);
 		String id = response.substring(startIdx + 1, stopIdx).trim();
 		
-		Process process = processDao.findOne(Long.parseLong(id));
+		Optional<Process> process = processDao.findById(Long.parseLong(id));
 
-		Notification notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
-		Assert.assertNull(notification);
+		Notification notification = notificationDao.getByUserIdAndProcess(user.getId(), process.get());
+		Assertions.assertNull(notification);
 
 		this.mockMvc.perform(put("/api/notifications/{id}", id))
 					.andExpect(status().is(200));
 
-		notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
-		Assert.assertNotNull(notification);
+		notification = notificationDao.getByUserIdAndProcess(user.getId(), process.get());
+		Assertions.assertNotNull(notification);
 
 		this.mockMvc.perform(delete("/api/notifications/{id}", id))
 					.andExpect(status().is(200));
 
-		notification = notificationDao.getByUserIdAndProcess(user.getId(), process);
-		Assert.assertNull(notification);
+		notification = notificationDao.getByUserIdAndProcess(user.getId(), process.get());
+		Assertions.assertNull(notification);
 	}
 }

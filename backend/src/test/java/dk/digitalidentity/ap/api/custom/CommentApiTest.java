@@ -7,16 +7,16 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import dk.digitalidentity.ap.api.ApiTestHelper;
 import dk.digitalidentity.ap.dao.CommentDao;
@@ -25,7 +25,7 @@ import dk.digitalidentity.ap.dao.model.Comment;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 @ActiveProfiles({ "test" })
@@ -38,7 +38,7 @@ public class CommentApiTest extends ApiTestHelper {
 	@Autowired
 	private ProcessDao processDao;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.before();
 	}
@@ -64,7 +64,7 @@ public class CommentApiTest extends ApiTestHelper {
 		}
 
 		List<Comment> comments = commentDao.getByProcess(processWithAccess);
-		Assert.assertTrue(comments.size() == 0);
+		Assertions.assertTrue(comments.size() == 0);
 
 		this.mockMvc.perform(put("/api/comments/{processId}", processWithAccess.getId())
 				.contentType(MediaType.APPLICATION_JSON)
@@ -72,10 +72,10 @@ public class CommentApiTest extends ApiTestHelper {
 				.andExpect(status().is(200));
 
 		comments = commentDao.getByProcess(processWithAccess);
-		Assert.assertTrue(comments.size() == 1);
+		Assertions.assertTrue(comments.size() == 1);
 
 		comments = commentDao.getByProcess(processWithNoAccess);
-		Assert.assertTrue(comments.size() == 0);
+		Assertions.assertTrue(comments.size() == 0);
 		
 		this.mockMvc.perform(put("/api/comments/{processId}", processWithNoAccess.getId())
 				.contentType(MediaType.APPLICATION_JSON)
@@ -83,6 +83,6 @@ public class CommentApiTest extends ApiTestHelper {
 				.andExpect(status().is(404));
 		
 		comments = commentDao.getByProcess(processWithNoAccess);
-		Assert.assertTrue(comments.size() == 0);
+		Assertions.assertTrue(comments.size() == 0);
 	}
 }

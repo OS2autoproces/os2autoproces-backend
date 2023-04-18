@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import dk.digitalidentity.ap.dao.impl.AutoProcessRepositoryFactoryBean;
 import dk.digitalidentity.ap.dao.model.Form;
@@ -22,13 +23,13 @@ import dk.digitalidentity.ap.dao.model.validator.ProcessValidator;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "dk.digitalidentity.ap.dao", repositoryFactoryBeanClass = AutoProcessRepositoryFactoryBean.class)
-public class DataRESTConfiguration extends RepositoryRestConfigurerAdapter {
+public class DataRESTConfiguration implements RepositoryRestConfigurer {
 
 	@Override
-	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
 		config.exposeIdsFor(Process.class, Technology.class, ItSystem.class, Kle.class, Form.class, User.class, OrgUnit.class);
 	}
-
+	
 	@Bean
 	public Validator validator() {
 		return new LocalValidatorFactoryBean();

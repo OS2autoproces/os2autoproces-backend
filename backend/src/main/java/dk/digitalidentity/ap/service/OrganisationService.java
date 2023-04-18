@@ -16,6 +16,7 @@ import dk.digitalidentity.ap.api.model.UserDTO;
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.User;
 import lombok.extern.log4j.Log4j;
+import org.springframework.util.StringUtils;
 
 @Log4j
 @Service
@@ -96,7 +97,7 @@ public class OrganisationService {
 				boolean found = false;
 
 				for (OrgUnit orgUnit : orgUnits) {
-					if (orgUnit.getUuid().equalsIgnoreCase(posUuid.toLowerCase())) {
+					if (orgUnit.getUuid().equalsIgnoreCase(posUuid)) {
 						user.getPositions().add(orgUnit);
 						
 						found = true;
@@ -255,18 +256,36 @@ public class OrganisationService {
 						changes = true;
 					}
 					
-					// name change
-					if (!existingUser.getName().equals(newUser.getName())) {
-						existingUser.setName(newUser.getName());
-						changes = true;
+					// name change - do not overwrite an existing name with null or ""
+					if (StringUtils.hasLength(existingUser.getName())) {
+						if (StringUtils.hasLength(newUser.getName())) {
+							if (!Objects.equals(existingUser.getName(), newUser.getName())) {
+								existingUser.setName(newUser.getName());
+								changes = true;
+							}
+						}
+					} else {
+						if (!Objects.equals(existingUser.getName(), newUser.getName())) {
+							existingUser.setName(newUser.getName());
+							changes = true;
+						}
 					}
 					
-					// email change
-					if (!Objects.equals(existingUser.getEmail(), newUser.getEmail())) {
-						existingUser.setEmail(newUser.getEmail());
-						changes = true;
+					// email change - do not overwrite an existing email with null or ""
+					if (StringUtils.hasLength(existingUser.getEmail())) {
+						if (StringUtils.hasLength(newUser.getEmail())) {
+							if (!Objects.equals(existingUser.getEmail(), newUser.getEmail())) {
+								existingUser.setEmail(newUser.getEmail());
+								changes = true;
+							}
+						}
+					} else {
+						if (!Objects.equals(existingUser.getEmail(), newUser.getEmail())) {
+							existingUser.setEmail(newUser.getEmail());
+							changes = true;
+						}
 					}
-					
+
 					// if there are new positions add them to existing object
 					for (OrgUnit newOrgUnit : newUser.getPositions()) {
 						boolean foundPosition = false;

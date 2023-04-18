@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.BasicErrorController;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
@@ -37,7 +39,7 @@ public class ErrorPageController extends BasicErrorController {
 	@RequestMapping(produces = "text/html")
 	@Override
 	public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> body = getErrorAttributes(request, showStackTrace);
+		Map<String, Object> body = getErrorAttributes(request, showStackTrace ? ErrorAttributeOptions.of(Include.STACK_TRACE) : ErrorAttributeOptions.defaults());
 
 		// deal with 404 first
 		Object status = body.get("status");
@@ -96,8 +98,4 @@ public class ErrorPageController extends BasicErrorController {
 		}
 	}
 
-	@Override
-	public String getErrorPath() {
-		return "/_dummyErrorPath";
-	}
 }

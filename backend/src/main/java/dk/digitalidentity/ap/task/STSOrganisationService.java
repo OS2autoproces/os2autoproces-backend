@@ -90,7 +90,9 @@ public class STSOrganisationService {
 			user.setPositions(new ArrayList<>());
 
 			for (STSPosition stsPosition : stsUser.getPositions()) {
-				user.getPositions().add(stsPosition.getUuid());
+				if (!user.getPositions().contains(stsPosition.getUuid())) {
+					user.getPositions().add(stsPosition.getUuid());
+				}
 			}
 			
 			organisation.getUsers().add(user);

@@ -1,18 +1,18 @@
 package dk.digitalidentity.ap.dao.model.processor;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.dao.model.Technology;
 
 @Component
-public class TechnologyProcessor implements ResourceProcessor<Resource<Technology>> {
+public class TechnologyProcessor implements RepresentationModelProcessor<EntityModel<Technology>> {
 
 	@Override
-	public Resource<Technology> process(Resource<Technology> resource) {
+	public EntityModel<Technology> process(EntityModel<Technology> model) {
 
 		// strip links
-		return new Resource<>(resource.getContent());
+		return EntityModel.of(model.getContent());
 	}
 }

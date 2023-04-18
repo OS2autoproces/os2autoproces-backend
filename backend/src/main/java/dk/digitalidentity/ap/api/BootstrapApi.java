@@ -332,8 +332,8 @@ public class BootstrapApi {
 			users.add(user);
 		}
 		
-		orgUnitDao.save(Arrays.asList(orgUnits));
-		userDao.save(users);
+		orgUnitDao.saveAll(Arrays.asList(orgUnits));
+		userDao.saveAll(users);
 	}
 
 	private NameAndEmail getRandomNameAndEmail() {

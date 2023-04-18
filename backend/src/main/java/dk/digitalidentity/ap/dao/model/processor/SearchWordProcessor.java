@@ -1,18 +1,18 @@
 package dk.digitalidentity.ap.dao.model.processor;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.dao.model.SearchWord;
 
 @Component
-public class SearchWordProcessor implements ResourceProcessor<Resource<SearchWord>> {
+public class SearchWordProcessor implements RepresentationModelProcessor<EntityModel<SearchWord>> {
 
 	@Override
-	public Resource<SearchWord> process(Resource<SearchWord> resource) {
+	public EntityModel<SearchWord> process(EntityModel<SearchWord> model) {
 
 		// strip links
-		return new Resource<>(resource.getContent());
+		return EntityModel.of(model.getContent());
 	}
 }

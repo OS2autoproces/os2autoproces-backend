@@ -18,7 +18,7 @@
 					<tr>
 						<td>Generated Secure API</td>
 						<td>Stable</td>
-						<td>This API gives read-only access to the ItSystem classification</td>
+						<td>This API gives access to the ItSystem classification for read and create.</td>
 					</tr>
 				</tbody>
 			</table>
@@ -26,7 +26,7 @@
 		
 		<h4>Useful operations</h4>
 		<p>
-			Note that this is a generated API, so it supports all of the operations that
+			Note that the read endpoint is a generated API, so it supports all of the operations that
 			Spring Data REST allows (though updating operations are disabled).
 			This list is just the operations that are useful for the frontend.
 			Note that when fetching all ItSystem values, it might be useful
@@ -35,6 +35,11 @@
 			Also the data practically never changes (roughly once every week), so it makes
 			sense for the frontend to load all ItSystem values in the beginning, and then store
 			them locally in the DOM.
+			
+			The create and update is provided by a custom API. Only the ItSystems created through this API
+			can be modified or removed. ItSystems created through the custom API will be returned as output
+			on the generated API, which will indicate if it can be edited through the "fromKitos" field.
+			Any ItSystem that has "fromKitos" set to "true" cannot be edited through the custom API endpoints.
 		</p>
 
 		<p>
@@ -43,13 +48,31 @@
 					<strong>Fetch a list of ItSystems</strong>
 					<pre class="card-text">GET https://www.os2autoproces.eu/api/itSystems
 (returns a list of ItSystem values, example given in the subchapter below)</pre>
+
+					<strong>Create ItSystem</strong>
+					<pre class="card-text">POST https://www.os2autoproces.eu/api/managedItSystem/
+{
+  "name": "Adobe Photoshop",
+  "vendor": "Adobe Systems Danmark Aps"
+}</pre>
+
+					<strong>Edit ItSystem</strong>
+					<pre class="card-text">PUT https://www.os2autoproces.eu/api/managedItSystem//&lt;id&gt;
+{
+  "name": "Adobe Photoshop",
+  "vendor": "Adobe Systems Danmark Aps"
+}
+</pre>
+
+					<strong>Remove an ItSystem</strong>
+					<pre class="card-text">DELETE https://www.os2autoproces.eu/api/managedItSystem/&lt;id&gt;</pre>
 				</div>
 			</div>
 		</p>
 		
 		<h4>Example output</h4>
 		<p>
-			The output follows the standard structure for list-output on generated APIs, meaning that the
+			The output of the it-system read operations follows the standard structure for list-output on generated APIs, meaning that the
 			result comes in the '_embedded' field, and pagination metadata comes in the 'page' field.
 			The result contains an array of (simple) ItSystem objects, which are described in the datamodel chapter below. 
 		</p>
@@ -199,6 +222,12 @@
 						<td>string</td>
 						<td>yes</td>
 						<td>The vendor of this ItSystem</td>
+					</tr>
+					<tr>
+						<td>fromKitos</td>
+						<td>boolean</td>
+						<td>no</td>
+						<td>True if the it-system is managed by KITOS (and cannot be updated through the custom API)</td>
 					</tr>
 				</tbody>
 			</table>

@@ -15,10 +15,10 @@ public class XApiSecurityFilterConfiguration {
 	private MunicipalityDao municipalityDao;
 
 	@Bean(name="XApiSecurityFilter")
-	public FilterRegistrationBean xapiSecurityFilter() {
+	public FilterRegistrationBean<XApiSecurityFilter> xapiSecurityFilter() {
 		XApiSecurityFilter filter = new XApiSecurityFilter(municipalityDao);
 
-		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<XApiSecurityFilter> filterRegistrationBean = new FilterRegistrationBean<XApiSecurityFilter>(filter);
 		filterRegistrationBean.addUrlPatterns("/xapi/*");
 		filterRegistrationBean.setOrder(100);
 		

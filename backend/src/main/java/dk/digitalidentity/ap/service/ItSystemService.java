@@ -21,8 +21,16 @@ public class ItSystemService {
 	public List<ItSystem> findAll() {
 		return itSystemDao.findAll();
 	}
+
+	public ItSystem findById(long id) {
+		return itSystemDao.findById(id);
+	}
 	
 	public long count() {
 		return itSystemDao.count();
+	}
+
+	public void delete(ItSystem itSystem) {
+		itSystemDao.delete(itSystem);
 	}
 }

@@ -13,6 +13,7 @@ import dk.digitalidentity.ap.dao.model.ItSystem;
 import dk.digitalidentity.ap.dao.model.Link;
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.Process;
+import dk.digitalidentity.ap.dao.model.Service;
 import dk.digitalidentity.ap.dao.model.Technology;
 import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.enums.Domain;
@@ -51,6 +52,7 @@ public interface ProcessExtendedProjection {
 	boolean isKlaProcess();
 	User getReporter();
 	User getContact();
+	String getOtherContactEmail();
 	User getOwner();
 	String getVendor();
 	String getCvr();
@@ -63,6 +65,7 @@ public interface ProcessExtendedProjection {
 	List<Link> getLinks();
 	List<Process> getChildren();
 	List<Process> getParents();
+	List<Service> getServices();
 	String getProcessChallenges();
 	String getSolutionRequests();
 	int getTimeSpendOccurancesPerEmployee();
@@ -90,7 +93,7 @@ public interface ProcessExtendedProjection {
 	RunPeriod getRunPeriod();
 	boolean isSepMep();
 	long getChildrenCount();
-
+	Double getExpectedDevelopmentTime();
 
 	default boolean isCanEdit() {
 		return SecurityUtil.canEdit(this);

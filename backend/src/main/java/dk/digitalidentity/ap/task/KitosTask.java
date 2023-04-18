@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +56,7 @@ public class KitosTask {
 				itSystem.setName(itSystemDTO.getName());
 				itSystem.setSystemId(itSystemDTO.getId());
 				itSystem.setVendor((itSystemDTO.getVendor() != null) ? itSystemDTO.getVendor().getName() : null);
+				itSystem.setFromKitos(true);
 				
 				itSystemsFromKitos.add(itSystem);
 			}
@@ -64,8 +66,8 @@ public class KitosTask {
 			return;
 		}
 
-		// Load ALL it-systems from the database (cache actually)
-		List<ItSystem> itSystemFromDB = itSystemService.findAll();
+		// Load ALL it-systems from the database (cache actually) apply filter only from KITOS
+		List<ItSystem> itSystemFromDB = itSystemService.findAll().stream().filter(ItSystem::isFromKitos).collect(Collectors.toList());
 
 		// Iterate over all the ItSystems from KITOS
 		for (ItSystem kitosItSystem : itSystemsFromKitos) {

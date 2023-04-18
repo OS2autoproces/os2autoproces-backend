@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import dk.digitalidentity.ap.dao.model.Form;
@@ -23,7 +22,6 @@ import dk.digitalidentity.ap.service.ProcessService;
 import dk.digitalidentity.ap.service.UserService;
 
 @Aspect
-@Component
 public class ProcessSaveInterceptor {
 	private static final String errorMessage = "You do not have permission to modify this process!";
 
@@ -113,6 +111,14 @@ public class ProcessSaveInterceptor {
 				else {
 					newProcess.setKlaProcess(false);
 				}
+
+				// trim long strings
+				if (newProcess.getLongDescription() != null) {
+					newProcess.setLongDescription(newProcess.getLongDescription().trim());
+				}
+				if (newProcess.getTechnicalImplementationNotes() != null) {
+					newProcess.setTechnicalImplementationNotes(newProcess.getTechnicalImplementationNotes().trim());
+				}
 				
 				// compute time spend
 				double timeSpend = newProcess.getTimeSpendPerOccurance();
@@ -122,10 +128,10 @@ public class ProcessSaveInterceptor {
 				newProcess.setTimeSpendComputedTotal((int) computedValueInHours);
 				
 				// if FORM is set, overwrite legal_clause with the official version
-				if (!StringUtils.isEmpty(newProcess.getForm())) {
+				if (StringUtils.hasLength(newProcess.getForm())) {
 					Form form = formService.getByCode(newProcess.getForm());
 
-					if (form != null && !StringUtils.isEmpty(form.getLegalClause())) {
+					if (form != null && StringUtils.hasLength(form.getLegalClause())) {
 						newProcess.setLegalClause(form.getLegalClause());
 					}
 				}
