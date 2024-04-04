@@ -53,4 +53,20 @@ public class User {
 	@NotNull
 	@Size(max = 8)
 	private String cvr;
+
+	public User cloneMe() {
+		User user = new User();
+		user.setId(id);
+		user.setUuid(uuid);
+		user.setName(name);
+		user.setEmail(email);
+		user.setActive(active);
+		user.setCvr(cvr);
+		
+		if (positions != null) {
+			user.setPositions(positions.stream().map(p -> p.cloneMe()).toList());
+		}
+		
+		return user;
+	}
 }

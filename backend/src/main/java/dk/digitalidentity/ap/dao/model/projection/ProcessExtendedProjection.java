@@ -3,7 +3,6 @@ package dk.digitalidentity.ap.dao.model.projection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.data.rest.core.config.Projection;
 
 import dk.digitalidentity.ap.config.ApplicationContextProvider;
@@ -34,6 +33,7 @@ public interface ProcessExtendedProjection {
 	ProcessType getType();
 	Date getCreated();
 	Date getLastChanged();
+	Date getPutIntoOperation();
 	Date getDecommissioned();
 	String getInternalNotes();
 	String getSearchWords();
@@ -89,6 +89,7 @@ public interface ProcessExtendedProjection {
 	String getOrganizationalImplementationNotes();
 	int getRating();
 	String getRatingComment();
+	String getAutomationDescription();
 	String getCodeRepositoryUrl();
 	RunPeriod getRunPeriod();
 	boolean isSepMep();
@@ -102,8 +103,6 @@ public interface ProcessExtendedProjection {
 	default boolean isHasBookmarked() {
 		BookmarkDao bookmarkDao = ApplicationContextProvider.getApplicationContext().getBean("bookmarkDao", BookmarkDao.class);
 		if (bookmarkDao == null) {
-			Logger log = Logger.getLogger(ProcessExtendedProjection.class);
-			log.error("BookmarkDao is null.");
 
 			return false;
 		}
@@ -114,8 +113,6 @@ public interface ProcessExtendedProjection {
 	default boolean isEmailNotification() {
 		NotificationDao notificationDao = ApplicationContextProvider.getApplicationContext().getBean("notificationDao", NotificationDao.class);
 		if (notificationDao == null) {
-			Logger log = Logger.getLogger(ProcessExtendedProjection.class);
-			log.error("NotificationDao is null.");
 
 			return false;
 		}

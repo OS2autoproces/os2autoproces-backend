@@ -75,6 +75,7 @@ public class CloneAPI {
 		clone.setProcessChallenges(process.getProcessChallenges());
 		clone.setRating(process.getRating());
 		clone.setRatingComment(process.getRatingComment());
+		clone.setAutomationDescription(process.getAutomationDescription());
 		clone.setShortDescription(process.getShortDescription());
 		clone.setSolutionRequests(process.getSolutionRequests());
 		clone.setStatus(process.getStatus());

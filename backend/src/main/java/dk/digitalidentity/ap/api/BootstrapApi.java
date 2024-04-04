@@ -23,8 +23,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +48,8 @@ import dk.digitalidentity.ap.dao.model.enums.Status;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
-import dk.digitalidentity.saml.model.TokenUser;
+import dk.digitalidentity.samlmodule.model.SamlGrantedAuthority;
+import dk.digitalidentity.samlmodule.model.TokenUser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -370,8 +369,8 @@ public class BootstrapApi {
 	}
 
 	private void fakeLogin(String cvr, User user) {
-		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
+		ArrayList<SamlGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
 
 		TokenUser token = TokenUser.builder().authorities(authorities).cvr(cvr).username("dummy").attributes(new HashMap<>()).build();
 		token.getAttributes().put("user", new AuthenticatedUser(user));

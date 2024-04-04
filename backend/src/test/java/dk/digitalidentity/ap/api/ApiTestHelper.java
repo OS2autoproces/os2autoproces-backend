@@ -6,8 +6,6 @@ import java.util.HashMap;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,7 +18,8 @@ import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.UserService;
-import dk.digitalidentity.saml.model.TokenUser;
+import dk.digitalidentity.samlmodule.model.SamlGrantedAuthority;
+import dk.digitalidentity.samlmodule.model.TokenUser;
 
 public abstract class ApiTestHelper {
 	protected ObjectMapper mapper;
@@ -58,15 +57,15 @@ public abstract class ApiTestHelper {
 	}
 	
 	protected void fakeLogin(String cvr, User user) {
-		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_FRONTPAGE_EDITOR));
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
+		ArrayList<SamlGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_FRONTPAGE_EDITOR));
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 
 		fakeLogin(cvr, user, authorities);
 	}
 
-	protected void fakeLogin(String cvr, User user, ArrayList<GrantedAuthority> authorities) {
+	protected void fakeLogin(String cvr, User user, ArrayList<SamlGrantedAuthority> authorities) {
 		if (user == null) {
 			SecurityContextHolder.getContext().setAuthentication(null);
 			return;

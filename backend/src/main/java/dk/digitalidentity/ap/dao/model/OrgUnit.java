@@ -26,7 +26,7 @@ public class OrgUnit {
 	private String uuid;
 
 	@Column
-	@Size(max = 128)
+	@Size(max = 255)
 	private String name;
 
 	@Column
@@ -36,4 +36,15 @@ public class OrgUnit {
 	@NotNull
 	@Size(max = 8)
 	private String cvr;
+
+	public OrgUnit cloneMe() {
+		OrgUnit orgUnit = new OrgUnit();
+		orgUnit.setId(id);
+		orgUnit.setUuid(uuid);
+		orgUnit.setName(name);
+		orgUnit.setActive(active);
+		orgUnit.setCvr(cvr);
+		
+		return orgUnit;
+	}
 }

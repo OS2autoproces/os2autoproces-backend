@@ -12,17 +12,17 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import dk.digitalidentity.ap.smtp.TransportErrorHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Profile("!test")
 public class AmazonSESService implements MailSenderService {
-	private static final Logger log = Logger.getLogger(AmazonSESService.class);
 
 	@Value("${email.username:}")
 	private String smtpUsername;
@@ -32,6 +32,9 @@ public class AmazonSESService implements MailSenderService {
 
 	@Value("${email.host:}")
 	private String smtpHost;
+
+	@Value("${email.active:true}")
+	private boolean emailActive;
 
 	@Override
 	public void sendMessage(String from, Collection<String> emails, String subject, String body) throws Exception {
@@ -85,6 +88,10 @@ public class AmazonSESService implements MailSenderService {
 
 	private boolean isConfigured() {
 		if (smtpHost == null || smtpHost.length() == 0 || smtpPassword == null || smtpPassword.length() == 0 || smtpUsername == null || smtpUsername.length() == 0) {
+			return false;
+		}
+		
+		if (!emailActive) {
 			return false;
 		}
 

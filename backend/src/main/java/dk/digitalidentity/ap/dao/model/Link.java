@@ -25,4 +25,13 @@ public class Link {
 
 	@Column(nullable = false)
 	private boolean internal;
+
+	public Link cloneMe() {
+		Link link = new Link();
+		link.setId(id);
+		link.setUrl(url);
+		link.setInternal(internal);
+		
+		return link;
+	}
 }

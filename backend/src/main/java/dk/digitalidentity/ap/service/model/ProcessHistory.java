@@ -34,7 +34,8 @@ public class ProcessHistory {
 
 	private int rating;
 	private String ratingComment;
-	
+	private String automationDescription;
+
 	public ProcessHistory(ResultSet rs) throws SQLException {
 		rev = rs.getLong("rev");
 		revtype = rs.getLong("revtype");
@@ -64,5 +65,6 @@ public class ProcessHistory {
 		organizationalImplementationNotes = rs.getString("organizational_implementation_notes");
 		rating = rs.getInt("rating");
 		ratingComment = rs.getString("rating_comment");
+		automationDescription = rs.getString("automation_description");
 	}
 }

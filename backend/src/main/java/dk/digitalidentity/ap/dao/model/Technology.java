@@ -27,4 +27,12 @@ public class Technology {
 	@Size(max = 255)
 	@NotNull
 	private String name;
+
+	public Technology cloneMe() {
+		Technology technology = new Technology();
+		technology.setId(id);
+		technology.setName(name);
+
+		return technology;
+	}
 }

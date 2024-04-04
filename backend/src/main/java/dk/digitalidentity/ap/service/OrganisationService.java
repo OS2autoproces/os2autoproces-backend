@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import dk.digitalidentity.ap.api.model.OrgUnitDTO;
 import dk.digitalidentity.ap.api.model.OrganisationDTO;
@@ -15,10 +16,9 @@ import dk.digitalidentity.ap.api.model.OrganisationImportResponse;
 import dk.digitalidentity.ap.api.model.UserDTO;
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.User;
-import lombok.extern.log4j.Log4j;
-import org.springframework.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Service
 public class OrganisationService {
 

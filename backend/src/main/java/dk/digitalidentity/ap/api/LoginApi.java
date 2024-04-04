@@ -13,9 +13,9 @@ import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.MunicipalityService;
 import dk.digitalidentity.ap.service.UserService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @RestController
 public class LoginApi {
 

@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -31,6 +29,7 @@ import dk.digitalidentity.ap.dao.ProcessDao;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.SecurityUtil;
+import dk.digitalidentity.samlmodule.model.SamlGrantedAuthority;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -100,8 +99,8 @@ public class AAProcessApiTest extends ApiTestHelper {
 				.collect(Collectors.toList());
 
 		// ensure our user has no special roles, so all validation happens against associations
-		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_USER));
+		ArrayList<SamlGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_USER));
 		fakeLogin(user.getCvr(), user, authorities);
 		
 		// assert that the user cannot read non-associated processes from same municipality
@@ -130,7 +129,7 @@ public class AAProcessApiTest extends ApiTestHelper {
 		
 		// now try with the super user, which should get more access
 		authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 		fakeLogin(user.getCvr(), user, authorities);
 
 		// user should now have access to these due to the role
@@ -159,8 +158,8 @@ public class AAProcessApiTest extends ApiTestHelper {
 				.collect(Collectors.toList());
 
 		// ensure our user has no special roles, so all validation happens against associations
-		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_USER));
+		ArrayList<SamlGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_USER));
 		fakeLogin(user.getCvr(), user, authorities);
 		
 		// assert that the user cannot modify non-associated processes from same municipality
@@ -196,7 +195,7 @@ public class AAProcessApiTest extends ApiTestHelper {
 
 		// now try with a super user
 		authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 		fakeLogin(user.getCvr(), user, authorities);
 
 		// assert that the user can now modify non-associated processes from same municipality
@@ -226,8 +225,8 @@ public class AAProcessApiTest extends ApiTestHelper {
 				.collect(Collectors.toList());
 
 		// ensure our user has no special roles, so all validation happens against associations
-		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_USER));
+		ArrayList<SamlGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_USER));
 		fakeLogin(user.getCvr(), user, authorities);
 
 		// assert that the user can modify processes reported by user

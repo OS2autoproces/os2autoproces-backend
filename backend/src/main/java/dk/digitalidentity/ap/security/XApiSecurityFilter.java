@@ -12,15 +12,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import dk.digitalidentity.ap.dao.MunicipalityDao;
 import dk.digitalidentity.ap.dao.model.Municipality;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class XApiSecurityFilter implements Filter {
-	private static final Logger logger = Logger.getLogger(XApiSecurityFilter.class);
 	private MunicipalityDao municipalityDao;
 
 	public XApiSecurityFilter(MunicipalityDao municipalityDao) {
@@ -32,8 +33,7 @@ public class XApiSecurityFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-		// we are using a custom header instead of Authorization because the Authorization header plays very badly with the SAML filter
-		String authHeader = request.getHeader("ApiKey");
+		String authHeader = request.getHeader("ApiKey");		
 		if (authHeader != null) {
 			Municipality municipality = municipalityDao.getByApiKey(authHeader);
 			if (municipality == null) {
@@ -42,6 +42,7 @@ public class XApiSecurityFilter implements Filter {
 			}
 
 			ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+			authorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 
 			TokenClient token = new TokenClient(municipality.getName(), municipality.getApiKey(), authorities);
 			token.setCvr(municipality.getCvr());
@@ -55,7 +56,7 @@ public class XApiSecurityFilter implements Filter {
 	}
 
 	private static void unauthorized(HttpServletResponse response, String message, String authHeader) throws IOException {
-		logger.warn(message + " (authHeader = " + authHeader + ")");
+		log.warn(message + " (authHeader = " + authHeader + ")");
 		response.sendError(401, message);
 	}
 

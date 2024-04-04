@@ -22,9 +22,9 @@ import dk.digitalidentity.ap.task.model.STSHierarchyWrapper;
 import dk.digitalidentity.ap.task.model.STSOU;
 import dk.digitalidentity.ap.task.model.STSPosition;
 import dk.digitalidentity.ap.task.model.STSUser;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Service
 public class STSOrganisationService {
 
@@ -43,6 +43,7 @@ public class STSOrganisationService {
 		
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("cvr", cvr);
+        headerMap.add("accept", "application/json");
 		HttpEntity<Object> headers = new HttpEntity<>(headerMap);
 		
 		ResponseEntity<String> keyResponse = restTemplate.exchange(stsOrgSyncUrl, HttpMethod.GET, headers, String.class);
@@ -57,8 +58,15 @@ public class STSOrganisationService {
 		ResponseEntity<STSHierarchyWrapper> response = null;
 		for (int i = 0; i < 15; i++) { // 45 minutes total
 			Thread.sleep(2 * 75 * 1000); // sleep 2,5 minutes before attempting to read again
+			
+			// not sure why, but re-doing the headers is needed for each call
+	        headerMap = new LinkedMultiValueMap<>();
+	        headerMap.add("cvr", cvr);
+	        headerMap.add("accept", "application/json");
+			headers = new HttpEntity<>(headerMap);
 
-			response = restTemplate.getForEntity(stsOrgSyncUrl + "/" + key, STSHierarchyWrapper.class);
+			response = restTemplate.exchange(stsOrgSyncUrl + "/" + key, HttpMethod.GET, headers, STSHierarchyWrapper.class);
+//			response = restTemplate.getForEntity(stsOrgSyncUrl + "/" + key, STSHierarchyWrapper.class);
 
 			if (response.getStatusCodeValue() != 404) {
 				break;

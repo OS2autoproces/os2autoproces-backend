@@ -23,10 +23,10 @@ import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.ProcessService;
 import dk.digitalidentity.ap.service.S3Service;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Log4j
+@Slf4j
 @RequestMapping("/api/attachments")
 public class AttachmentApi {
 	

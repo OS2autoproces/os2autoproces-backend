@@ -27,4 +27,12 @@ public class Service {
 	@Size(max = 255)
 	@NotNull
 	private String name;
+
+	public Service cloneMe() {
+		Service service = new Service();
+		service.setId(id);
+		service.setName(name);
+		
+		return service;
+	}
 }

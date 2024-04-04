@@ -13,7 +13,7 @@ import dk.digitalidentity.ap.service.model.ProcessHistoryPair;
 
 @Service
 public class ProcessModificationsService {
-	private static final String SELECT_SQL = "SELECT rev, revtype, kl_id, phase, status, status_text, legal_clause, kle, form, kla, title, short_description, long_description, process_challenges, solution_requests, technical_implementation_notes, organizational_implementation_notes, rating, rating_comment FROM process_aud WHERE id = ? ORDER BY rev DESC LIMIT ?";
+	private static final String SELECT_SQL = "SELECT rev, revtype, kl_id, phase, status, status_text, legal_clause, kle, form, kla, title, short_description, long_description, process_challenges, solution_requests, technical_implementation_notes, organizational_implementation_notes, rating, rating_comment, automation_description FROM process_aud WHERE id = ? ORDER BY rev DESC LIMIT ?";
 	private static final String COUNT_SQL = "SELECT count(*) FROM process_aud WHERE id = ? AND last_changed > ?";
 
 	@Autowired

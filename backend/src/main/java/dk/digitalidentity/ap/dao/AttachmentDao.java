@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.dao;
 
 import java.util.List;
 
+import dk.digitalidentity.ap.dao.model.Bookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -18,6 +19,7 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, Querydsl
 	List<Attachment> findAll();
 	List<Attachment> findByProcess(Process process);
 	Attachment getById(long attachmentId);
+	long countByProcessId(Long processId);
 
 	@Override
 	default void customize(QuerydslBindings bindings, QAttachment attachment) {

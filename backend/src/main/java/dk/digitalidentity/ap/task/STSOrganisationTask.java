@@ -16,9 +16,9 @@ import dk.digitalidentity.ap.dao.OrgUnitDao;
 import dk.digitalidentity.ap.dao.model.Municipality;
 import dk.digitalidentity.ap.dao.model.QOrgUnit;
 import dk.digitalidentity.ap.service.MunicipalityService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Component
 @EnableScheduling
 public class STSOrganisationTask {

@@ -21,6 +21,8 @@ import dk.digitalidentity.ap.service.MunicipalityService;
 import dk.digitalidentity.ap.service.ProcessService;
 import dk.digitalidentity.ap.service.UserService;
 
+import java.util.Date;
+
 @Aspect
 public class ProcessSaveInterceptor {
 	private static final String errorMessage = "You do not have permission to modify this process!";
@@ -103,7 +105,7 @@ public class ProcessSaveInterceptor {
 						newProcess.setType(ProcessType.CHILD);
 					}
 				}
-				
+
 				// make sure to update the klaProcess boolean
 				if (newProcess.getKla() != null && newProcess.getKla().length() > 0) {
 					newProcess.setKlaProcess(true);
@@ -161,10 +163,13 @@ public class ProcessSaveInterceptor {
 								break;
 						}
  					}
-					
+
 					// for easy sorting
 					newProcess.setChildrenCount(newProcess.getChildren().size());
 				}
+
+				// update last changed
+				newProcess.setLastChanged(new Date());
 			}
 		}
 

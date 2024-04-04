@@ -40,10 +40,10 @@ import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.AuthenticatedUser;
 import dk.digitalidentity.ap.security.SecurityUtil;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@Log4j
+@Slf4j
 public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 		extends QuerydslJpaPredicateExecutor<T>
 		implements RevisionRepository<T, ID, N> {
@@ -136,44 +136,56 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 
 	@Override
 	public Page<T> findAll(Predicate predicate, Pageable pageable) {
-		if (entityInformation.getJavaType().equals(Process.class)) {
-			Predicate where = getPredicate(predicate);
-
-			return super.findAll(where, pageable);
+		try {
+			if (entityInformation.getJavaType().equals(Process.class)) {
+				Predicate where = getPredicate(predicate);
+	
+				return super.findAll(where, pageable);
+			}
+			else if (entityInformation.getJavaType().equals(User.class)) {
+				Predicate where = getSameCvrPredicateForUser(predicate);
+	
+				return super.findAll(where, pageable);
+			}
+			else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
+				Predicate where = getSameCvrPredicateForOrgUnit(predicate);
+	
+				return super.findAll(where, pageable);
+			}
+	
+			return super.findAll(predicate, pageable);
 		}
-		else if (entityInformation.getJavaType().equals(User.class)) {
-			Predicate where = getSameCvrPredicateForUser(predicate);
-
-			return super.findAll(where, pageable);
+		catch (Exception ex) {
+			log.error("Hah 1", ex);
+			throw ex;
 		}
-		else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
-			Predicate where = getSameCvrPredicateForOrgUnit(predicate);
-
-			return super.findAll(where, pageable);
-		}
-
-		return super.findAll(predicate, pageable);
 	}
 	
 	@Override
 	public List<T> findAll(Predicate predicate) {
-		if (entityInformation.getJavaType().equals(Process.class)) {
-			Predicate where = getPredicate(predicate);
-
-			return super.findAll(where);
+		try {
+			if (entityInformation.getJavaType().equals(Process.class)) {
+				Predicate where = getPredicate(predicate);
+	
+				return super.findAll(where);
+			}
+			else if (entityInformation.getJavaType().equals(User.class)) {
+				Predicate where = getSameCvrPredicateForUser(predicate);
+	
+				return super.findAll(where);
+			}
+			else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
+				Predicate where = getSameCvrPredicateForOrgUnit(predicate);
+	
+				return super.findAll(where);
+			}
+	
+			return super.findAll(predicate);
 		}
-		else if (entityInformation.getJavaType().equals(User.class)) {
-			Predicate where = getSameCvrPredicateForUser(predicate);
-
-			return super.findAll(where);
+		catch (Exception ex) {
+			log.error("Hah 1", ex);
+			throw ex;
 		}
-		else if (entityInformation.getJavaType().equals(OrgUnit.class)) {
-			Predicate where = getSameCvrPredicateForOrgUnit(predicate);
-
-			return super.findAll(where);
-		}
-
-		return super.findAll(predicate);
 	}
 
 	// helper methods start here
@@ -213,7 +225,7 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
 
 		predicate = handleFreeTextSearch(predicate);
-		
+
 		// processes of type 'GLOBAL_PARENT' automatically becomes visible to all users
 		Predicate global = process.type.eq(ProcessType.GLOBAL_PARENT);
 
@@ -261,10 +273,11 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 
 		List<Predicate> modifiedPredicateHolder = new ArrayList<>();
 		String freeTextSearch = analyzePredicateV2(predicate, predicate, modifiedPredicateHolder);
+		SecurityUtil.setFreeTextSearch(freeTextSearch);
 
 		if (freeTextSearch != null) {
 			QProcess process = QProcess.process;
-			
+
 			Predicate shortDescription = process.shortDescription.contains(freeTextSearch);
 			Predicate longDescription = process.longDescription.contains(freeTextSearch);
 			Predicate title = process.title.contains(freeTextSearch);
@@ -275,7 +288,14 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 			Predicate otherContactEmail = process.otherContactEmail.contains(freeTextSearch);
 			Predicate ownerName = process.owner.name.contains(freeTextSearch);
 			Predicate kleCode = process.kle.startsWith(freeTextSearch);
-			
+			Predicate solutionRequests = process.solutionRequests.contains(freeTextSearch);
+			Predicate processChallenges = process.processChallenges.contains(freeTextSearch);
+			Predicate timeSpendComment = process.timeSpendComment.contains(freeTextSearch);
+			Predicate technicalImplementationNotes = process.technicalImplementationNotes.contains(freeTextSearch);
+			Predicate organizationalImplementationNotes = process.organizationalImplementationNotes.contains(freeTextSearch);
+			Predicate automationDescription = process.automationDescription.contains(freeTextSearch);
+			Predicate ratingComment = process.ratingComment.contains(freeTextSearch);
+
 			try {
 				// if the freeTextSearch is just a number, perform a search on the process ID and only
 				Long id = Long.parseLong(freeTextSearch);
@@ -288,10 +308,10 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 
 			if (modifiedPredicateHolder.size() > 0) {
 				Predicate p = modifiedPredicateHolder.get(0);
-				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode), p);
+				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment), p);
 			}
 			else {
-				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode);
+				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment);
 			}
 		}
 

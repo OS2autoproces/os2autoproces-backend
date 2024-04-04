@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-
-import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
@@ -21,28 +19,34 @@ import dk.digitalidentity.ap.security.SecurityUtil;
 @Component
 public class ProcessReadInterceptor {
 
-	@Autowired
-	private EntityManager entityManager;
-
-	@AfterReturning(pointcut = "execution(* dk.digitalidentity.ap.dao.ProcessDao.get*(..))", returning = "target")
-	public void afterGet(Object target) throws Throwable {
-		processTarget(target);
+	@Around(value = "execution(* dk.digitalidentity.ap.dao.ProcessDao.get*(..))")
+	public Object aroundGet(ProceedingJoinPoint jp) throws Throwable {
+        Object target = jp.proceed();
+        
+        target = processTarget(target);
+        
+        return target;
 	}
 
-	@AfterReturning(pointcut = "execution(* dk.digitalidentity.ap.dao.ProcessDao.find*(..))", returning = "target")
-	public void afterFind(Object target) throws Throwable {
-		processTarget(target);
+	@Around(value = "execution(* dk.digitalidentity.ap.dao.ProcessDao.find*(..))")
+	public Object aroundFind(ProceedingJoinPoint jp) throws Throwable {
+        Object target = jp.proceed();
+        
+        target = processTarget(target);
+        
+        return target;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processTarget(Object target) throws Exception {
+	private Object processTarget(Object target) throws Exception {
 		if (target == null) {
-			return;
+			return target;
 		}
 
 		if (target instanceof Process) {
 			Process process = (Process) target;
-			filter(process);
+
+			return filter(process);
 		}
 		else if (target instanceof PageImpl<?>) {
 			Page<Object> page = (Page<Object>) target;
@@ -51,11 +55,14 @@ public class ProcessReadInterceptor {
 			if (!targetList.isEmpty()) {
 				// Get first element of list to determine type
 				if (targetList.get(0) instanceof Process) {
+					List<Process> newProcesses = new ArrayList<>();
 					List<Process> processes = targetList.stream().map(o -> (Process) o).collect(Collectors.toList());
 
 					for (Process process : processes) {
-						filter(process);
+						newProcesses.add(filter(process));
 					}
+
+					return new PageImpl<>(newProcesses, page.getPageable(), page.getTotalElements());
 				}
 			}
 		}
@@ -65,58 +72,53 @@ public class ProcessReadInterceptor {
 			if (!targetList.isEmpty()) {
 				// Get first element of list to determine type
 				if (targetList.get(0) instanceof Process) {
+					List<Process> newProcesses = new ArrayList<>();
 					List<Process> processes = targetList.stream().map(o -> (Process) o).collect(Collectors.toList());
 
 					for (Process process : processes) {
-						filter(process);
+						newProcesses.add(filter(process));
 					}
 				}
 			}
 		}
+		
+		// no filtering
+		return target;
 	}
 
-	private void filter(Process process) {
+	private Process filter(Process process) {
 		if (process == null) {
-			return;
+			return process;
 		}
 
 		if (SecurityUtil.isLoggedInAsSystemAccount()) {
-			return;
+			return process;
 		}
 		
 		// when linking to foreign processes (owned by other municipalities),
 		// those processes are read, and then linked to - if we make modifications,
 		// those are flushed when the transaction completes, and we do not want that
 		// on filtered processes....
-		boolean detached = false;
+		boolean cloned = false;
 
 		if (!SecurityUtil.canEdit(process)) {
-			detach(process);
-			detached = true;
+			if (!cloned) {
+				process = process.cloneMe();
+				cloned = true;
+			}
+
 			process.setInternalNotes(null);
-		}
-
-		// parent processes might contain children from other municipalities
-		if (process.getChildren() != null && process.getChildren().size() > 0) {
-
-			// filtering will likely always happen here, so we detach parents always
-			if (!detached) {
-				detach(process);
-				detached = true;
-			}
-
-			for (Process child : process.getChildren()) {
-				filter(child);
-			}
 		}
 
 		// no more filtering on same cvr access (or global parent processes)
 		if (process.getCvr().equals(SecurityUtil.getCvr()) || process.getType().equals(ProcessType.GLOBAL_PARENT)) {
-			return;
+			return process;
 		}
-		
-		if (!detached) {
-			detach(process);
+
+		// from here on out we should only work on a clone
+		if (!cloned) {
+			process = process.cloneMe();
+			cloned = true;
 		}
 
 		// blank out fields that are internal only
@@ -125,21 +127,7 @@ public class ProcessReadInterceptor {
 		process.setUsers(new ArrayList<>());
 		process.setReporter(null);
 		process.setEsdhReference(null);
-	}
-	
-	private void detach(Process process) {
-		// visit all collections and relationships before detaching
-		process.getOrgUnits().size();
-		process.getReporter();
-		process.getUsers().size();
-		process.getTechnologies().size();
-		process.getOwner();
-		process.getChildren().size();
-		process.getParents().size();
-		process.getLinks().size();
-		process.getDomains().size();
-		process.getItSystems().size();
-
-		entityManager.detach(process);
+		
+		return process;
 	}
 }

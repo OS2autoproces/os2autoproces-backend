@@ -8,9 +8,9 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 public class ProjectionAnalyzer {
 
 	public static boolean verifyProjectionExtendsEntity(Class<?> entityClazz, Class<?> projectionClazz) {

@@ -1,10 +1,12 @@
 package dk.digitalidentity.ap.dao;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
+import com.querydsl.core.BooleanBuilder;
+import dk.digitalidentity.ap.dao.model.ItSystem;
+import dk.digitalidentity.ap.dao.model.Process;
+import dk.digitalidentity.ap.dao.model.QProcess;
+import dk.digitalidentity.ap.dao.model.Technology;
+import dk.digitalidentity.ap.dao.model.enums.Domain;
+import dk.digitalidentity.ap.dao.model.enums.Phase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,15 +17,14 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import com.querydsl.core.BooleanBuilder;
-
-import dk.digitalidentity.ap.dao.model.Process;
-import dk.digitalidentity.ap.dao.model.QProcess;
-import dk.digitalidentity.ap.dao.model.enums.Domain;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface ProcessDao extends JpaRepository<Process, Long>, QuerydslPredicateExecutor<Process>, QuerydslBinderCustomizer<QProcess> {
-	
+
 	@RestResource(exported = false)
 	List<Process> findByLastChangedBetween(Date begin, Date end);
 
@@ -56,7 +57,34 @@ public interface ProcessDao extends JpaRepository<Process, Long>, QuerydslPredic
 	@Transactional
 	@Query(value = "UPDATE process SET visibility = :visibility WHERE id = :processId", nativeQuery = true)
 	void setProcessVisibility(long processId, String visibility);
-	
+
+	@RestResource(exported = false)
+	long countByPhase(Phase phase);
+
+	@RestResource(exported = false)
+	long countByPhaseAndCvr(Phase phase, String cvr);
+
+	@RestResource(exported = false)
+	long countByCvr(String cvr);
+
+	@RestResource(exported = false)
+	long countBySepMepFalseAndKlaProcessFalse();
+
+	@RestResource(exported = false)
+	long countByCvrAndSepMepFalseAndKlaProcessFalse(String cvr);
+
+	@RestResource(exported = false)
+	long countByItSystemsContaining(ItSystem itSystem);
+
+	@RestResource(exported = false)
+	long countByCvrAndItSystemsContaining(String cvr, ItSystem itSystem);
+
+	@RestResource(exported = false)
+	long countByTechnologiesContaining(Technology technology);
+
+	@RestResource(exported = false)
+	long countByCvrAndTechnologiesContaining(String cvr, Technology technology);
+
 	@Override
 	default void customize(QuerydslBindings bindings, QProcess root) {
 		bindings.bind(root.lastChanged).all((path, value) -> {
@@ -80,6 +108,39 @@ public interface ProcessDao extends JpaRepository<Process, Long>, QuerydslPredic
 
 				for (Domain domain : domains) {
 					builder.or(path.contains(domain));
+				}
+			}
+
+			return Optional.of(builder);
+		});
+
+		bindings.bind(root.technologies).all((path, value) -> {
+			BooleanBuilder builder = new BooleanBuilder();
+
+			Iterator<? extends List<Technology>> iterator = value.iterator();
+			while (iterator.hasNext()) {
+				List<Technology> technologies = iterator.next();
+
+				for (Technology technology : technologies) {
+					builder.or(path.contains(technology));
+				}
+			}
+
+			return Optional.of(builder);
+		});
+
+		bindings.bind(root.itSystems).all((path, value) -> {
+			BooleanBuilder builder = new BooleanBuilder();
+
+			Iterator<? extends List<ItSystem>> iterator = value.iterator();
+			while (iterator.hasNext()) {
+				List<ItSystem> systems = iterator.next();
+
+				for (ItSystem itSystem : systems) {
+					builder.or(path.contains(itSystem));
+
+					// a hack to search in services as well when searching on ITSystems. The services are created with the same name as the IT-System. Therefore, search in services on system.name
+					builder.or(root.services.any().name.equalsIgnoreCase(itSystem.getName()));
 				}
 			}
 

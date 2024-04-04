@@ -2,6 +2,8 @@ package dk.digitalidentity.ap.api;
 
 import javax.validation.Valid;
 
+import dk.digitalidentity.ap.dao.model.Service;
+import dk.digitalidentity.ap.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,12 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 import dk.digitalidentity.ap.dao.model.ItSystem;
 import dk.digitalidentity.ap.service.ItSystemService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/managedItSystem")
-public class ItSystemApi {
+public class CustomITSystemApi {
 
 	@Autowired
 	private ItSystemService itSystemService;
+
+	@Autowired
+	private ServiceService serviceService;
 
 	@PostMapping("/")
 	public ResponseEntity<?> createItSystem(@RequestBody @Valid ItSystem itSystem) {
@@ -33,7 +41,6 @@ public class ItSystemApi {
 		dbItSystem.setFromKitos(false);
 		dbItSystem.setName(itSystem.getName());
 		dbItSystem.setVendor(itSystem.getVendor());
-		dbItSystem.setSystemId(itSystem.getSystemId());
 
 		return ResponseEntity.ok(itSystemService.save(dbItSystem));
 	}
@@ -53,9 +60,16 @@ public class ItSystemApi {
 			return ResponseEntity.badRequest().body("ItSystem is managed by KITOS, and cannot be edited through API");
 		}
 
+		String oldName = dbItSystem.getName();
 		dbItSystem.setName(itSystem.getName());
 		dbItSystem.setVendor(itSystem.getVendor());
-		dbItSystem.setSystemId(itSystem.getSystemId());
+
+		// update names on services
+		List<Service> services = serviceService.getServicesByName(oldName);
+		for (Service service : services) {
+			service.setName(itSystem.getName());
+		}
+		serviceService.saveAll(services);
 
 		return ResponseEntity.ok(itSystemService.save(dbItSystem));
 	}

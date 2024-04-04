@@ -2,7 +2,9 @@ package dk.digitalidentity.ap.dao;
 
 import java.util.List;
 
+import dk.digitalidentity.ap.dao.model.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;

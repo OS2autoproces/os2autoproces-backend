@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.service.MailSenderService;
 import dk.digitalidentity.ap.service.ProcessService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Component
 @EnableScheduling
 public class LegalClauseTask {

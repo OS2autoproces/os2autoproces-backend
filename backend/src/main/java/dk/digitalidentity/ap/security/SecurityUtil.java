@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,8 @@ import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.dao.model.enums.ProcessType;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.dao.model.projection.ProcessExtendedProjection;
-import dk.digitalidentity.saml.model.TokenUser;
+import dk.digitalidentity.samlmodule.model.SamlGrantedAuthority;
+import dk.digitalidentity.samlmodule.model.TokenUser;
 
 @Component
 public class SecurityUtil {
@@ -30,6 +30,7 @@ public class SecurityUtil {
 	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 	public static final String ROLE_FRONTPAGE_EDITOR = "ROLE_FRONTPAGE_EDITOR";
 	public static final String ROLE_SYSTEM = "ROLE_SYSTEM";
+	public static final String FREE_TEXT_KEY = "";
 
 	public static String getCvr() {
 		String cvr = null;
@@ -109,7 +110,7 @@ public class SecurityUtil {
 	}
 
 	public static void loginSystem() {
-		Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(ROLE_SYSTEM));
+		Collection<SamlGrantedAuthority> authorities = Collections.singleton(new SamlGrantedAuthority(ROLE_SYSTEM));
 
 		User user = new User();
 		user.setCvr("00000000");
@@ -131,7 +132,7 @@ public class SecurityUtil {
 	}
 
 	public static User loginMunicipality(Municipality municipality) {
-		Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(ROLE_SUPERUSER));
+		Collection<SamlGrantedAuthority> authorities = Collections.singleton(new SamlGrantedAuthority(ROLE_SUPERUSER));
 		
 		User user = new User();
 		user.setCvr(municipality.getCvr());
@@ -227,5 +228,22 @@ public class SecurityUtil {
 		}
 
 		return false;
+	}
+
+	// the two methods below are used to get and set the users curent free text search and showing in it the ui result
+	public static String getFreeTextSearch() {
+		String result = null;
+		if (isUserLoggedIn()) {
+			TokenUser tokenUser = (TokenUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+			result = (String) tokenUser.getAttributes().get(FREE_TEXT_KEY);
+		}
+		return result;
+	}
+
+	public static void setFreeTextSearch(String freeTextSearch) {
+		if (isUserLoggedIn()) {
+			TokenUser tokenUser = (TokenUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+			tokenUser.getAttributes().put(FREE_TEXT_KEY, freeTextSearch);
+		}
 	}
 }

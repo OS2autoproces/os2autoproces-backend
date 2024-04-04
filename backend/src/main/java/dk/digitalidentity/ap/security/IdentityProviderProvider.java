@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.service.IdentityProviderService;
-import dk.digitalidentity.saml.extension.SamlIdentityProviderProvider;
-import dk.digitalidentity.saml.model.IdentityProvider;
+import dk.digitalidentity.samlmodule.model.IdentityProvider;
+import dk.digitalidentity.samlmodule.model.SamlIdentityProviderProvider;
 
 @Component
 public class IdentityProviderProvider implements SamlIdentityProviderProvider {

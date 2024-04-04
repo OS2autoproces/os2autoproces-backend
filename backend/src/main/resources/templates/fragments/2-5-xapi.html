@@ -38,6 +38,15 @@
 			If the REST endpoint returns HTTP 200, and a Set-Cookie header, the operation is succesful. The value
 			of the Set-Cookie is the session-cookie that must be used on all calls to the rest of the API.
 		</p>
+		
+		<p>
+			Note that it is also possible to use the standardized Authorization header like shown below (note the Bearer prefix)
+		</p>
+		
+		<pre>
+			POST https://www.os2autoproces.eu/xapi/auth
+			Authorization: Bearer xxxxxxxx
+		</pre>
 	</div>
 </body>
 </html>

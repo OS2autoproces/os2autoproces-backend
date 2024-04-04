@@ -101,6 +101,10 @@ public class Process {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
+	private Date putIntoOperation;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column
 	private Date decommissioned;
 
 	@Column
@@ -330,6 +334,10 @@ public class Process {
 	private String ratingComment;
 
 	@Column
+	@Size(max = 10000)
+	private String automationDescription;
+
+	@Column
 	@Size(max = 1000)
 	private String searchWords;
 	
@@ -399,5 +407,130 @@ public class Process {
 		p.setCvr(projection.getCvr());
 		
 		return p;
+	}
+
+	// this seems to be the only safe way to use the filter() method on the readInterceptor
+	public Process cloneMe() {
+		Process process = new Process();
+		process.setAutomationDescription(automationDescription);
+		
+		if (bookmarkUsers != null) {
+			process.setBookmarkUsers(bookmarkUsers.stream().map(bu -> bu.cloneMe()).toList());
+		}
+		
+		if (children != null) {
+			process.setChildren(children.stream().map(c -> c.cloneMe()).toList());
+		}
+		
+		process.setChildrenCount(childrenCount);
+		process.setCodeRepositoryUrl(codeRepositoryUrl);
+		process.setContact(contact.cloneMe());
+		process.setCreated(created);
+		process.setCvr(cvr);
+		process.setDecommissioned(decommissioned);
+		
+		if (domains != null) {
+			process.setDomains(domains);
+		}
+		
+		process.setEsdhReference(esdhReference);
+		process.setEvaluatedLevelOfRoi(evaluatedLevelOfRoi);
+		process.setExpectedDevelopmentTime(expectedDevelopmentTime);
+		process.setForm(form);
+		process.setFreetext(freetext);
+		process.setId(id);
+		process.setIllegalAccessField(illegalAccessField);
+		process.setInternalNotes(internalNotes);
+		
+		if (itSystems != null) {
+			process.setItSystems(itSystems.stream().map(i -> i.cloneMe()).toList());
+		}
+		
+		process.setItSystemsDescription(itSystemsDescription);
+		process.setKla(kla);
+		process.setKlaProcess(klaProcess);
+		process.setKle(kle);
+		process.setKlId(klId);
+		process.setLastChanged(lastChanged);
+		process.setLegalClause(legalClause);
+		process.setLegalClauseLastVerified(legalClauseLastVerified);
+		process.setLevelOfChange(levelOfChange);
+		process.setLevelOfDigitalInformation(levelOfDigitalInformation);
+		process.setLevelOfProfessionalAssessment(levelOfProfessionalAssessment);
+		process.setLevelOfQuality(levelOfQuality);
+		process.setLevelOfRoutineWorkReduction(levelOfRoutineWorkReduction);
+		process.setLevelOfSpeed(levelOfSpeed);
+		process.setLevelOfStructuredInformation(levelOfStructuredInformation);
+		process.setLevelOfUniformity(levelOfUniformity);
+		
+		if (links != null) {
+			process.setLinks(links.stream().map(l -> l.cloneMe()).toList());
+		}
+		
+		process.setLongDescription(longDescription);
+		process.setMunicipalityName(municipalityName);
+		process.setNoChangesNotificationDate(noChangesNotificationDate);
+		process.setOrganizationalImplementationNotes(organizationalImplementationNotes);
+		
+		if (orgUnits != null) {
+			process.setOrgUnits(orgUnits.stream().map(o -> o.cloneMe()).toList());
+		}
+		
+		process.setOtherContactEmail(otherContactEmail);
+		
+		if (owner != null) {
+			process.setOwner(owner.cloneMe());
+		}
+		
+		// nope, we should never look up (I hope)... otherwise we could end up cloning the entire database
+		// process.setParents(parents);
+		
+		process.setPhase(phase);
+		process.setProcessChallenges(processChallenges);
+		process.setPutIntoOperation(putIntoOperation);
+		process.setRating(rating);
+		process.setRatingComment(ratingComment);
+
+		if (reporter != null) {
+			process.setReporter(reporter.cloneMe());
+		}
+		
+		process.setRunPeriod(runPeriod);
+		process.setSearchWords(searchWords);
+		process.setSepMep(sepMep);
+		
+		if (services != null) {
+			process.setServices(services.stream().map(s -> s.cloneMe()).toList());
+		}
+		
+		process.setShortDescription(shortDescription);
+		process.setSolutionRequests(solutionRequests);
+		process.setStatus(status);
+		process.setStatusText(statusText);
+		process.setTargetsCitizens(targetsCitizens);
+		process.setTargetsCompanies(targetsCompanies);
+		process.setTechnicalImplementationNotes(technicalImplementationNotes);
+		
+		if (technologies != null) {
+			process.setTechnologies(technologies.stream().map(t -> t.cloneMe()).toList());
+		}
+		
+		process.setTimeSpendComment(timeSpendComment);
+		process.setTimeSpendComputedTotal(timeSpendComputedTotal);
+		process.setTimeSpendEmployeesDoingProcess(timeSpendEmployeesDoingProcess);
+		process.setTimeSpendOccurancesPerEmployee(timeSpendOccurancesPerEmployee);
+		process.setTimeSpendPercentageDigital(timeSpendPercentageDigital);
+		process.setTimeSpendPerOccurance(timeSpendPerOccurance);
+		process.setTitle(title);
+		process.setType(type);
+
+		if (users != null) {
+			process.setUsers(users.stream().map(u -> u.cloneMe()).toList());
+		}
+		
+		process.setVendor(vendor);
+		process.setVisibility(visibility);
+		
+		return process;
 	}
 }

@@ -9,12 +9,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import dk.digitalidentity.ap.service.FormService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @EnableScheduling
 @EnableAsync
-@Log4j
+@Slf4j
 public class FormTask {
 
 	@Value("${scheduled.enabled:false}")

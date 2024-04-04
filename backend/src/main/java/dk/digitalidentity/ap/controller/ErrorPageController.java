@@ -3,48 +3,41 @@ package dk.digitalidentity.ap.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
-import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import dk.digitalidentity.ap.dao.model.Municipality;
 import dk.digitalidentity.ap.service.MunicipalityService;
 
 @Controller
-@RequestMapping("${server.error.path:${error.path:/error}}")
-public class ErrorPageController extends BasicErrorController {
-	
-	@Value(value = "${error.showtrace:false}")
-	private boolean showStackTrace;
+public class ErrorPageController implements ErrorController {
+	private ErrorAttributes errorAttributes = new DefaultErrorAttributes();
 
 	@Autowired
 	private MunicipalityService municipalityService;
 
-	@Autowired
-	public ErrorPageController(ErrorAttributes errorAttributes, ErrorProperties errorProperties) {
-		super(errorAttributes, errorProperties);
-	}
-
-	@RequestMapping(produces = "text/html")
-	@Override
-	public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> body = getErrorAttributes(request, showStackTrace ? ErrorAttributeOptions.of(Include.STACK_TRACE) : ErrorAttributeOptions.defaults());
+	@RequestMapping(value = "/saml/error", produces = "text/html")
+	public String errorPage(Model model, HttpServletRequest request) {
+		Map<String, Object> body = getErrorAttributes(new ServletWebRequest(request));
+		model.addAllAttributes(body);
 
 		// deal with 404 first
 		Object status = body.get("status");
         if (status != null && status instanceof Integer && (Integer) status == 404) {
-        	return new ModelAndView("404", body);
+        	return "404";
         }
         
 		Object authException = request.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
@@ -59,7 +52,7 @@ public class ErrorPageController extends BasicErrorController {
 			Throwable t = (Throwable) authException;
 
 			logThrowable(builder, t, false);
-			body.put("exception", builder.toString());
+			model.addAttribute("exception", builder.toString());
 
 			if (authException instanceof UsernameNotFoundException) {
 				String message = ((UsernameNotFoundException) authException).getMessage();
@@ -70,21 +63,40 @@ public class ErrorPageController extends BasicErrorController {
 
 					Municipality municipality = municipalityService.getByCvr(cvr);
 					if (municipality != null) {
-						body.put("cause", "USER");
+						model.addAttribute("cause", "USER");
 					} else {
-						body.put("cause", "ORG");
+						model.addAttribute("cause", "ORG");
 					}
 				}
 			}
 		}
 
 		if (!body.containsKey("cause")) {
-			body.put("cause", "UNKNOWN");
+			model.addAttribute("cause", "UNKNOWN");
 		}
 
-		return new ModelAndView("samlerror", body);
+		return "samlerror";
 	}
 
+	@RequestMapping(value = "/error", produces = "application/json")
+	public ResponseEntity<Map<String, Object>> errorJSON(HttpServletRequest request) {
+		Map<String, Object> body = getErrorAttributes(new ServletWebRequest(request));
+
+		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+		try {
+			status = HttpStatus.valueOf((int) body.get("status"));
+		}
+		catch (Exception ex) {
+			;
+		}
+
+		return new ResponseEntity<>(body, status);
+	}
+
+	private Map<String, Object> getErrorAttributes(WebRequest request) {
+		return errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+	}
+	
 	private void logThrowable(StringBuilder builder, Throwable t, boolean append) {
 		StackTraceElement[] stackTraceElements = t.getStackTrace();
 
@@ -97,5 +109,4 @@ public class ErrorPageController extends BasicErrorController {
 			logThrowable(builder, t.getCause(), true);
 		}
 	}
-
 }

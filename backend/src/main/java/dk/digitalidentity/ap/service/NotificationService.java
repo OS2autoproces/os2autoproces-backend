@@ -7,22 +7,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import dk.digitalidentity.ap.dao.NotificationDao;
 import dk.digitalidentity.ap.dao.model.Comment;
+import dk.digitalidentity.ap.dao.model.Notification;
+import dk.digitalidentity.ap.dao.model.Process;
 import dk.digitalidentity.ap.dao.model.State;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
 import dk.digitalidentity.ap.dao.model.enums.Visibility;
 import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.model.ProcessHistoryPair;
-import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
-import dk.digitalidentity.ap.dao.NotificationDao;
-import dk.digitalidentity.ap.dao.model.Notification;
-import dk.digitalidentity.ap.dao.model.Process;
-import org.springframework.transaction.annotation.Transactional;
-
-@Log4j
+@Slf4j
 @Service
 public class NotificationService {
 
@@ -248,6 +248,10 @@ public class NotificationService {
 
 		if (!stringEquals(history.getLatest().getRatingComment(), history.getPrev().getRatingComment())) {
 			builder.append("<b>Vurderingskommentar</b><br/>" + history.getLatest().getRatingComment() + "<br/><br/>");
+		}
+
+		if (!stringEquals(history.getLatest().getAutomationDescription(), history.getPrev().getAutomationDescription())) {
+			builder.append("<b>Beskrivelse af automatisering</b><br/>" + history.getLatest().getAutomationDescription() + "<br/><br/>");
 		}
 
 		try {

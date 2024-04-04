@@ -3,6 +3,7 @@ package dk.digitalidentity.ap.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,7 @@ public class ExcelApi {
 	private AttachmentDao attachmentDao;
 
 	@GetMapping
-	public ModelAndView getExcel(HttpServletResponse response, @QuerydslPredicate(root = Process.class) Predicate predicate) {
+	public ModelAndView getExcel(HttpServletResponse response, @QuerydslPredicate(root = Process.class) Predicate predicate, Locale loc) {
 		final List<Process> processes = new ArrayList<>();
 		final Map<Long, List<Attachment>> attachmentMap = new HashMap<>();
 		
@@ -53,7 +54,7 @@ public class ExcelApi {
 		model.put("attachmentMap", attachmentMap);
 
 		response.setContentType("application/ms-excel");
-		response.setHeader("Content-Disposition", "attachment; filename=\"processes.xls\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"processes.xlsx\"");
 
 		return new ModelAndView(new ProcessXlsView(), model);
 	}

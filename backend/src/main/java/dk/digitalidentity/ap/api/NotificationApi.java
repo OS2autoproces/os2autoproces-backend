@@ -17,9 +17,9 @@ import dk.digitalidentity.ap.security.SecurityUtil;
 import dk.digitalidentity.ap.service.NotificationService;
 import dk.digitalidentity.ap.service.ProcessService;
 import dk.digitalidentity.ap.service.UserService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationApi {

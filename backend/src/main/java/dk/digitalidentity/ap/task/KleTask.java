@@ -24,12 +24,12 @@ import dk.kleonline.grupper.GruppeType;
 import dk.kleonline.grupper.KLEGrupper;
 import dk.kleonline.hovedgrupper.HovedgruppeType;
 import dk.kleonline.hovedgrupper.KLEHovedgrupper;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @EnableScheduling
 @EnableAsync
-@Log4j
+@Slf4j
 public class KleTask {
 	
 	@Value("${scheduled.enabled:false}")

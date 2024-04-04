@@ -13,9 +13,9 @@ import dk.digitalidentity.ap.dao.FormDao;
 import dk.digitalidentity.ap.dao.KleDao;
 import dk.digitalidentity.ap.dao.model.Form;
 import dk.digitalidentity.ap.dao.model.Kle;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Service
 public class KleToFormService {
 	private static final String WELL_KNOWN_KLE = "01.02.27";

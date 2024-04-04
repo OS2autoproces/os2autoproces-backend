@@ -6,10 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import dk.digitalidentity.ap.dao.model.Administrator;
 import dk.digitalidentity.ap.dao.model.Municipality;
@@ -18,11 +18,12 @@ import dk.digitalidentity.ap.dao.model.User;
 import dk.digitalidentity.ap.service.AdministratorService;
 import dk.digitalidentity.ap.service.MunicipalityService;
 import dk.digitalidentity.ap.service.UserService;
-import dk.digitalidentity.saml.extension.SamlLoginPostProcessor;
-import dk.digitalidentity.saml.model.TokenUser;
-import lombok.extern.log4j.Log4j;
+import dk.digitalidentity.samlmodule.model.SamlGrantedAuthority;
+import dk.digitalidentity.samlmodule.model.SamlLoginPostProcessor;
+import dk.digitalidentity.samlmodule.model.TokenUser;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j
+@Slf4j
 @Component
 public class LoginPostProcesser implements SamlLoginPostProcessor {
 	private UserService userService;
@@ -39,6 +40,11 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 	@Transactional
 	public void process(TokenUser tokenUser) {
 		String uuid = (String) tokenUser.getAttributes().get(TokenUser.ATTRIBUTE_UUID);
+		
+		// KOMBIT login supplies CVR through NameID and not configured CVR on Identity Provider
+		if (!StringUtils.hasLength(tokenUser.getCvr())) {
+			tokenUser.setCvr(getNameIdValue("O", tokenUser.getUsername()));
+		}
 		
 		Municipality municipality = municipalityService.getByCvr(tokenUser.getCvr());
 		if (municipality == null) {
@@ -136,16 +142,16 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 			orgUnit.getCvr();
 		}
 
-		List<GrantedAuthority> newAuthorities = new ArrayList<>();
-		newAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		List<SamlGrantedAuthority> newAuthorities = new ArrayList<>();
+		newAuthorities.add(new SamlGrantedAuthority("ROLE_USER"));
 
 		for (GrantedAuthority authority : tokenUser.getAuthorities()) {
 			switch (authority.getAuthority()) {
 				case "ROLE_http://os2autoproces.eu/roles/usersystemrole/local_superuser/1":
-					newAuthorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_LOCAL_SUPERUSER));
+					newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_LOCAL_SUPERUSER));
 					break;
 				case "ROLE_http://os2autoproces.eu/roles/usersystemrole/superuser/1":
-					newAuthorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
+					newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 					break;
 				default:
 					break;
@@ -157,10 +163,10 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 			for (Administrator administrator : administratorRoles) {
 				switch (administrator.getRole()) {
 					case "frontpage_editor":
-						newAuthorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_FRONTPAGE_EDITOR));
+						newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_FRONTPAGE_EDITOR));
 						break;
 					case "administrator":
-						newAuthorities.add(new SimpleGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
+						newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_ADMINISTRATOR));
 						break;
 					default:
 						break;		
