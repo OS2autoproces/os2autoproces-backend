@@ -12,7 +12,7 @@ Til Backenden er der udarbejdet følgende dokumenter. Tilgå repositoriet for Fr
   <li><a href="doc/Vejledning til brug af AD importer.docx">Vejledning til AD Importer (indlæsning af organisationsdata fra AD)</a></li>
   <li><a href="doc/Regional SAML opsætning.docx">Vejledning til opsætning af AD FS / SAML integration (for andre myndigheder end kommuner)</a></li>
   <li><a href="doc/Vejledning til implementering af OS2autoproces.docx">Vejledning til opsætning af kommunal integration</a></li>
-  <li><a href="doc/Vejledning til indlæsning af organisationsdata - 3 modeller.docx">Vejledning til indlæsning af organisationsdata</a></li>
+  <li><a href="doc/Vejledning til indlæsning af organisationsdata.docx">Vejledning til indlæsning af organisationsdata</a></li>
 </ul>
 
 <h2>Kode</h2>
