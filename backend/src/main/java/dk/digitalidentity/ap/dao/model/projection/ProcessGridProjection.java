@@ -37,9 +37,9 @@ public interface ProcessGridProjection {
 	String getMunicipalityName();
 	Visibility getVisibility();
 	long getChildrenCount();
-	int getTimeSpendOccurancesPerEmployee();
-	double getTimeSpendPerOccurance();
-	int getTimeSpendPercentageDigital();
+	Integer getTimeSpendOccurancesPerEmployee();
+	Double getTimeSpendPerOccurance();
+	Integer getTimeSpendPercentageDigital();
 	List<Technology> getTechnologies();
 	RunPeriod getRunPeriod();
 
@@ -60,6 +60,10 @@ public interface ProcessGridProjection {
 	User getOwner();
 
 	default boolean isHasBookmarked() {
+		if (SecurityUtil.getRoles().contains(SecurityUtil.ROLE_SYSTEM)) {
+			return false;
+		}
+
 		BookmarkDao bookmarkDao = ApplicationContextProvider.getApplicationContext().getBean("bookmarkDao", BookmarkDao.class);
 		if (bookmarkDao == null) {
 			return false;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -61,6 +63,18 @@ public class S3Service {
 			
 			return null;
 		}
+	}
+
+	public byte[] downloadAsBytes(String key) throws IOException {
+
+		if (bucketName == null) {
+			log.debug("Not found. Bucket: " + bucketName + " Key: " + key);
+			return null;
+		}
+
+		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
+		S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
+		return org.apache.commons.io.IOUtils.toByteArray(s3Object.getObjectContent());
 	}
 
 	public void delete(String fileName) {

@@ -53,7 +53,7 @@ public class STSOrganisationService {
 			return;
 		}
 
-		String key = keyResponse.getBody();
+		String key = keyResponse.getBody().replace("\"", "");
 		
 		ResponseEntity<STSHierarchyWrapper> response = null;
 		for (int i = 0; i < 15; i++) { // 45 minutes total
@@ -65,8 +65,11 @@ public class STSOrganisationService {
 	        headerMap.add("accept", "application/json");
 			headers = new HttpEntity<>(headerMap);
 
-			response = restTemplate.exchange(stsOrgSyncUrl + "/" + key, HttpMethod.GET, headers, STSHierarchyWrapper.class);
-//			response = restTemplate.getForEntity(stsOrgSyncUrl + "/" + key, STSHierarchyWrapper.class);
+			String url = stsOrgSyncUrl + "/" + key;
+			
+			log.info("Attempt " + (i+1) + " checking for data for " + cvr + " at " + url);
+			
+			response = restTemplate.exchange(url, HttpMethod.GET, headers, STSHierarchyWrapper.class);
 
 			if (response.getStatusCodeValue() != 404) {
 				break;

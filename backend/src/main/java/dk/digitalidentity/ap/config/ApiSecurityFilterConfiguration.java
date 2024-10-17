@@ -1,5 +1,6 @@
 package dk.digitalidentity.ap.config;
 
+import dk.digitalidentity.ap.dao.ProcessSeenByDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +15,12 @@ public class ApiSecurityFilterConfiguration {
 	@Autowired
 	private MunicipalityDao municipalityDao;
 
+	@Autowired
+	private ProcessSeenByDao processSeenByDao;
+
 	@Bean(name="ApiSecurityFilter")
 	public FilterRegistrationBean<ApiSecurityFilter> apiSecurityFilter() {
-		ApiSecurityFilter filter = new ApiSecurityFilter(municipalityDao);
+		ApiSecurityFilter filter = new ApiSecurityFilter(municipalityDao, processSeenByDao);
 
 		FilterRegistrationBean<ApiSecurityFilter> filterRegistrationBean = new FilterRegistrationBean<ApiSecurityFilter>(filter);
 		filterRegistrationBean.addUrlPatterns("/api/*");

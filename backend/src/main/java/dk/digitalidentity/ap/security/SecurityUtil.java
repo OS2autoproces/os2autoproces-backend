@@ -191,6 +191,18 @@ public class SecurityUtil {
 		return false;
 	}
 
+	public static boolean canEditMunicipalityInfo(Municipality municipality) {
+		if (SecurityUtil.getUser() == null || !municipality.getCvr().equals(SecurityUtil.getCvr())) {
+			return false;
+		}
+
+		if (municipality.getCvr().equals(SecurityUtil.getCvr()) && SecurityUtil.getRoles().contains(SecurityUtil.ROLE_SUPERUSER)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static boolean canRead(Process process) {
 		if (getUser() == null) {
 			return false;

@@ -3,6 +3,7 @@ package dk.digitalidentity.ap.dao;
 import java.util.List;
 
 import dk.digitalidentity.ap.dao.model.Service;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import dk.digitalidentity.ap.dao.model.ItSystem;
 import dk.digitalidentity.ap.dao.model.QItSystem;
 
+@SecurityRequirement(name = "Authorization")
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface ItSystemDao extends JpaRepository<ItSystem, Long>, QuerydslPredicateExecutor<ItSystem>, QuerydslBinderCustomizer<QItSystem> {
 

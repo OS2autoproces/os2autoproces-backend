@@ -11,15 +11,15 @@ import dk.digitalidentity.ap.service.ProcessService;
 @Component
 @EnableScheduling
 public class ProcessCounterTask {
+
 	@Value("${scheduled.enabled:false}")
 	private boolean runScheduled;
 
 	@Autowired
 	private ProcessService processService;
 
-	// take a snapshot of the process count last day every three months at 23.55
-	@Scheduled(cron = "0 55 23 L MAR,JUN,SEP,DEC ?")
-	@Scheduled(fixedRate = 30 * 10000)
+	// take a snapshot of the process count last day every three months at 21.55
+	@Scheduled(cron = "0 55 21 L MAR,JUN,SEP,DEC ?")
 	public void sendNotifications() {
 		if (!runScheduled) {
 			return;

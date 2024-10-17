@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.dao;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -12,6 +13,7 @@ import dk.digitalidentity.ap.dao.model.QTechnology;
 import dk.digitalidentity.ap.dao.model.Technology;
 import dk.digitalidentity.ap.security.RequireAdminRole;
 
+@SecurityRequirement(name = "Authorization")
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface TechnologyDao extends JpaRepository<Technology, Long>, QuerydslPredicateExecutor<Technology>, QuerydslBinderCustomizer<QTechnology> {
 

@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.dao;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -14,6 +15,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import dk.digitalidentity.ap.dao.model.OrgUnit;
 import dk.digitalidentity.ap.dao.model.QOrgUnit;
 
+@SecurityRequirement(name = "Authorization")
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface OrgUnitDao extends JpaRepository<OrgUnit, Long>, QuerydslPredicateExecutor<OrgUnit>, QuerydslBinderCustomizer<QOrgUnit> {
 	

@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import dk.digitalidentity.ap.service.ProcessSeenByService;
 import dk.digitalidentity.ap.service.ServiceService;
+import dk.digitalidentity.ap.service.model.ProcessSeenByChartDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Chart API")
 public class ChartApi {
 
 	@Autowired
@@ -50,6 +56,9 @@ public class ChartApi {
 
 	@Autowired
 	private ServiceService serviceService;
+
+	@Autowired
+	private ProcessSeenByService processSeenByService;
 
 	// maps does not work well with vue.js and typescript that why we use lists
 	record OrganisationChartDTO(List<String> totalLabels, List<Long> totalData, List<String> ownLabels, List<Long> ownData) {}
@@ -96,21 +105,22 @@ public class ChartApi {
 				ownData.add(processDao.countByCvrAndSepMepFalseAndKlaProcessFalse(authenticatedUser.getCvr()));
 			} else {
 				ProcessCountHistory historyTotal = processCountHistoryDao.findByCvrAndCountedQuarter(null, quarter);
+				totalLabels.add(quarter);
 				if (historyTotal == null) {
-					log.error("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard for quarter " + quarter);
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard");
+					log.warn("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard for quarter " + quarter);
+					totalData.add(0L);
+				} else {
+					totalData.add(historyTotal.getProcessCount());
 				}
 
 				ProcessCountHistory historyOwn = processCountHistoryDao.findByCvrAndCountedQuarter(authenticatedUser.getCvr(), quarter);
-				if (historyOwn == null) {
-					log.error("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard for quarter " + quarter + " and cvr " + authenticatedUser.getCvr());
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard");
-				}
-
-				totalLabels.add(quarter);
-				totalData.add(historyTotal.getProcessCount());
 				ownLabels.add(quarter);
-				ownData.add(historyOwn.getProcessCount());
+				if (historyOwn == null) {
+					log.warn("Missing rows in ProcessCountHistory tabel to generate history chart for dashboard for quarter " + quarter + " and cvr " + authenticatedUser.getCvr());
+					ownData.add(0L);
+				} else {
+					ownData.add(historyOwn.getProcessCount());
+				}
 			}
 		}
 
@@ -189,14 +199,20 @@ public class ChartApi {
 		return ResponseEntity.ok(new OrganisationChartDTO(totalLabels, totalData, ownLabels, ownData));
 	}
 
-	record OrganisationProcessCountChartDTO(String municipalityName, long processCount) {}
+	record OrganisationProcessCountChartDTO(String cvr, String municipalityName, long processCount) {}
 	@GetMapping("/api/charts/organisation")
 	public ResponseEntity<?> getOrganisationChartData() {
 
 		List<OrganisationProcessCountChartDTO> result = new ArrayList<>();
 		for (Municipality municipality : municipalityDao.findAll()) {
-			result.add(new OrganisationProcessCountChartDTO(municipality.getName(), processDao.countByCvr(municipality.getCvr())));
+			result.add(new OrganisationProcessCountChartDTO(municipality.getCvr(), municipality.getName(), processDao.countByCvr(municipality.getCvr())));
 		}
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/api/charts/seenby")
+	public ResponseEntity<?> getSeenByChart() {
+		List<ProcessSeenByChartDTO> result = processSeenByService.getTop10ProcessIdsWithTitleAndCount();
 		return ResponseEntity.ok(result);
 	}
 
@@ -207,15 +223,14 @@ public class ChartApi {
 		List<String> quarters = new ArrayList<>();
 
 		for (int i = 0; i < 8; i++) {
+			String quarterName = "Q" + quarter + " " + year;
+			quarters.add(quarterName);
 			if (quarter == 1) {
 				year--;
 				quarter = 4;
 			} else {
 				quarter--;
 			}
-
-			String quarterName = "Q" + quarter + " " + year;
-			quarters.add(quarterName);
 		}
 
 		Collections.reverse(quarters);

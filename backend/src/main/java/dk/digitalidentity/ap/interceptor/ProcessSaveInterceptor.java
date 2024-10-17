@@ -2,6 +2,7 @@ package dk.digitalidentity.ap.interceptor;
 
 import javax.persistence.EntityManager;
 
+import dk.digitalidentity.ap.dao.model.Municipality;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -84,12 +85,26 @@ public class ProcessSaveInterceptor {
 				}
 				else {
 					AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
-					User user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
+					User user = null;
+					if (authenticatedUser != null) {
+						user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
+					}
+
+					Municipality municipality = municipalityService.getByCvr(SecurityUtil.getCvr());
 
 					// on new process we assigned current users cvr
 					newProcess.setCvr(SecurityUtil.getCvr());
-					newProcess.setReporter(user);
-					newProcess.setMunicipalityName(municipalityService.getByCvr(SecurityUtil.getCvr()).getName());
+					newProcess.setMunicipalityName(municipality.getName());
+
+					// set other contact email if autofill is configured on municipality
+					if (StringUtils.hasLength(municipality.getAutoOtherContactEmail())) {
+						newProcess.setOtherContactEmail(municipality.getAutoOtherContactEmail());
+					}
+
+					// default value if not supplied
+					if (newProcess.getReporter() == null) {
+						newProcess.setReporter(user);
+					}
 
 					// default value if not supplied
 					if (newProcess.getOwner() == null) {
@@ -123,12 +138,16 @@ public class ProcessSaveInterceptor {
 				}
 				
 				// compute time spend
-				double timeSpend = newProcess.getTimeSpendPerOccurance();
-				int numberOfOccurances = newProcess.getTimeSpendOccurancesPerEmployee();
-				int percentage = newProcess.getTimeSpendPercentageDigital();
-				double computedValueInHours = (timeSpend * numberOfOccurances * percentage / 60) / 100;
-				newProcess.setTimeSpendComputedTotal((int) computedValueInHours);
-				
+				Double timeSpend = newProcess.getTimeSpendPerOccurance();
+				Integer numberOfOccurances = newProcess.getTimeSpendOccurancesPerEmployee();
+				Integer percentage = newProcess.getTimeSpendPercentageDigital();
+				if (timeSpend == null || numberOfOccurances == null || percentage == null) {
+					newProcess.setTimeSpendComputedTotal(0);
+				} else {
+					double computedValueInHours = (timeSpend * numberOfOccurances * percentage / 60) / 100;
+					newProcess.setTimeSpendComputedTotal((int) computedValueInHours);
+				}
+
 				// if FORM is set, overwrite legal_clause with the official version
 				if (StringUtils.hasLength(newProcess.getForm())) {
 					Form form = formService.getByCode(newProcess.getForm());

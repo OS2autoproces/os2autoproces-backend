@@ -1,21 +1,29 @@
 package dk.digitalidentity.ap.dao;
 
-import java.util.List;
-
+import dk.digitalidentity.ap.dao.model.Municipality;
+import dk.digitalidentity.ap.dao.model.QMunicipality;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
-import dk.digitalidentity.ap.dao.model.Municipality;
-import dk.digitalidentity.ap.dao.model.QMunicipality;
+import java.util.List;
 
-@RepositoryRestResource(exported = false)
+@SecurityRequirement(name = "Authorization")
+@RestResource
+@CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface MunicipalityDao extends JpaRepository<Municipality, Long>, QuerydslPredicateExecutor<Municipality>, QuerydslBinderCustomizer<QMunicipality> {
 
 	List<Municipality> findAll();
-	Municipality getByCvr(String cvr);
+
+	@RestResource(path = "byCvr", rel = "byCvr")
+	Municipality getByCvr(@Param("cvr") String cvr);
+
+	@RestResource(exported = false)
 	Municipality getByApiKey(String apiKey);
 
 	@Override

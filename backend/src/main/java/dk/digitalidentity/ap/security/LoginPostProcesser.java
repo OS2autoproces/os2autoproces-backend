@@ -40,6 +40,9 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 	@Transactional
 	public void process(TokenUser tokenUser) {
 		String uuid = (String) tokenUser.getAttributes().get(TokenUser.ATTRIBUTE_UUID);
+		if (!StringUtils.hasLength(uuid)) {
+			uuid = tokenUser.getUsername();
+		}
 		
 		// KOMBIT login supplies CVR through NameID and not configured CVR on Identity Provider
 		if (!StringUtils.hasLength(tokenUser.getCvr())) {

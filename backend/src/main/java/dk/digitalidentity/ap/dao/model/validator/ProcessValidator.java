@@ -95,10 +95,6 @@ public class ProcessValidator implements Validator {
 				process.setStatus(Status.INPROGRESS);
 				process.setKlaProcess(false);
 				process.setTimeSpendComputedTotal(0);
-				process.setTimeSpendEmployeesDoingProcess(0);
-				process.setTimeSpendOccurancesPerEmployee(0);
-				process.setTimeSpendPercentageDigital(0);
-				process.setTimeSpendPerOccurance(0);
 				process.setLevelOfChange(Level.NOT_SET);
 				process.setLevelOfDigitalInformation(Level.NOT_SET);
 				process.setLevelOfProfessionalAssessment(Level.NOT_SET);

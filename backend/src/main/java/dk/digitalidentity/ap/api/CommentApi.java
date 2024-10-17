@@ -2,6 +2,8 @@ package dk.digitalidentity.ap.api;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ import dk.digitalidentity.ap.service.ProcessService;
 
 @RestController
 @RequestMapping("/api/comments")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Comment API")
 public class CommentApi {
 
 	@Autowired

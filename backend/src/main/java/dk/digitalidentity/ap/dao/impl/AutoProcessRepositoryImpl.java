@@ -296,11 +296,13 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 			Predicate automationDescription = process.automationDescription.contains(freeTextSearch);
 			Predicate ratingComment = process.ratingComment.contains(freeTextSearch);
 
+
+			Predicate idPredicate = null;
 			try {
 				// if the freeTextSearch is just a number, perform a search on the process ID and only
 				Long id = Long.parseLong(freeTextSearch);
 
-				return process.id.eq(id); 
+				idPredicate = process.id.eq(id);
 			}
 			catch (Exception ex) {
 				; // ignore;
@@ -308,10 +310,18 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 
 			if (modifiedPredicateHolder.size() > 0) {
 				Predicate p = modifiedPredicateHolder.get(0);
-				return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment), p);
+				if (idPredicate == null) {
+					return ExpressionUtils.allOf(ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment), p);
+				} else {
+					return ExpressionUtils.allOf(ExpressionUtils.anyOf(idPredicate, shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment), p);
+				}
 			}
 			else {
-				return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment);
+				if (idPredicate == null) {
+					return ExpressionUtils.anyOf(shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment);
+				} else {
+					return ExpressionUtils.anyOf(idPredicate, shortDescription, longDescription, title, searchWords, orgUnitNames, reporterName, contactName, otherContactEmail, ownerName, kleCode, solutionRequests, processChallenges, timeSpendComment, technicalImplementationNotes, organizationalImplementationNotes, automationDescription, ratingComment);
+				}
 			}
 		}
 

@@ -1,5 +1,8 @@
 package dk.digitalidentity.ap.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/ops")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "STS Organisation API")
 public class OpsApi {
 
 	@Autowired
 	private STSOrganisationService stsOrganisationService;
 
+	@Operation(summary = "Trigger STS Organisation update")
 	@GetMapping(value = "/organisation/{cvr}")
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> triggerOrganisationUpdate(@PathVariable("cvr") String cvr) throws Exception {

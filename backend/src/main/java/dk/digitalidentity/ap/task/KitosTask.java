@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @EnableScheduling
 public class KitosTask {
-	
+
 	@Value("${scheduled.enabled:false}")
 	private boolean runScheduled;
 

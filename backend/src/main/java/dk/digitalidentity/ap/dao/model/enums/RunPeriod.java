@@ -1,6 +1,7 @@
 package dk.digitalidentity.ap.dao.model.enums;
 
 public enum RunPeriod {
+	NOT_CHOSEN_YET(""),
 	ONDEMAND("Efter behov"),
 	ONCE("Enkeltkørsel"),
 	DAILY("Dagligt"),

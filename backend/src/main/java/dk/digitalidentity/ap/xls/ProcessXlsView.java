@@ -213,8 +213,8 @@ public class ProcessXlsView extends AbstractXlsxView {
 			createCell(row, 31, process.getTimeSpendPerOccurance() * process.getTimeSpendOccurancesPerEmployee() / 60, numberStyle);
 			createCell(row, 32, process.getTimeSpendComputedTotal(), numberStyle);
 			createCell(row, 33, process.getTimeSpendEmployeesDoingProcess(), numberStyle);
-			createCell(row, 34, process.isTargetsCitizens() ? "Ja" : "Nej", normalStyle);
-			createCell(row, 35, process.isTargetsCompanies() ? "Ja" : "Nej", normalStyle);
+			createCell(row, 34, process.getTargetsCitizens() == null ? "" : process.getTargetsCitizens() ?  "Ja" : "Nej", normalStyle);
+			createCell(row, 35, process.getTargetsCompanies() == null ? "" : process.getTargetsCompanies() ? "Ja" : "Nej", normalStyle);
 			createCell(row, 36, process.getExpectedDevelopmentTime() != null ? process.getExpectedDevelopmentTime() : 0, numberStyle);
 			createCell(row, 37, process.getTimeSpendComment(), normalStyle);
 			createCell(row, 38, process.getLevelOfProfessionalAssessment().getValue(), normalStyle);

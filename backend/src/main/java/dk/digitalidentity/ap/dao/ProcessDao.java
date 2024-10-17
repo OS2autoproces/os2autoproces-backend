@@ -7,6 +7,7 @@ import dk.digitalidentity.ap.dao.model.QProcess;
 import dk.digitalidentity.ap.dao.model.Technology;
 import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,8 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "Authorization")
 @CrossOrigin(exposedHeaders = "x-csrf-token")
 public interface ProcessDao extends JpaRepository<Process, Long>, QuerydslPredicateExecutor<Process>, QuerydslBinderCustomizer<QProcess> {
+
+	@RestResource(exported = false)
+	List<Process> findByCvr(String cvr);
 
 	@RestResource(exported = false)
 	List<Process> findByLastChangedBetween(Date begin, Date end);

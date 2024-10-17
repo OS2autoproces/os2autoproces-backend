@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,8 @@ import dk.digitalidentity.ap.service.UserService;
 
 @RestController
 @RequestMapping("/api/processes")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Clone Process API")
 public class CloneAPI {
 
 	@Autowired
@@ -83,8 +87,8 @@ public class CloneAPI {
 		clone.setRunPeriod(process.getRunPeriod());
 		clone.setCodeRepositoryUrl(process.getCodeRepositoryUrl());
 		clone.setExpectedDevelopmentTime(process.getExpectedDevelopmentTime());
-		clone.setTargetsCitizens(process.isTargetsCitizens());
-		clone.setTargetsCompanies(process.isTargetsCompanies());
+		clone.setTargetsCitizens(process.getTargetsCitizens());
+		clone.setTargetsCompanies(process.getTargetsCompanies());
 		clone.setTechnicalImplementationNotes(process.getTechnicalImplementationNotes());
 		clone.setTechnologies(new ArrayList<>());
 		if (process.getTechnologies() != null && process.getTechnologies().size() > 0) {
@@ -116,7 +120,7 @@ public class CloneAPI {
 		User user = userService.getByUuidAndCvr(authenticatedUser.getUuid(), authenticatedUser.getCvr());
 		
 		// values that are not copied
-		clone.setVisibility(Visibility.PERSONAL);
+		clone.setVisibility(Visibility.MUNICIPALITY);
 		clone.setOwner(user);
 		clone.setReporter(user);
 		clone.setContact(user);

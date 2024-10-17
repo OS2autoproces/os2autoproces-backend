@@ -1,5 +1,7 @@
 package dk.digitalidentity.ap.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +16,8 @@ import dk.digitalidentity.ap.security.RequireFrontPageEditorRole;
 import dk.digitalidentity.ap.service.CmsService;
 
 @RestController
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "CMS API")
 public class CmsApi {
 	
 	@Autowired

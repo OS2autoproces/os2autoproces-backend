@@ -10,7 +10,7 @@ public class AutoProcessRevisionListener implements RevisionListener {
 		AutoProcessRevision entity = (AutoProcessRevision) revisionEntity;
 
 		long auditorId = (SecurityUtil.getUser() != null) ? SecurityUtil.getUser().getId() : -1;
-		String auditorName = (SecurityUtil.getUserId() != null) ? SecurityUtil.getUser().getName() : "system";
+		String auditorName = (SecurityUtil.getUser() != null) ? SecurityUtil.getUser().getName() : "system";
 
 		entity.setAuditorId(auditorId);
 		entity.setAuditorName(auditorName);

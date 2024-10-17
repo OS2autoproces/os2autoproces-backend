@@ -1,0 +1,9 @@
+CREATE TABLE process_seen_by (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+   user_id BIGINT NOT NULL,
+   process_id BIGINT NOT NULL,
+   CONSTRAINT pk_processseenby PRIMARY KEY (id)
+);
+
+ALTER TABLE process_seen_by ADD CONSTRAINT FK_PROCESSSEENBY_ON_PROCESS FOREIGN KEY (process_id) REFERENCES `process` (id);
+ALTER TABLE process_seen_by ADD CONSTRAINT FK_PROCESSSEENBY_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);

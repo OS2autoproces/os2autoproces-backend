@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,8 @@ import dk.digitalidentity.ap.xls.ProcessXlsView;
 
 @RestController
 @RequestMapping("/api/excel")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Excel API")
 public class ExcelApi {
 	
 	@Autowired

@@ -1,7 +1,25 @@
 package dk.digitalidentity.ap.dao.model;
 
-import java.util.Date;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import dk.digitalidentity.ap.dao.model.enums.Domain;
+import dk.digitalidentity.ap.dao.model.enums.Level;
+import dk.digitalidentity.ap.dao.model.enums.Phase;
+import dk.digitalidentity.ap.dao.model.enums.ProcessType;
+import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
+import dk.digitalidentity.ap.dao.model.enums.Status;
+import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.dao.model.projection.ProcessExtendedProjection;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -24,29 +42,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.data.rest.core.annotation.RestResource;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import dk.digitalidentity.ap.dao.model.enums.Domain;
-import dk.digitalidentity.ap.dao.model.enums.Level;
-import dk.digitalidentity.ap.dao.model.enums.Phase;
-import dk.digitalidentity.ap.dao.model.enums.ProcessType;
-import dk.digitalidentity.ap.dao.model.enums.RunPeriod;
-import dk.digitalidentity.ap.dao.model.enums.Status;
-import dk.digitalidentity.ap.dao.model.enums.Visibility;
-import dk.digitalidentity.ap.dao.model.projection.ProcessExtendedProjection;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -169,7 +166,7 @@ public class Process {
 	private User contact;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "owner", nullable = false)
+	@JoinColumn(name = "owner", nullable = true)
 	private User owner;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -242,25 +239,21 @@ public class Process {
 	private String solutionRequests;
 
 	@Column
-	@NotNull
 	@Min(value = 0)
-	private int timeSpendOccurancesPerEmployee;
+	private Integer timeSpendOccurancesPerEmployee;
 
 	@Column
-	@NotNull
 	@Min(value = 0)
-	private double timeSpendPerOccurance;
+	private Double timeSpendPerOccurance;
 
 	@Column
-	@NotNull
 	@Min(value = 0)
-	private int timeSpendEmployeesDoingProcess;
+	private Integer timeSpendEmployeesDoingProcess;
 
 	@Column
-	@NotNull
 	@Min(value = 0)
 	@Max(value = 100)
-	private int timeSpendPercentageDigital;
+	private Integer timeSpendPercentageDigital;
 
 	@Column
 	@NotNull
@@ -272,12 +265,10 @@ public class Process {
 	private String timeSpendComment;
 
 	@Column
-	@NotNull
-	private boolean targetsCompanies;
+	private Boolean targetsCompanies;
 
 	@Column
-	@NotNull
-	private boolean targetsCitizens;
+	private Boolean targetsCitizens;
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -379,7 +370,7 @@ public class Process {
 	@JsonIgnore
 	@Column(name = "freetext", insertable = false, updatable = false)
 	private String illegalAccessField;
-	
+
 	// these methods exist only so the tests will ignore this method *sigh*
 	// TODO: perhaps have our tests look at @JsonIgnore on the fields instead of the methods
 

@@ -43,13 +43,22 @@ public class ProcessService {
 	public Process findOne(long id) {
 		return processDao.findById(id).orElse(null);
 	}
-	
+
+	public List<Process> findByCvr(String cvr) {
+		return processDao.findByCvr(cvr);
+	}
+
 	public List<Process> findAll() {
 		return processDao.findAll();
 	}
 
 	public Process save(Process process) {
 		return processDao.save(process);
+	}
+
+	// only use saveAll one when the save interceptor does not need to be hit
+	public void saveAll(List<Process> processes) {
+		processDao.saveAll(processes);
 	}
 
 	public List<Process> findByLastChangedBetween(Date begin, Date end) {

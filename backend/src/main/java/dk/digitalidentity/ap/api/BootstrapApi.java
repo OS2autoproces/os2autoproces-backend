@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.RandomStringUtils;
@@ -57,6 +59,8 @@ import lombok.Setter;
 // TODO: actually we should keep it for development as well, and then just add a dev-mode
 //       check
 @RestController
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Bootstrap API")
 public class BootstrapApi {
 	private ArrayList<String> names;
 	private ArrayList<String> surnames;
@@ -252,7 +256,7 @@ public class BootstrapApi {
 			p.setTimeSpendComputedTotal(random.nextInt(3));
 			p.setTimeSpendEmployeesDoingProcess(random.nextInt(3));
 			p.setTimeSpendOccurancesPerEmployee(random.nextInt(3));
-			p.setTimeSpendPerOccurance(random.nextInt(3));
+			p.setTimeSpendPerOccurance(random.nextDouble(3));
 			p.setLevelOfChange(Level.values()[random.nextInt(Level.values().length - 1)]);
 			p.setLevelOfDigitalInformation(Level.values()[random.nextInt(Level.values().length - 1)]);
 			p.setLevelOfProfessionalAssessment(Level.values()[random.nextInt(Level.values().length - 1)]);

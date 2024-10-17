@@ -3,6 +3,8 @@ package dk.digitalidentity.ap.api;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/bookmarks")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Bookmark Process API")
 public class BookmarkApi {
 
 	@Autowired
