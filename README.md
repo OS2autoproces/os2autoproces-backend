@@ -21,5 +21,10 @@ Til Backenden er der udarbejdet følgende dokumenter. Tilgå repositoriet for Fr
   <li><a href="doc/Build.md">Vejledning til at bygge og afvikle kodebasen</a></li>
   <li><a href="doc/Deploy.md">Vejledning til at pakketere, distribuere og afviklere løsningen i et servermiljø</a></li>
 </ul>
-  
+
+<h2>API</h2>
+Der er udstillet SWAGGER dokumentation til API'et, samt en beskrivelse af API'et, som kan tilgås her
+https://dev.os2autoproces.eu/doc
+https://dev.os2autoproces.eu/swagger-ui/index.html
+https://www.os2autoproces.eu/swagger-ui/index.html
 </p>
