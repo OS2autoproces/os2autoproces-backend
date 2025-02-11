@@ -24,7 +24,9 @@ Til Backenden er der udarbejdet følgende dokumenter. Tilgå repositoriet for Fr
 
 <h2>API</h2>
 Der er udstillet SWAGGER dokumentation til API'et, samt en beskrivelse af API'et, som kan tilgås her
-https://dev.os2autoproces.eu/doc
-https://dev.os2autoproces.eu/swagger-ui/index.html
-https://www.os2autoproces.eu/swagger-ui/index.html
+<ul>
+<li>https://dev.os2autoproces.eu/doc</li>
+<li>https://dev.os2autoproces.eu/swagger-ui/index.html</li>
+<li>https://www.os2autoproces.eu/swagger-ui/index.html</li>
+</ul>
 </p>
