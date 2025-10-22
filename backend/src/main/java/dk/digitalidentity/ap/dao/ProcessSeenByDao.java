@@ -24,12 +24,15 @@ public interface ProcessSeenByDao extends JpaRepository<ProcessSeenBy, Long> {
 	int insertIfNotExists(@Param("userId") long userId, @Param("processId") long processId);
 
 	@Query(value = "SELECT ranked.sort_order, ranked.process_id AS processId, ranked.title AS title, ranked.count " +
-			"FROM (SELECT psb.process_id, p.title AS title, COUNT(psb.process_id) AS count, " +
-			"ROW_NUMBER() OVER(ORDER BY COUNT(psb.process_id) DESC) AS sort_order " +
-			"FROM process_seen_by psb " +
-			"JOIN process p ON psb.process_id = p.id " +
-			"GROUP BY psb.process_id, p.title) AS ranked " +
-			"ORDER BY ranked.count DESC " +
-			"LIMIT 10", nativeQuery = true)
-	List<Object[]> findTop10ProcessIdsWithTitleCountAndRank();
+			"FROM ( " +
+			"    SELECT psb.process_id, p.title AS title, COUNT(psb.process_id) AS count, " +
+			"           ROW_NUMBER() OVER(ORDER BY COUNT(psb.process_id) DESC, psb.process_id ASC) AS sort_order " +
+			"    FROM process_seen_by psb " +
+			"    JOIN process p ON psb.process_id = p.id " +
+			"    WHERE p.visibility = 'PUBLIC' " +
+			"    GROUP BY psb.process_id, p.title " +
+			") AS ranked " +
+			"WHERE ranked.sort_order <= 10 " +
+			"ORDER BY ranked.sort_order", nativeQuery = true)
+	List<Object[]> findTop10PublicProcessIdsWithTitleCountAndRank();
 }

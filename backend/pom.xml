@@ -191,15 +191,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-aws-context</artifactId>
-			<version>1.2.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
-			<version>1.2.2.RELEASE</version>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.125</version>
 		</dependency>
 
 		<dependency>
@@ -213,6 +207,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+			<version>1.18.32</version>
 		</dependency>
 
 		<dependency>
@@ -284,16 +279,16 @@
 			<version>3.0.2</version>
 		</dependency>
 
-<!--		this dependency can not be used for generating swagger api documentation because of spring boot 2 -->
-<!--		it could be used if we were using Spring Boot 3 -->
-<!--		<dependency>-->
-<!--			<groupId>org.springdoc</groupId>-->
-<!--			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>-->
-<!--			<version>2.5.0</version>-->
-<!--		</dependency>-->
+		<!--		this dependency can not be used for generating swagger api documentation because of spring boot 2 -->
+		<!--		it could be used if we were using Spring Boot 3 -->
+		<!--		<dependency>-->
+		<!--			<groupId>org.springdoc</groupId>-->
+		<!--			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>-->
+		<!--			<version>2.5.0</version>-->
+		<!--		</dependency>-->
 
-<!--	this dependency is needed for generating swagger api documentation because of spring boot 2 (also for the kitos api) -->
-<!--	this should not be used if we upgrade to SpringBoot 3 -->
+		<!--	this dependency is needed for generating swagger api documentation because of spring boot 2 (also for the kitos api) -->
+		<!--	this should not be used if we upgrade to SpringBoot 3 -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>

@@ -207,12 +207,39 @@ public class ProcessXlsView extends AbstractXlsxView {
 
 			createCell(row, 26, process.getCreated(), dateStyle);
 			createCell(row, 27, process.getLastChanged(), dateStyle);
-			createCell(row, 28, process.getTimeSpendOccurancesPerEmployee(), numberStyle);
-			createCell(row, 29, process.getTimeSpendPerOccurance(), numberStyle);
-			createCell(row, 30, process.getTimeSpendPercentageDigital(), numberStyle);
-			createCell(row, 31, process.getTimeSpendPerOccurance() * process.getTimeSpendOccurancesPerEmployee() / 60, numberStyle);
+
+			if (process.getTimeSpendOccurancesPerEmployee() != null) {
+				createCell(row, 28, process.getTimeSpendOccurancesPerEmployee(), numberStyle);
+			} else {
+				createCell(row, 28, "", normalStyle);
+			}
+
+			if (process.getTimeSpendPerOccurance() != null) {
+				createCell(row, 29, process.getTimeSpendPerOccurance(), numberStyle);
+			} else {
+				createCell(row, 29, "", normalStyle);
+			}
+
+			if (process.getTimeSpendPercentageDigital() != null) {
+				createCell(row, 30, process.getTimeSpendPercentageDigital(), numberStyle);
+			} else {
+				createCell(row, 30, "", normalStyle);
+			}
+
+			if (process.getTimeSpendPerOccurance() != null && process.getTimeSpendOccurancesPerEmployee() != null) {
+				createCell(row, 31, process.getTimeSpendPerOccurance() * process.getTimeSpendOccurancesPerEmployee() / 60, numberStyle);
+			} else {
+				createCell(row, 31, "", normalStyle);
+			}
+
 			createCell(row, 32, process.getTimeSpendComputedTotal(), numberStyle);
-			createCell(row, 33, process.getTimeSpendEmployeesDoingProcess(), numberStyle);
+
+			if (process.getTimeSpendEmployeesDoingProcess() != null) {
+				createCell(row, 33, process.getTimeSpendEmployeesDoingProcess(), numberStyle);
+			} else {
+				createCell(row, 33, "", normalStyle);
+			}
+
 			createCell(row, 34, process.getTargetsCitizens() == null ? "" : process.getTargetsCitizens() ?  "Ja" : "Nej", normalStyle);
 			createCell(row, 35, process.getTargetsCompanies() == null ? "" : process.getTargetsCompanies() ? "Ja" : "Nej", normalStyle);
 			createCell(row, 36, process.getExpectedDevelopmentTime() != null ? process.getExpectedDevelopmentTime() : 0, numberStyle);

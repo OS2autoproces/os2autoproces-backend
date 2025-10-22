@@ -156,6 +156,12 @@ public class LoginPostProcesser implements SamlLoginPostProcessor {
 				case "ROLE_http://os2autoproces.eu/roles/usersystemrole/superuser/1":
 					newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
 					break;
+				case "ROLE_http://dev.os2autoproces.eu/roles/usersystemrole/local_superuser/1":
+					newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_LOCAL_SUPERUSER));
+					break;
+				case "ROLE_http://dev.os2autoproces.eu/roles/usersystemrole/superuser/1":
+					newAuthorities.add(new SamlGrantedAuthority(SecurityUtil.ROLE_SUPERUSER));
+					break;
 				default:
 					break;
 			}

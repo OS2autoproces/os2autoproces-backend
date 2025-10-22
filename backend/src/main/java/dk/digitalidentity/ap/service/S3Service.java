@@ -2,58 +2,50 @@ package dk.digitalidentity.ap.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.WritableResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.util.IOUtils;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class S3Service {
-	private static final String S3_PREFIX = "s3://";
 
-	@Value("${s3.bucket.url}")
+	@Value("${upcloud.s3.bucket.url}")
 	private String s3URLPrefix;
 
-	@Value("${s3.bucket.name}")
+	@Value("${upcloud.s3.bucket.name}")
 	private String bucketName;
 	
-	@Value("${cloud.aws.credentials.accessKey}")
+	@Value("${upcloud.s3.credentials.accessKey}")
 	private String accessKey;
 
 	@Autowired
-	private ResourceLoader resourceLoader;
+	private AmazonS3 amazonS3Client;
 
-	@Autowired
-	private AmazonS3Client amazonS3Client;
-
-	public String writeFile(InputStream is, String fileName) throws IOException {
-		try {
+    public String writeFile(InputStream inputStream, String fileName) {
+        try {
 			String uniqueFileName = generateRandomFileName(fileName);
-			
-			Resource resource = resourceLoader.getResource(S3_PREFIX + bucketName + "/" + uniqueFileName);
-	
-			WritableResource writableResource = (WritableResource) resource;
-			try (OutputStream outputStream = writableResource.getOutputStream()) {
-				outputStream.write(IOUtils.toByteArray(is));
-			}
 
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(inputStream.available());
+            metadata.setContentType("application/octet-stream");
+
+            PutObjectRequest request = new PutObjectRequest(bucketName, uniqueFileName, inputStream, metadata);
+            amazonS3Client.putObject(request);
+            
 			return s3URLPrefix + uniqueFileName;
-		}
-		catch (SdkClientException ex) {
+        }
+        catch (Exception ex) {
 			if (accessKey == null || accessKey.length() == 0) {
 				log.warn("No AWS/S3 credentials configured, not storing attachment");
 			}
@@ -62,8 +54,8 @@ public class S3Service {
 			}
 			
 			return null;
-		}
-	}
+        }
+    }
 
 	public byte[] downloadAsBytes(String key) throws IOException {
 

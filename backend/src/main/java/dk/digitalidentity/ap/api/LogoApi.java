@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,6 +88,23 @@ public class LogoApi {
 		}
 
 		return ResponseEntity.badRequest().build();
+	}
+
+	@DeleteMapping(path = "/{cvr}")
+	public ResponseEntity<?> deleteLogo(@PathVariable("cvr") String cvr) {
+		Municipality municipality = municipalityService.getByCvr(cvr);
+		if (municipality == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		if (!SecurityUtil.canEditMunicipalityInfo(municipality)) {
+			log.warn("User " + SecurityUtil.getUser().getId() + " does not have write access to municipality info for " + municipality.getCvr());
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
+		logoService.delete(municipality.getLogo());
+
+		return ResponseEntity.ok().build();
 	}
 
 }

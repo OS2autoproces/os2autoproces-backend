@@ -360,10 +360,18 @@ public class Process {
 	@Size(max = 255)
 	private String otherContactEmail;
 
-	// this one exists solely because we need to use it for searching purposes ;)
+	// the three properties bellow exists solely because we need to use it for searching purposes ;)
 	@JsonIgnore
 	@Column
 	private String freetext;
+
+	@JsonIgnore
+	@Column(name = "filter_my_organisation", insertable = false, updatable = false)
+	private Boolean filterMyOrganisation;
+
+	@JsonIgnore
+	@Column(name = "filter_on_cvr", insertable = false, updatable = false)
+	private Boolean filterOnCvr;
 
 	// this is a hack, to ensure we have a field we can map validation errors to,
 	// when we do not want to expose the actual data

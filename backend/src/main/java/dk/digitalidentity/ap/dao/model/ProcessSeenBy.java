@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 @Setter
 @Entity
 public class ProcessSeenBy {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

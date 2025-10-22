@@ -1,13 +1,32 @@
 package dk.digitalidentity.ap.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-
+import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Operation;
+import com.querydsl.core.types.Operator;
+import com.querydsl.core.types.PathImpl;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.PredicateOperation;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
+import dk.digitalidentity.ap.dao.model.ItSystem;
+import dk.digitalidentity.ap.dao.model.Municipality;
+import dk.digitalidentity.ap.dao.model.OrgUnit;
+import dk.digitalidentity.ap.dao.model.Process;
+import dk.digitalidentity.ap.dao.model.QMunicipality;
+import dk.digitalidentity.ap.dao.model.QOrgUnit;
+import dk.digitalidentity.ap.dao.model.QProcess;
+import dk.digitalidentity.ap.dao.model.QUser;
+import dk.digitalidentity.ap.dao.model.Technology;
+import dk.digitalidentity.ap.dao.model.User;
+import dk.digitalidentity.ap.dao.model.enums.ProcessType;
+import dk.digitalidentity.ap.dao.model.enums.Visibility;
+import dk.digitalidentity.ap.security.AuthenticatedUser;
+import dk.digitalidentity.ap.security.FilterMyOrganisationHolder;
+import dk.digitalidentity.ap.security.FilterOnCvrHolder;
+import dk.digitalidentity.ap.security.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryImpl;
@@ -21,37 +40,25 @@ import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.history.support.RevisionEntityInformation;
 
-import com.querydsl.core.types.ConstantImpl;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Operation;
-import com.querydsl.core.types.Operator;
-import com.querydsl.core.types.PathImpl;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.PredicateOperation;
-
-import dk.digitalidentity.ap.dao.model.OrgUnit;
-import dk.digitalidentity.ap.dao.model.Process;
-import dk.digitalidentity.ap.dao.model.QOrgUnit;
-import dk.digitalidentity.ap.dao.model.QProcess;
-import dk.digitalidentity.ap.dao.model.QUser;
-import dk.digitalidentity.ap.dao.model.User;
-import dk.digitalidentity.ap.dao.model.enums.ProcessType;
-import dk.digitalidentity.ap.dao.model.enums.Visibility;
-import dk.digitalidentity.ap.security.AuthenticatedUser;
-import dk.digitalidentity.ap.security.SecurityUtil;
-import lombok.extern.slf4j.Slf4j;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Slf4j
 public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 		extends QuerydslJpaPredicateExecutor<T>
 		implements RevisionRepository<T, ID, N> {
+
 	private final EntityInformation<T, ?> entityInformation;
-	
+
 	// hacks :)
 	private final EnversRevisionRepositoryImpl enversImpl;
 	private final SimpleJpaRepository<T, ID> jpaRepositoryImpl;
+	private final JPQLQuery<Municipality> municipalityJPQLQuery;
 
 	public AutoProcessRepositoryImpl(JpaEntityInformation<T, ID> entityInformation, RevisionEntityInformation revisionEntityInformation, EntityManager entityManager) {
 		super(entityInformation, entityManager, SimpleEntityPathResolver.INSTANCE, null);
@@ -60,6 +67,7 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 		
 		enversImpl = new EnversRevisionRepositoryImpl<T, ID, N>(entityInformation, revisionEntityInformation, entityManager);
 		jpaRepositoryImpl = new SimpleJpaRepository<T, ID>(entityInformation, entityManager);
+		municipalityJPQLQuery = new JPAQuery<>(entityManager);
 	}
 
 	// sucks, but we have to copy the code (raw, unmodified) from EnversRevisionRepositoryImpl for the next
@@ -89,7 +97,6 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 	public Optional<T> findById(ID id) {
 		if (entityInformation.getJavaType().equals(Process.class)) {
 			Predicate predicate = QProcess.process.id.eq((Long) id);
-
 			Predicate where = getPredicate(predicate);
 
 			return super.findOne(where);
@@ -189,6 +196,13 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 	}
 
 	// helper methods start here
+
+	private Municipality findMunicipalityByCvr(String cvr) {
+		QMunicipality qMunicipality = QMunicipality.municipality;
+		return municipalityJPQLQuery.from(qMunicipality)
+				.where(qMunicipality.cvr.eq(cvr))
+				.fetchOne();
+	}
 	
 	private Predicate getSameCvrPredicateForUser(Predicate predicate) {
 		// Spring Security ensures that a user is logged in, and a CVR number is
@@ -225,6 +239,59 @@ public class AutoProcessRepositoryImpl<T, ID, N extends Number & Comparable<N>>
 		AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
 
 		predicate = handleFreeTextSearch(predicate);
+
+		// if the user has chosen "Relevant for min organisation" in the ui filterMyOrganisation will be true
+		try {
+			Boolean filterMyOrganisation = FilterMyOrganisationHolder.get();
+
+			if (filterMyOrganisation != null && filterMyOrganisation == true && predicate != null) {
+				String cvr = SecurityUtil.getCvr();
+				Municipality municipality = findMunicipalityByCvr(cvr);
+				if (municipality != null) {
+					List<Predicate> filterMunicipalityPredicates = new ArrayList<>();
+
+					if (municipality.getTechnologies().isEmpty() && municipality.getItSystems().isEmpty()) {
+
+						// hack for not showing anything if no technologies or itSystems configured on municipality
+						filterMunicipalityPredicates.add(process.technologies.any().id.eq(-1L));
+					} else {
+						for (Technology technology : municipality.getTechnologies()) {
+							filterMunicipalityPredicates.add(process.technologies.any().id.eq(technology.getId()));
+						}
+						for (ItSystem itSystem : municipality.getItSystems()) {
+							filterMunicipalityPredicates.add(process.itSystems.any().id.eq(itSystem.getId()));
+							filterMunicipalityPredicates.add(process.services.any().name.equalsIgnoreCase(itSystem.getName()));
+						}
+					}
+
+					Predicate municipalityFilter = ExpressionUtils.anyOf(filterMunicipalityPredicates.toArray(new Predicate[0]));
+					predicate = ExpressionUtils.allOf(predicate, municipalityFilter);
+				}
+			}
+		} finally {
+			FilterMyOrganisationHolder.clear();
+		}
+
+		log.info("Before filterCvr blob");
+		// if the user has chosen "Min organisation" in the ui filterOnCvr will be true
+		try {
+			Boolean filterCvr = FilterOnCvrHolder.get();
+			log.info("In filter on cvr blob");
+
+			if (filterCvr != null && filterCvr && predicate != null) {
+				log.info("In filterCvr = true blob");
+				String cvr = SecurityUtil.getCvr();
+				log.info("Found cvr: " + cvr);
+				Municipality municipality = findMunicipalityByCvr(cvr);
+				if (municipality != null) {
+					log.info("Found municipality and adding predicate: " + municipality.getName());
+					predicate = ExpressionUtils.allOf(predicate, process.cvr.eq(cvr));
+				}
+			}
+		} finally {
+			FilterOnCvrHolder.clear();
+		}
+		log.info("After filterCvr blob");
 
 		// processes of type 'GLOBAL_PARENT' automatically becomes visible to all users
 		Predicate global = process.type.eq(ProcessType.GLOBAL_PARENT);

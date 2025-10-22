@@ -66,16 +66,19 @@ public class ApiSecurityFilter implements Filter {
 			String path = httpRequest.getRequestURI();
 			String projectionParam = httpRequest.getParameter("projection");
 
-			if (path.matches("/backend/api/processes/\\d+") && "extended".equals(projectionParam)) {
+			if (path.matches("/api/processes/\\d+") && "extended".equals(projectionParam)) {
 				AuthenticatedUser authenticatedUser = SecurityUtil.getUser();
 				if (authenticatedUser != null) {
-					Pattern pattern = Pattern.compile("/backend/api/processes/(\\d+)");
+					Pattern pattern = Pattern.compile("/api/processes/(\\d+)");
 					Matcher matcher = pattern.matcher(path);
 
 					if (matcher.find()) {
 						String id = matcher.group(1);
-						Long projectId = Long.parseLong(id);
-						processSeenByDao.insertIfNotExists(authenticatedUser.getId(), projectId);
+						Long processId = Long.parseLong(id);
+						
+						if (authenticatedUser.getId() > 0 && processId > 0) {
+							processSeenByDao.insertIfNotExists(authenticatedUser.getId(), processId);
+						}
 					}
 				}
 			}

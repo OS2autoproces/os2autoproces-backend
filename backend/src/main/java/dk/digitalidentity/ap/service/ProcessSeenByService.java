@@ -13,8 +13,8 @@ public class ProcessSeenByService {
 	@Autowired
 	private ProcessSeenByDao processSeenByDao;
 
-	public List<ProcessSeenByChartDTO> getTop10ProcessIdsWithTitleAndCount() {
-		List<Object[]> results = processSeenByDao.findTop10ProcessIdsWithTitleCountAndRank();
+	public List<ProcessSeenByChartDTO> getTop10PublicProcessIdsWithTitleAndCount() {
+		List<Object[]> results = processSeenByDao.findTop10PublicProcessIdsWithTitleCountAndRank();
 		List<ProcessSeenByChartDTO> dtos = new ArrayList<>();
 
 		for (Object[] result : results) {

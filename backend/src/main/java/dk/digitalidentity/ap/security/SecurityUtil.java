@@ -24,6 +24,7 @@ import dk.digitalidentity.samlmodule.model.TokenUser;
 
 @Component
 public class SecurityUtil {
+
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_LOCAL_SUPERUSER = "ROLE_LOCAL_SUPERUSER";
 	public static final String ROLE_SUPERUSER = "ROLE_SUPERUSER";

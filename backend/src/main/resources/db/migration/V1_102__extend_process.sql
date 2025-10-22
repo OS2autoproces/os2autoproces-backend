@@ -1,0 +1,1 @@
+ALTER TABLE `process` ADD filter_my_organisation BIT(1) NULL;

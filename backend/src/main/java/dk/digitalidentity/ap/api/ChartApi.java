@@ -212,7 +212,7 @@ public class ChartApi {
 
 	@GetMapping("/api/charts/seenby")
 	public ResponseEntity<?> getSeenByChart() {
-		List<ProcessSeenByChartDTO> result = processSeenByService.getTop10ProcessIdsWithTitleAndCount();
+		List<ProcessSeenByChartDTO> result = processSeenByService.getTop10PublicProcessIdsWithTitleAndCount();
 		return ResponseEntity.ok(result);
 	}
 

@@ -1,0 +1,1 @@
+ALTER TABLE `process` ADD filter_on_cvr BIT(1) NULL;

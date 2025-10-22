@@ -7,6 +7,9 @@ import dk.digitalidentity.ap.dao.model.QProcess;
 import dk.digitalidentity.ap.dao.model.Technology;
 import dk.digitalidentity.ap.dao.model.enums.Domain;
 import dk.digitalidentity.ap.dao.model.enums.Phase;
+import dk.digitalidentity.ap.security.FilterMyOrganisationHolder;
+import dk.digitalidentity.ap.security.FilterOnCvrHolder;
+import dk.digitalidentity.ap.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -150,6 +153,24 @@ public interface ProcessDao extends JpaRepository<Process, Long>, QuerydslPredic
 			}
 
 			return Optional.of(builder);
+		});
+
+		bindings.bind(root.filterMyOrganisation).first((path, value) -> {
+			if (Boolean.TRUE.equals(value)) {
+				FilterMyOrganisationHolder.set(true);
+			} else {
+				FilterMyOrganisationHolder.set(false);
+			}
+			return null;
+		});
+
+		bindings.bind(root.filterOnCvr).first((path, value) -> {
+			if (Boolean.TRUE.equals(value)) {
+				FilterOnCvrHolder.set(true);
+			} else {
+				FilterOnCvrHolder.set(false);
+			}
+			return null;
 		});
 	}
 }
